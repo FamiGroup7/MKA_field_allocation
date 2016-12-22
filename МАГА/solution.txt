@@ -1,0 +1,2 @@
+
+Otnositelnaia pogreshnost = 1.3679e-14
