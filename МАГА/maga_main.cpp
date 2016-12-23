@@ -95,6 +95,8 @@ struct nvtr
 	}
 };
 
+int LosLU(double* ggl, double* ggu, double* diag, int N, int* ig, int* jg, double* f, double* q);
+
 vector<point> xyz_points;
 vector<nvtr> KE;
 vector<field> sreda;
@@ -115,6 +117,7 @@ double M2[4][4] = {
 	{2,1,4,2},
 	{1,2,2,4}
 };
+ofstream output("solution.txt");
 
 void inputConfig()
 {
@@ -874,14 +877,13 @@ void GenerateMatrix()
 		Addition(ielem);
 	}
 
-	//Edge2_not_sim(0, 1, 1, 1, 1, 1);
-	Edge3_not_sim(1, 1, 1, 1, 1, 1);
+	Edge2_not_sim(1, 1, 1, 1, 1, 1);
+	//Edge3_not_sim(1, 1, 1, 1, 1, 1);
 	for (i = 0; i < ig[kolvoRegularNode]; i++)
 	{
 		ggu[i] = ggl[i];
 	}
-	//Edge1_not_sim(0, 0, 0, 0, 0, 0);
-	//Edge1_not_sim(1, 1, 1, 1);
+	//Edge1_not_sim(1, 1, 1, 1, 1, 1);
 }
 
 void mult(double* res, double* v)
@@ -934,6 +936,19 @@ void MultMatrixOnVector(double* in, double* out)
 	delete[] out1;
 }
 
+void calcPogreshnost(ofstream&output)
+{
+	int i;
+	double sumCh = 0, sumZn = 0;
+	for (i = 0; i < xyz_points.size(); i++)
+	{
+		sumCh += (q[i] - analiticSolution(xyz_points[i])) * (q[i] - analiticSolution(xyz_points[i]));
+		//output << setw(18) << analiticSolution(xyz_points[i]) << setw(18) << q[i] << setw(18) << q[i] - analiticSolution(xyz_points[i]) << endl;
+		sumZn += analiticSolution(xyz_points[i]) * analiticSolution(xyz_points[i]);
+	}
+	output << endl << "Otnositelnaia pogreshnost = " << sqrt(sumCh / sumZn);
+}
+
 void runLOS()
 {
 	int maxiter = 10000, i;
@@ -980,16 +995,6 @@ void runLOS()
 		}
 		checkE = sqrt(ScalarMult(r, r) / ScalarMult(b, b));
 	}
-
-	ofstream output("solution.txt");
-	double sumCh = 0, sumZn = 0;
-	for (i = 0; i < xyz_points.size(); i++)
-	{
-		sumCh += (q[i] - analiticSolution(xyz_points[i])) * (q[i] - analiticSolution(xyz_points[i]));
-		//output << setw(18) << analiticSolution(xyz_points[i]) << setw(18) << q[i] << setw(18) << q[i] - analiticSolution(xyz_points[i]) << endl;
-		sumZn += analiticSolution(xyz_points[i]) * analiticSolution(xyz_points[i]);
-	}
-	output << endl << "Otnositelnaia pogreshnost = " << sqrt(sumCh / sumZn);
 }
 
 int main(int argc, char* argv[])
@@ -999,4 +1004,7 @@ int main(int argc, char* argv[])
 	generatePortrait();
 	GenerateMatrix();
 	runLOS();
+	//LosLU(ggl, ggu, di, xyz_points.size(), ig, jg, b, q);
+
+	calcPogreshnost(output);
 }
