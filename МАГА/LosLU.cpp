@@ -1,4 +1,5 @@
 #include <math.h>
+#include <iostream>
 
 void LUsq(double* ggl, double* ggu, double* diag, int N, int* ig, int* jg, double* D, double* L, double* U)
 {
@@ -31,6 +32,12 @@ void LUsq(double* ggl, double* ggu, double* diag, int N, int* ig, int* jg, doubl
 			L[j] = (ggl[j] - sl) / D[k];
 			U[j] = (ggu[j] - su) / D[k];
 			sd += U[j] * L[j];
+		}
+		if(D[i]<sd)
+		{
+			std::cerr << "Error in LUsq. D[i]<sd" << std::endl;
+			system("pause");
+			exit(1);
 		}
 		D[i] = sqrt(D[i] - sd);
 	}

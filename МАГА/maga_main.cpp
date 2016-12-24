@@ -26,7 +26,7 @@ struct point // точка
 	{
 	}
 
-	point():x(0),y(0),z(0)
+	point(): x(0), y(0), z(0)
 	{
 	}
 
@@ -54,7 +54,7 @@ struct locateOfPoint
 	{
 	}
 
-	locateOfPoint():i(0),j(0),z(0)
+	locateOfPoint(): i(0), j(0), z(0)
 	{
 	}
 };
@@ -465,8 +465,9 @@ void generatePortrait()
 
 double analiticSolution(point goal)
 {
-	return goal.x + goal.y + goal.z;
-	//	return 1;
+	return 1 + goal.x + goal.y + goal.z;
+	//return goal.x*goal.x + goal.y*goal.y + goal.z*goal.z;
+	//return exp(goal.x + goal.y + goal.z);
 }
 
 double analiticSolution(double x, double y, double z)
@@ -482,13 +483,15 @@ double Lambda(int ielem)
 double Gamma(int ielem)
 {
 	return 1;
-	//	return 0;
 }
 
 double Func(int ielem, int node)
 {
-	return xyz_points[KE[ielem].uzel[node]].x + xyz_points[KE[ielem].uzel[node]].y + xyz_points[KE[ielem].uzel[node]].z;
-	//	return 0;
+	return 1 + xyz_points[KE[ielem].uzel[node]].x + xyz_points[KE[ielem].uzel[node]].y + xyz_points[KE[ielem].uzel[node]].z;
+	//return xyz_points[KE[ielem].uzel[node]].x*xyz_points[KE[ielem].uzel[node]].x + xyz_points[KE[ielem].uzel[node]].y*xyz_points[KE[ielem].uzel[node]].y +
+	//	xyz_points[KE[ielem].uzel[node]].z*xyz_points[KE[ielem].uzel[node]].z - 6;
+	//return analiticSolution(xyz_points[KE[ielem].uzel[node]].x, xyz_points[KE[ielem].uzel[node]].y, xyz_points[KE[ielem].uzel[node]].z) - 6;
+	//return -2*analiticSolution(xyz_points[KE[ielem].uzel[node]].x, xyz_points[KE[ielem].uzel[node]].y, xyz_points[KE[ielem].uzel[node]].z);
 }
 
 void CreateLocalMatrixs(int ielem)
@@ -877,13 +880,14 @@ void GenerateMatrix()
 		Addition(ielem);
 	}
 
-	Edge2_not_sim(1, 1, 1, 1, 1, 1);
-	//Edge3_not_sim(1, 1, 1, 1, 1, 1);
+	//Edge2_not_sim(0, 0, 1, 1, 0, 0);
+	//Edge3_not_sim(0, 0, 0, 0, 1, 1);
 	for (i = 0; i < ig[kolvoRegularNode]; i++)
 	{
 		ggu[i] = ggl[i];
 	}
-	//Edge1_not_sim(1, 1, 1, 1, 1, 1);
+	//Edge1_not_sim(1, 1, 0, 0, 0, 0);
+	Edge1_not_sim(1, 1, 1, 1, 1, 1);
 }
 
 void mult(double* res, double* v)
@@ -936,16 +940,19 @@ void MultMatrixOnVector(double* in, double* out)
 	delete[] out1;
 }
 
-void calcPogreshnost(ofstream&output)
+void calcPogreshnost(ofstream& output)
 {
 	int i;
 	double sumCh = 0, sumZn = 0;
+	output << setw(10) << "x" << setw(10) << "y" << setw(10) << "z" << setw(18) << "analitic" << setw(18) << "solution" << setw(18) << "pogreshn" << endl;
 	for (i = 0; i < xyz_points.size(); i++)
 	{
 		sumCh += (q[i] - analiticSolution(xyz_points[i])) * (q[i] - analiticSolution(xyz_points[i]));
-		//output << setw(18) << analiticSolution(xyz_points[i]) << setw(18) << q[i] << setw(18) << q[i] - analiticSolution(xyz_points[i]) << endl;
+		output << setw(10) <<xyz_points[i].x << setw(10) << xyz_points[i].y << setw(10) << xyz_points[i].z << setw(18) << analiticSolution(xyz_points[i]) << setw(18) << q[i] << setw(18) << q[i] - analiticSolution(xyz_points[i]) << endl;
 		sumZn += analiticSolution(xyz_points[i]) * analiticSolution(xyz_points[i]);
 	}
+	output << "KE number = " << KE.size() << endl;
+	output << "Nodes number = " << xyz_points.size() << endl;
 	output << endl << "Otnositelnaia pogreshnost = " << sqrt(sumCh / sumZn);
 }
 
@@ -1003,8 +1010,17 @@ int main(int argc, char* argv[])
 	inputNet();
 	generatePortrait();
 	GenerateMatrix();
-	runLOS();
-	//LosLU(ggl, ggu, di, xyz_points.size(), ig, jg, b, q);
+
+	bool flagLU = false;
+	if (flagLU)
+	{
+		int numberIteration = LosLU(ggl, ggu, di, xyz_points.size(), ig, jg, b, q);
+		output << "numberIteration = " << numberIteration << endl;
+	}
+	else
+	{
+		runLOS();
+	}
 
 	calcPogreshnost(output);
 }
