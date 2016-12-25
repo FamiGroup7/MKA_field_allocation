@@ -95,6 +95,15 @@ struct nvtr
 	}
 };
 
+struct sigmStruct
+{
+	int terminalNode;
+	vector<int> neighbors;
+	vector<double> tNeighbors;
+}*sigmT;
+int *igT, *jgT;
+double *ggT;
+
 int LosLU(double* ggl, double* ggu, double* diag, int N, int* ig, int* jg, double* f, double* q);
 
 vector<point> xyz_points;
@@ -105,6 +114,8 @@ double leftX, rightX, leftY, rightY, leftZ, rightZ;
 double koordSourceX, koordSourceY, koordSourceZ;
 double *xNet, *yNet, *zNet;
 int nX, nY, nZ;
+char*** matrixNode;
+int nColT, kolvoRegularNode;
 
 int *ig, *jg;
 double *di, *b, *q, *ggl, *ggu;
@@ -176,10 +187,10 @@ void GenerateNetLikeTelma(set<double>& mas, ifstream& fileNet)
 			lastPosition = position;
 			position += napravlenie[i] * stepReal;
 		}
-		if (fabs(lastPosition - endPosition) < sizeOfSteps[i] && lastPosition != startPosition)
+		/*if (fabs(lastPosition - endPosition) < sizeOfSteps[i]*0.9 && lastPosition != startPosition)
 		{
 			mas.erase(mas.find(lastPosition));
-		}
+		}*/
 	}
 }
 
@@ -202,13 +213,296 @@ int indexXYZ(double x, double y, double z)
 	return indexXYZ(goal);
 }
 
+double LikeASquare(double x, double y)
+{
+	if (x > y)
+		return (1 - y / x);
+	else
+		return (1 - x / y);
+}
+
+void OptimizationQuarterXforDuplication(int directionX, int directionY, int startX, int startY, int endX, int endY)
+{
+	int i, j, k, granX, granY, posI, posJ, posK;
+	double height_1, height_2, width_1, width_2;
+	for (j = startY * directionY; j < endY * directionY; j++)
+	{
+		posJ = j * directionY;
+		for (i = startX * directionX; i < endX * directionX - 1; i++)
+		{
+			posI = i * directionX;
+			//обработка вершины при попытке расширени€
+			if (directionX == 1 && directionY == 1 && (matrixNode[posI][posJ][0] == 'S' || matrixNode[posI][posJ][0] == 'R' || matrixNode[posI][posJ][0] == 'A' || matrixNode[posI][posJ][0] == 'V')
+				|| (directionX == -1 && directionY == 1 && (matrixNode[posI][posJ][0] == 'S' || matrixNode[posI][posJ][0] == 'R' || matrixNode[posI][posJ][0] == 'D' || matrixNode[posI][posJ][0] == 'V'))
+				|| (directionX == -1 && directionY == -1 && (matrixNode[posI][posJ][0] == 'W' || matrixNode[posI][posJ][0] == 'R' || matrixNode[posI][posJ][0] == 'D' || matrixNode[posI][posJ][0] == 'V'))
+				|| (directionX == 1 && directionY == -1 && (matrixNode[posI][posJ][0] == 'W' || matrixNode[posI][posJ][0] == 'R' || matrixNode[posI][posJ][0] == 'A' || matrixNode[posI][posJ][0] == 'V')))
+			{
+				height_1 = height_2 = width_1 = width_2 = granX = granY = 0;
+				for (k = j + 1; k <= endY * directionY; k++) //высота 1
+				{
+					posK = k * directionY;
+					if (directionX == 1 && directionY == 1 && (matrixNode[posI][posK][0] == 'W' || matrixNode[posI][posK][0] == 'A' || matrixNode[posI][posK][0] == 'R' || matrixNode[posI][posK][0] == 'V')
+						|| (directionX == -1 && directionY == 1 && (matrixNode[posI][posK][0] == 'W' || matrixNode[posI][posK][0] == 'D' || matrixNode[posI][posK][0] == 'R' || matrixNode[posI][posK][0] == 'V'))
+						|| (directionX == -1 && directionY == -1 && (matrixNode[posI][posK][0] == 'S' || matrixNode[posI][posK][0] == 'D' || matrixNode[posI][posK][0] == 'R' || matrixNode[posI][posK][0] == 'V'))
+						|| (directionX == 1 && directionY == -1 && (matrixNode[posI][posK][0] == 'S' || matrixNode[posI][posK][0] == 'A' || matrixNode[posI][posK][0] == 'R' || matrixNode[posI][posK][0] == 'V')))
+					{
+						height_1 = fabs(yNet[posK] - yNet[posJ]);
+						break;
+					}
+				}
+				for (k = i + 1; k < endX * directionX; k++) //ширина 1
+				{
+					posK = k * directionX;
+					if (directionY == 1 && (matrixNode[posK][posJ][0] == 'S' || matrixNode[posK][posJ][0] == 'R') ||
+						directionY == -1 && (matrixNode[posK][posJ][0] == 'W' || matrixNode[posK][posJ][0] == 'R'))
+					{
+						width_1 = fabs(xNet[posK] - xNet[posI]);
+						granX = posK;
+						break;
+					}
+				}
+				for (k = j + 1; k <= endY * directionY; k++) //высота 2
+				{
+					posK = k * directionY;
+					if (directionY == 1 && (matrixNode[granX][posK][0] == 'W' || matrixNode[granX][posK][0] == 'R') ||
+						directionY == -1 && (matrixNode[granX][posK][0] == 'S' || matrixNode[granX][posK][0] == 'R'))
+					{
+						height_2 = fabs(yNet[posK] - yNet[posJ]);
+						granY = posK;
+						break;
+					}
+				}
+				if (height_2 == height_1)
+				{
+					for (k = granX * directionX + 1; k <= endX * directionX; k++)
+					{
+						posK = k * directionX;
+						if (directionX == 1 && directionY == 1 && (matrixNode[posK][posJ][0] == 'D' || matrixNode[posK][posJ][0] == 'S' || matrixNode[posK][posJ][0] == 'R' || matrixNode[posK][posJ][0] == 'V') ||
+							directionX == -1 && directionY == 1 && (matrixNode[posK][posJ][0] == 'A' || matrixNode[posK][posJ][0] == 'S' || matrixNode[posK][posJ][0] == 'R' || matrixNode[posK][posJ][0] == 'V') ||
+							directionX == -1 && directionY == -1 && (matrixNode[posK][posJ][0] == 'A' || matrixNode[posK][posJ][0] == 'W' || matrixNode[posK][posJ][0] == 'R' || matrixNode[posK][posJ][0] == 'V') ||
+							directionX == 1 && directionY == -1 && (matrixNode[posK][posJ][0] == 'D' || matrixNode[posK][posJ][0] == 'W' || matrixNode[posK][posJ][0] == 'R' || matrixNode[posK][posJ][0] == 'V'))
+						{
+							width_2 = width_1 + fabs(xNet[posK] - xNet[granX]);
+							break;
+						}
+					}
+					if (LikeASquare(width_1, height_1) > LikeASquare(width_2, height_2))
+					{
+						if (directionY == 1)
+						{
+							if (matrixNode[granX][posJ][0] == 'S')
+								matrixNode[granX][posJ][0] = 'Y';
+							else
+								matrixNode[granX][posJ][0] = 'W';
+							if (matrixNode[granX][granY][0] == 'W')
+								matrixNode[granX][granY][0] = 'Y';
+							else
+								matrixNode[granX][granY][0] = 'S';
+						}
+						else
+						{
+							if (matrixNode[granX][posJ][0] == 'W')
+								matrixNode[granX][posJ][0] = 'Y';
+							else
+								matrixNode[granX][posJ][0] = 'S';
+							if (matrixNode[granX][granY][0] == 'S')
+								matrixNode[granX][granY][0] = 'Y';
+							else
+								matrixNode[granX][granY][0] = 'W';
+						}
+					}
+				}
+			}
+		}
+	}
+}
+
+void normDividing()
+{
+	for (int i = 0; i < nX; i++)
+	{
+		matrixNode[i] = new char*[nY];
+		for (int j = 0; j < nY; j++)
+		{
+			matrixNode[i][j] = new char[nZ];
+			for (int k = 0; k < nZ; k++)
+			{
+				if (i == 0)
+					matrixNode[i][j][k] = 'A';
+				else if (i == nX - 1)
+					matrixNode[i][j][k] = 'D';
+				else if (j == 0)
+					matrixNode[i][j][k] = 'S';
+				else if (j == nY - 1)
+					matrixNode[i][j][k] = 'W';
+				else if (k == 0)
+					matrixNode[i][j][k] = 'F';
+				else if (k == nZ - 1)
+					matrixNode[i][j][k] = 'B';
+				else
+					matrixNode[i][j][k] = 'R';
+				if ((k == 0 || k == nZ - 1) && (i == 0 || j == 0 || i == nX - 1 || j == nY - 1) ||
+					(i == 0 || i == nX - 1) && (k == 0 || j == 0 || k == nZ - 1 || j == nY - 1) ||
+					(j == 0 || j == nY - 1) && (i == 0 || k == 0 || i == nX - 1 || k == nZ - 1))
+					matrixNode[i][j][k] = 'V';
+			}
+		}
+	}
+}
+
+int FindLocate(double* massiv, int razm, double x)
+{
+	int i;
+	for (i = 0; i < razm; i++)
+	{
+		if (massiv[i] == x)
+			return i;
+	}
+	return -1;
+}
+
+void duplicatingOfXY()
+{
+	for (int i = 0; i < nX; i++)
+	{
+		matrixNode[i] = new char*[nY];
+		for (int j = 0; j < nY; j++)
+		{
+			matrixNode[i][j] = new char[nZ];
+			int k = 0;
+
+			if (i == 0)
+				matrixNode[i][j][k] = 'A';
+			else if (i == nX - 1)
+				matrixNode[i][j][k] = 'D';
+			else if (j == 0)
+				matrixNode[i][j][k] = 'S';
+			else if (j == nY - 1)
+				matrixNode[i][j][k] = 'W';
+			else
+				matrixNode[i][j][k] = 'R';
+		}
+	}
+	matrixNode[0][0][0] = matrixNode[0][nY - 1][0] = matrixNode[nX - 1][0][0] = matrixNode[nX - 1][nY - 1][0] = 'V';
+
+	double height_1, height_2, width_1, width_2;
+	int locateSourceX, locateSourceY;
+	for (int indSreda = 0; indSreda < sreda.size(); indSreda++)
+	{
+		if (koordSourceX <= sreda[indSreda].x1)
+			locateSourceX = FindLocate(xNet, nX, sreda[indSreda].x1);
+		else if (koordSourceX >= sreda[indSreda].x2)
+			locateSourceX = FindLocate(xNet, nX, sreda[indSreda].x2);
+		else
+			locateSourceX = FindLocate(xNet, nX, koordSourceX);
+
+		if (koordSourceY <= sreda[indSreda].y1)
+			locateSourceY = FindLocate(yNet, nY, sreda[indSreda].y1);
+		else if (koordSourceY >= sreda[indSreda].y2)
+			locateSourceY = FindLocate(yNet, nY, sreda[indSreda].y2);
+		else
+			locateSourceY = FindLocate(yNet, nY, koordSourceY);
+
+		//1-€ четверть
+		OptimizationQuarterXforDuplication(1, 1, locateSourceX, locateSourceY, FindLocate(xNet, nX, sreda[indSreda].x2), FindLocate(yNet, nY, sreda[indSreda].y2));
+		//OptimizationQuarterY(1, 1, locateSourceX, locateSourceY, FindLocate(xNet, nX, sreda[indSreda].x2), FindLocate(yNet, nY, sreda[indSreda].y2));
+
+		//2-€ четверть
+		OptimizationQuarterXforDuplication(-1, 1, locateSourceX, locateSourceY, FindLocate(xNet, nX, sreda[indSreda].x1), FindLocate(yNet, nY, sreda[indSreda].y2));
+		//OptimizationQuarterY(-1, 1, locateSourceX, locateSourceY, FindLocate(xNet, nX, sreda[indSreda].x1), FindLocate(yNet, nY, sreda[indSreda].y2));
+
+		//3-€ четверть
+		OptimizationQuarterXforDuplication(-1, -1, locateSourceX, locateSourceY, FindLocate(xNet, nX, sreda[indSreda].x1), FindLocate(yNet, nY, sreda[indSreda].y1));
+		//OptimizationQuarterY(-1, -1, locateSourceX, locateSourceY, FindLocate(xNet, nX, sreda[indSreda].x1), FindLocate(yNet, nY, sreda[indSreda].y1));
+
+		//4-€ четверть
+		OptimizationQuarterXforDuplication(1, -1, locateSourceX, locateSourceY, FindLocate(xNet, nX, sreda[indSreda].x2), FindLocate(yNet, nY, sreda[indSreda].y1));
+		//OptimizationQuarterY(1, -1, locateSourceX, locateSourceY, FindLocate(xNet, nX, sreda[indSreda].x2), FindLocate(yNet, nY, sreda[indSreda].y1));
+	}
+
+	for (int k = 1; k < nZ; k++)
+	{
+		for (int i = 0; i < nX; i++)
+			for (int j = 0; j < nY; j++)
+			{
+				matrixNode[i][j][k] = matrixNode[i][j][0];
+			}
+	}
+	for (int i = 0; i < nX;i++)
+	{
+		for (int j = 0; j < nY;j++)
+		{
+			if (i == 0 || i == nX - 1 || j == 0 || j == nY - 1)
+			{
+				if(matrixNode[i][j][0]!='Y' && matrixNode[i][j][0] != 'V')
+				{
+					matrixNode[i][j][0] = matrixNode[i][j][nZ - 1] = 'V';
+				}
+			} else
+			{
+				if(matrixNode[i][j][0]=='R')
+				{
+					matrixNode[i][j][0] = 'F';
+					matrixNode[i][j][nZ - 1] = 'B';
+				}
+			}
+		}
+	}
+}
+
+//W - сзади нет ребра
+//A - слева нет ребра
+//S - спереди нет ребра
+//D - справа нет ребра
+//F - снизу нет ребра
+//B - сверху нет ребра
+
+//V - вершины
+//R - регул€рные узлы, 6 ребер примыкают
+//Y - отсутствует вершина или лежит на линии
+void DivideArea(double* xNet, int nX, double* yNet, int nY, double* zNet, int nZ)
+{
+	matrixNode = new char**[nX];
+	for (int i = 0; i < nX; i++)
+	{
+		matrixNode[i] = new char*[nY];
+		for (int j = 0; j < nY; j++)
+		{
+			matrixNode[i][j] = new char[nZ];
+
+			/*for (int k = 0; k < nZ; k++)
+			{
+				if (i == 0)
+					matrixNode[i][j][k] = 'A';
+				else if (i == nX - 1)
+					matrixNode[i][j][k] = 'D';
+				else if (j == 0)
+					matrixNode[i][j][k] = 'S';
+				else if (j == nY - 1)
+					matrixNode[i][j][k] = 'W';
+				else if (k == 0)
+					matrixNode[i][j][k] = 'F';
+				else if (k == nZ - 1)
+					matrixNode[i][j][k] = 'B';
+				else
+					matrixNode[i][j][k] = 'R';
+				if ((k == 0 || k == nZ - 1) && (i == 0 || j == 0 || i == nX - 1 || j == nY - 1) ||
+					(i == 0 || i == nX - 1) && (k == 0 || j == 0 || k == nZ - 1 || j == nY - 1) ||
+					(j == 0 || j == nY - 1) && (i == 0 || k == 0 || i == nX - 1 || k == nZ - 1))
+					matrixNode[i][j][k] = 'V';
+			}*/
+		}
+	}
+	duplicatingOfXY();
+
+}
+
 void inputNet()
 {
 	int i, numberFields;
 	field tempField;
 	set<double> xTemp, yTemp, zTemp;
 	set<double>::const_iterator it;
-	set<double>::iterator xIT, yIT, zIT;
 	ifstream inpSreda("sreda.txt");
 	inpSreda >> numberFields;
 	double areaOfSreda = 0;
@@ -280,54 +574,6 @@ void inputNet()
 	{
 		zNet[i] = *it;
 	}
-
-	ofstream fileXY("xyz.txt");
-	ofstream fileNvtr("nvtr.txt");
-
-	zIT = zTemp.begin();
-	for (zIT; zIT != zTemp.end(); ++zIT)
-	{
-		yIT = yTemp.begin();
-		for (yIT; yIT != yTemp.end(); ++yIT)
-		{
-			xIT = xTemp.begin();
-			for (xIT; xIT != xTemp.end(); ++xIT)
-			{
-				xyz_points.push_back(point(*xIT, *yIT, *zIT));
-				fileXY << *xIT << " " << *yIT << " " << *zIT << " " << endl;
-			}
-		}
-	}
-
-	for (int zI = 0; zI < nZ - 1; ++zI)
-	{
-		for (int yI = 0; yI < nY - 1; ++yI)
-		{
-			for (int xI = 0; xI < nX - 1; ++xI)
-			{
-				nvtr tempNvtr;
-				tempNvtr.uzel[0] = indexXYZ(xNet[xI], yNet[yI], zNet[zI]);
-				tempNvtr.uzel[1] = indexXYZ(xNet[xI + 1], yNet[yI], zNet[zI]);
-				tempNvtr.uzel[2] = indexXYZ(xNet[xI], yNet[yI + 1], zNet[zI]);
-				tempNvtr.uzel[3] = indexXYZ(xNet[xI + 1], yNet[yI + 1], zNet[zI]);
-
-				tempNvtr.uzel[4] = indexXYZ(xNet[xI], yNet[yI], zNet[zI + 1]);
-				tempNvtr.uzel[5] = indexXYZ(xNet[xI + 1], yNet[yI], zNet[zI + 1]);
-				tempNvtr.uzel[6] = indexXYZ(xNet[xI], yNet[yI + 1], zNet[zI + 1]);
-				tempNvtr.uzel[7] = indexXYZ(xNet[xI + 1], yNet[yI + 1], zNet[zI + 1]);
-
-				tempNvtr.numberField = 0;
-
-				KE.push_back(tempNvtr);
-				for (i = 0; i < 8; i++)
-				{
-					fileNvtr << tempNvtr.uzel[i] << " ";
-				}
-				fileNvtr << tempNvtr.numberField << endl;
-			}
-		}
-	}
-	return;
 }
 
 void generatePortrait()
@@ -948,7 +1194,7 @@ void calcPogreshnost(ofstream& output)
 	for (i = 0; i < xyz_points.size(); i++)
 	{
 		sumCh += (q[i] - analiticSolution(xyz_points[i])) * (q[i] - analiticSolution(xyz_points[i]));
-		output << setw(10) <<xyz_points[i].x << setw(10) << xyz_points[i].y << setw(10) << xyz_points[i].z << setw(18) << analiticSolution(xyz_points[i]) << setw(18) << q[i] << setw(18) << q[i] - analiticSolution(xyz_points[i]) << endl;
+		output << setw(10) << xyz_points[i].x << setw(10) << xyz_points[i].y << setw(10) << xyz_points[i].z << setw(18) << analiticSolution(xyz_points[i]) << setw(18) << q[i] << setw(18) << q[i] - analiticSolution(xyz_points[i]) << endl;
 		sumZn += analiticSolution(xyz_points[i]) * analiticSolution(xyz_points[i]);
 	}
 	output << "KE number = " << KE.size() << endl;
@@ -1004,11 +1250,297 @@ void runLOS()
 	}
 }
 
+void outputWithoutOptimisation()
+{
+	ofstream fileXY("xyz.txt");
+	ofstream fileNvtr("nvtr.txt");
+
+	for (int k = 0; k<nZ; k++)
+	{
+		for (int j = 0; j < nY; j++)
+		{
+			for (int i = 0; i < nX; i++)
+			{
+				xyz_points.push_back(point(xNet[i], yNet[j], zNet[k]));
+				fileXY << xNet[i] << " " << yNet[j] << " " << zNet[k] << endl;
+			}
+		}
+	}
+
+	for (int zI = 0; zI < nZ - 1; ++zI)
+	{
+		for (int yI = 0; yI < nY - 1; ++yI)
+		{
+			for (int xI = 0; xI < nX - 1; ++xI)
+			{
+				nvtr tempNvtr;
+				tempNvtr.uzel[0] = indexXYZ(xNet[xI], yNet[yI], zNet[zI]);
+				tempNvtr.uzel[1] = indexXYZ(xNet[xI + 1], yNet[yI], zNet[zI]);
+				tempNvtr.uzel[2] = indexXYZ(xNet[xI], yNet[yI + 1], zNet[zI]);
+				tempNvtr.uzel[3] = indexXYZ(xNet[xI + 1], yNet[yI + 1], zNet[zI]);
+
+				tempNvtr.uzel[4] = indexXYZ(xNet[xI], yNet[yI], zNet[zI + 1]);
+				tempNvtr.uzel[5] = indexXYZ(xNet[xI + 1], yNet[yI], zNet[zI + 1]);
+				tempNvtr.uzel[6] = indexXYZ(xNet[xI], yNet[yI + 1], zNet[zI + 1]);
+				tempNvtr.uzel[7] = indexXYZ(xNet[xI + 1], yNet[yI + 1], zNet[zI + 1]);
+
+				tempNvtr.numberField = 0;
+
+				KE.push_back(tempNvtr);
+				for (int i = 0; i < 8; i++)
+				{
+					fileNvtr << tempNvtr.uzel[i] << " ";
+				}
+				fileNvtr << tempNvtr.numberField << endl;
+			}
+		}
+	}
+}
+
+int findAreaNumber(int nodes[])
+{
+	int i;
+	for (i = 0; i < sreda.size(); i++)
+	{
+		if (xyz_points[nodes[0]].x >= sreda[i].x1 && xyz_points[nodes[1]].x <= sreda[i].x2 && 
+			xyz_points[nodes[0]].y >= sreda[i].y1 && xyz_points[nodes[2]].y <= sreda[i].y2 &&
+			xyz_points[nodes[0]].z >= sreda[i].z1 && xyz_points[nodes[4]].z <= sreda[i].z2)
+			return i;
+	}
+	cout << "ќшибка в FindAreaNumber: не найдена подобласть." << endl;
+	system("pause");
+	exit(1);
+	return -1;
+}
+
+void outputKEandXYZ()
+{
+	ofstream fileXY("xyz.txt");
+	ofstream fileNvtr("nvtr.txt");
+	vector<point> ncPoint;
+
+	//формируем массивы регул€рных и терминальных вершин
+	for (int k = 0; k < nZ;k++)
+	for (int j = 0; j < nY; j++)
+		for (int i = 0; i < nX; i++)
+		{
+			if (matrixNode[i][j][k] != 'Y')
+				if ((k == 0 && matrixNode[i][j][k]=='F' || k == nZ - 1 && matrixNode[i][j][k]=='B'
+					|| i == 0 && matrixNode[i][j][k]=='A' || i == nX - 1 && matrixNode[i][j][k]=='D'
+					|| j == 0 && matrixNode[i][j][k] =='S' || j == nY - 1 && matrixNode[i][j][k]=='W') 
+					|| matrixNode[i][j][k]=='V' || matrixNode[i][j][k] == 'R')
+				{
+					xyz_points.push_back(point(xNet[i], yNet[j], zNet[k]));
+				}
+				else
+				{
+					ncPoint.push_back(point(xNet[i], yNet[j], zNet[k]));
+				}
+		}
+
+	//добавл€ем в  ќЌ≈÷ массива вершин терминальные вершины
+	for (vector<point>::iterator it = ncPoint.begin(); it < ncPoint.end(); it++)
+	{
+		xyz_points.push_back(*it);
+	}
+
+	//количество столбцов в T
+	nColT = ncPoint.size();
+	kolvoRegularNode = xyz_points.size() - nColT;
+
+	//формируем файл xy.txt
+	fileXY << xyz_points.size() << " " << kolvoRegularNode << endl;
+	for (int i = 0; i < xyz_points.size(); i++)
+	{
+		fileXY << xyz_points[i].x << " " << xyz_points[i].y << " " << xyz_points[i].z << endl;
+	}
+
+	//формируем структуру  Ё
+	nvtr tempNvtr;
+	for (int iZ = 0; iZ < nZ - 1; iZ++)
+	for (int iY = 0; iY < nY - 1; iY++)
+		for (int iX = 0; iX < nX - 1; iX++)
+		{
+			if (matrixNode[iX][iY][iZ] == 'V' || matrixNode[iX][iY][iZ] == 'S' || matrixNode[iX][iY][iZ] == 'A'
+				|| matrixNode[iX][iY][iZ] == 'R' || matrixNode[iX][iY][iZ] == 'F')
+			{
+				tempNvtr.uzel[0] = indexXYZ(xNet[iX], yNet[iY],zNet[iZ]);
+				for (int k = iX + 1; k < nX; k++)
+				{
+					if (matrixNode[k][iY][iZ] == 'S' || matrixNode[k][iY][iZ] == 'R' || matrixNode[k][iY][iZ] == 'D' 
+						|| matrixNode[k][iY][iZ] == 'V' || matrixNode[k][iY][iZ] == 'F')
+					{
+						tempNvtr.uzel[1] = indexXYZ(xNet[k], yNet[iY],zNet[iZ]);
+						for (int t = iY + 1; t < nY; t++)
+						{
+							if (matrixNode[k][t][iZ] == 'W' || matrixNode[k][t][iZ] == 'R' || matrixNode[k][t][iZ] == 'D' 
+								|| matrixNode[k][t][iZ] == 'V' || matrixNode[k][t][iZ] == 'F')
+							{
+								tempNvtr.uzel[3] = indexXYZ(xNet[k], yNet[t],zNet[iZ]);
+								tempNvtr.uzel[2] = indexXYZ(xNet[iX], yNet[t], zNet[iZ]);
+
+								for (int h = iZ; h < nZ;h++)
+								{
+									if (matrixNode[iX][iY][h] == 'S' || matrixNode[iX][iY][h] == 'R' || matrixNode[iX][iY][h] == 'A'
+										|| matrixNode[iX][iY][h] == 'V' || matrixNode[iX][iY][h] == 'B')
+									{
+										tempNvtr.uzel[4] = indexXYZ(xNet[iX], yNet[iY], zNet[h]);
+										tempNvtr.uzel[5] = indexXYZ(xNet[k], yNet[iY], zNet[h]);
+										tempNvtr.uzel[6] = indexXYZ(xNet[iX], yNet[t], zNet[h]);
+										tempNvtr.uzel[7] = indexXYZ(xNet[k], yNet[t], zNet[h]);
+										break;
+									}
+								}
+								break;
+							}
+						}
+						break;
+					}
+				}
+				tempNvtr.numberField = findAreaNumber(tempNvtr.uzel);
+				KE.push_back(tempNvtr);
+			}
+	}
+
+	//формируем файл nvtr.txt
+	fileNvtr << KE.size() << endl;
+	for (int i = 0; i < KE.size(); i++)
+	{
+		for (int j = 0; j < 8; j++)
+		{
+			fileNvtr << KE[i].uzel[j] << " ";
+		}
+		fileNvtr <<KE[i].numberField<< endl;
+	}
+}
+
+//void GenerateT()
+//{
+//	ofstream outT("Tmatrix.txt");
+//	igT = new int[nColT + 1];
+//
+//	//формируем вспомогательную сигм-структуру
+//	int i, j, k, indNeib1, indNeib2;
+//	sigmT = new sigmStruct[kolvoRegularNode];
+//	for (i = kolvoRegularNode; i < xyz_points.size(); i++)
+//	{
+//		sigmT[i - kolvoRegularNode].terminalNode = i;
+//		locateOfPoint term = FindLocate(xyz_points[i]);
+//		if (matrixNode[term.i][term.j] == 'W' || matrixNode[term.i][term.j] == 'S')
+//		{
+//			for (indNeib1 = term.i - 1; indNeib1 >= 0 && matrixNode[indNeib1][term.j] != 'A' && matrixNode[indNeib1][term.j] != 'R'; indNeib1--);
+//			sigmT[i - kolvoRegularNode].neighbors.push_back(NumberNode(xNet[indNeib1], yNet[term.j]));
+//			for (indNeib2 = term.i + 1; indNeib2 < nX && matrixNode[indNeib2][term.j] != 'D' && matrixNode[indNeib2][term.j] != 'R'; indNeib2++);
+//			sigmT[i - kolvoRegularNode].neighbors.push_back(NumberNode(xNet[indNeib2], yNet[term.j]));
+//			sigmT[i - kolvoRegularNode].tNeighbors.push_back(fabs((xNet[indNeib2] - xNet[term.i]) / (xNet[indNeib2] - xNet[indNeib1])));
+//			sigmT[i - kolvoRegularNode].tNeighbors.push_back(fabs((xNet[indNeib1] - xNet[term.i]) / (xNet[indNeib2] - xNet[indNeib1])));
+//		}
+//		else
+//		{
+//			for (indNeib1 = term.j - 1; indNeib1 >= 0 && matrixNode[term.i][indNeib1] != 'S' && matrixNode[term.i][indNeib1] != 'R'; indNeib1--);
+//			sigmT[i - kolvoRegularNode].neighbors.push_back(NumberNode(xNet[term.i], yNet[indNeib1]));
+//			for (indNeib2 = term.j + 1; indNeib2 < nY && matrixNode[term.i][indNeib2] != 'W' && matrixNode[term.i][indNeib2] != 'R'; indNeib2++);
+//			sigmT[i - kolvoRegularNode].neighbors.push_back(NumberNode(xNet[term.i], yNet[indNeib2]));
+//			sigmT[i - kolvoRegularNode].tNeighbors.push_back(fabs((yNet[indNeib2] - yNet[term.j]) / (yNet[indNeib2] - yNet[indNeib1])));
+//			sigmT[i - kolvoRegularNode].tNeighbors.push_back(fabs((yNet[indNeib1] - yNet[term.j]) / (yNet[indNeib2] - yNet[indNeib1])));
+//		}
+//	}
+//
+//	for (i = 0; i < nColT; i++)
+//	{
+//		for (j = 0; j < 2; j++)
+//		{
+//			if (sigmT[i].neighbors[j] >= kolvoRegularNode)
+//			{
+//				sigmTChain(i, sigmT[i].neighbors[j] - kolvoRegularNode, sigmT[i].tNeighbors[j]);
+//			}
+//		}
+//	}
+//
+//	for (i = 0; i < nColT; i++)
+//		for (j = 1; j >= 0; j--)
+//			if (sigmT[i].neighbors[j] >= kolvoRegularNode)
+//			{
+//				sigmT[i].neighbors.erase(sigmT[i].neighbors.begin() + j);
+//				sigmT[i].tNeighbors.erase(sigmT[i].tNeighbors.begin() + j);
+//			}
+//
+//	//сортируем по узлам
+//	double tmp_sort;
+//	for (k = 0; k < nColT; k++)
+//		for (i = 0; i < sigmT[k].neighbors.size(); ++i) // i - номер текущего шага
+//		{
+//			int pos = i;
+//			tmp_sort = sigmT[k].neighbors[i];
+//			for (int j = i + 1; j < sigmT[k].neighbors.size(); ++j) // цикл выбора наименьшего элемента
+//			{
+//				if (sigmT[k].neighbors[j] < tmp_sort)
+//				{
+//					pos = j;
+//					tmp_sort = sigmT[k].neighbors[j];
+//				}
+//			}
+//			sigmT[k].neighbors[pos] = sigmT[k].neighbors[i];
+//			sigmT[k].neighbors[i] = tmp_sort; // мен€ем местами наименьший с a[i]
+//
+//			tmp_sort = sigmT[k].tNeighbors[pos];
+//			sigmT[k].tNeighbors[pos] = sigmT[k].tNeighbors[i];
+//			sigmT[k].tNeighbors[i] = tmp_sort; // мен€ем местами наименьший с a[i]
+//
+//		}
+//
+//	for (i = 0; i < nColT; i++)
+//	{
+//		outT << sigmT[i].terminalNode << " ";
+//		for (j = 0; j < sigmT[i].neighbors.size(); j++)
+//		{
+//			outT << sigmT[i].neighbors[j] << " " << sigmT[i].tNeighbors[j] << " ";
+//		}
+//		outT << endl;
+//	}
+//	igT[0] = 0;
+//	for (i = 0; i < nColT; i++)
+//	{
+//		igT[i + 1] = igT[i] + sigmT[i].neighbors.size();
+//	}
+//	ggT = new double[igT[nColT]];
+//	jgT = new int[igT[nColT]];
+//	for (i = 0, j = 0; i < nColT && j < igT[nColT]; i++)
+//	{
+//		for (k = 0; k < igT[i + 1] - igT[i]; k++, j++)
+//		{
+//			jgT[j] = sigmT[i].neighbors[k];
+//			ggT[j] = sigmT[i].tNeighbors[k];
+//		}
+//	}
+//
+//	outT << endl << "T" << endl;
+//	for (i = 0; i <= nColT; i++)
+//	{
+//		outT << igT[i] << " ";
+//	}
+//	outT << endl;
+//	for (i = 0; i < igT[nColT]; i++)
+//	{
+//		outT << jgT[i] << " ";
+//	}
+//	outT << endl;
+//	for (i = 0; i < igT[nColT]; i++)
+//	{
+//		outT << ggT[i] << " ";
+//	}
+//	outT << endl;
+//
+//}
+
 int main(int argc, char* argv[])
 {
 	inputConfig();
 	inputNet();
-	generatePortrait();
+	DivideArea(xNet, nX, yNet, nY, zNet, nZ);
+	//outputWithoutOptimisation();
+	outputKEandXYZ();
+	/*generatePortrait();
 	GenerateMatrix();
 
 	bool flagLU = false;
@@ -1022,5 +1554,5 @@ int main(int argc, char* argv[])
 		runLOS();
 	}
 
-	calcPogreshnost(output);
+	calcPogreshnost(output);*/
 }
