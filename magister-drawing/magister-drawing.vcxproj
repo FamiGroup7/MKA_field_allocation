@@ -74,7 +74,12 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>_MBCS;%(PreprocessorDefinitions);_CRT_SECURE_NO_WARNINGS</PreprocessorDefinitions>
     </ClCompile>
+    <Link>
+      <SubSystem>
+      </SubSystem>
+    </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -111,6 +116,16 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="drawing-main.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="glut.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="..\МАГА\nvtr.txt" />
+    <Text Include="..\МАГА\Tmatrix.txt" />
+    <Text Include="..\МАГА\viewNet.txt" />
+    <Text Include="..\МАГА\xyz.txt" />
+    <Text Include="возможные проблемы.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

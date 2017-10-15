@@ -5,6 +5,24 @@
 #include <vector>
 #include <set>
 #include <locale>
+#include <bitset>
+#include <Windows.h>
+const size_t BIT_SIZE = 13;
+const size_t LEFT_UP = 0;
+const size_t LEFT_DOWN = 1;
+const size_t RIGHT_UP = 2;
+const size_t RIGHT_DOWN = 3;
+const size_t FORE_UP = 4;
+const size_t FORE_DOWN = 5;
+const size_t BACK_UP = 6;
+const size_t BACK_DOWN = 7;
+const size_t LEFT_FORE = 8;
+const size_t RIGHT_FORE = 9;
+const size_t LEFT_BACK = 10;
+const size_t RIGHT_BACK = 11;
+const size_t IS_REGULAR = 12;
+
+const double EPS = 1e-15;
 
 using namespace std;
 
@@ -14,6 +32,11 @@ struct colour // цвет точки
 	int green;
 	int blue;
 };
+
+bool equals(double val1, double val2) {
+	if (fabs(val1 - val2) < EPS)return true;
+	return false;
+}
 
 struct point // точка
 {
@@ -32,9 +55,9 @@ struct point // точка
 
 	friend bool operator==(const point& lhs, const point& rhs)
 	{
-		return lhs.x == rhs.x
-			&& lhs.y == rhs.y
-			&& lhs.z == rhs.z;
+		return equals(lhs.x, rhs.x)
+			&& equals(lhs.y, rhs.y)
+			&& equals(lhs.z, rhs.z);
 	}
 
 	friend bool operator!=(const point& lhs, const point& rhs)
@@ -45,16 +68,16 @@ struct point // точка
 
 struct locateOfPoint
 {
-	int i, j, z;
+	int i, j, k;
 
-	locateOfPoint(int i, int j, int z)
+	locateOfPoint(int i, int j, int k)
 		: i(i),
 		  j(j),
-		  z(z)
+		  k(k)
 	{
 	}
 
-	locateOfPoint(): i(0), j(0), z(0)
+	locateOfPoint(): i(0), j(0), k(0)
 	{
 	}
 };
@@ -95,14 +118,25 @@ struct nvtr
 	}
 };
 
-struct sigmStruct
-{
+struct neighbor {
+	int index;
+	double weight;
+
+	neighbor(int ind, double w) :index(ind), weight(w) {
+	}
+
+	friend bool operator< (const neighbor &left, const neighbor &right) {
+		return left.index < right.index;
+	}
+};
+
+struct sigmStruct3D {
 	int terminalNode;
-	vector<int> neighbors;
-	vector<double> tNeighbors;
-}*sigmT;
+	set<neighbor> neighbors;
+} *sigmNewT, *tmpSigm;
+
 int *igT, *jgT;
-double *ggT;
+double* ggT;
 
 int LosLU(double* ggl, double* ggu, double* diag, int N, int* ig, int* jg, double* f, double* q);
 
@@ -115,6 +149,7 @@ double koordSourceX, koordSourceY, koordSourceZ;
 double *xNet, *yNet, *zNet;
 int nX, nY, nZ;
 char*** matrixNode;
+bitset<BIT_SIZE>*** newNodes;
 int nColT, kolvoRegularNode;
 
 int *ig, *jg;
@@ -132,6 +167,12 @@ ofstream output("solution.txt");
 
 void inputConfig()
 {
+}
+
+void logError(char* message) {
+	cout << message << endl;
+	system("pause");
+	exit(1);
 }
 
 void GenerateNetLikeTelma(set<double>& mas, ifstream& fileNet)
@@ -202,7 +243,8 @@ int indexXYZ(point goal)
 			return i;
 	}
 
-	cout << "ќшибка. Ќе найдена точка." << endl;
+	cout << "ќшибка. Ќе найдена точка (" << goal.x << "," << goal.y << "," << goal.z << ")" << endl;
+	throw new exception();
 	system("pause");
 	exit(1);
 }
@@ -221,133 +263,13 @@ double LikeASquare(double x, double y)
 		return (1 - x / y);
 }
 
-void OptimizationQuarterXforDuplication(int directionX, int directionY, int startX, int startY, int endX, int endY)
-{
-	int i, j, k, granX, granY, posI, posJ, posK;
-	double height_1, height_2, width_1, width_2;
-	for (j = startY * directionY; j < endY * directionY; j++)
-	{
-		posJ = j * directionY;
-		for (i = startX * directionX; i < endX * directionX - 1; i++)
-		{
-			posI = i * directionX;
-			//обработка вершины при попытке расширени€
-			if (directionX == 1 && directionY == 1 && (matrixNode[posI][posJ][0] == 'S' || matrixNode[posI][posJ][0] == 'R' || matrixNode[posI][posJ][0] == 'A' || matrixNode[posI][posJ][0] == 'V')
-				|| (directionX == -1 && directionY == 1 && (matrixNode[posI][posJ][0] == 'S' || matrixNode[posI][posJ][0] == 'R' || matrixNode[posI][posJ][0] == 'D' || matrixNode[posI][posJ][0] == 'V'))
-				|| (directionX == -1 && directionY == -1 && (matrixNode[posI][posJ][0] == 'W' || matrixNode[posI][posJ][0] == 'R' || matrixNode[posI][posJ][0] == 'D' || matrixNode[posI][posJ][0] == 'V'))
-				|| (directionX == 1 && directionY == -1 && (matrixNode[posI][posJ][0] == 'W' || matrixNode[posI][posJ][0] == 'R' || matrixNode[posI][posJ][0] == 'A' || matrixNode[posI][posJ][0] == 'V')))
-			{
-				height_1 = height_2 = width_1 = width_2 = granX = granY = 0;
-				for (k = j + 1; k <= endY * directionY; k++) //высота 1
-				{
-					posK = k * directionY;
-					if (directionX == 1 && directionY == 1 && (matrixNode[posI][posK][0] == 'W' || matrixNode[posI][posK][0] == 'A' || matrixNode[posI][posK][0] == 'R' || matrixNode[posI][posK][0] == 'V')
-						|| (directionX == -1 && directionY == 1 && (matrixNode[posI][posK][0] == 'W' || matrixNode[posI][posK][0] == 'D' || matrixNode[posI][posK][0] == 'R' || matrixNode[posI][posK][0] == 'V'))
-						|| (directionX == -1 && directionY == -1 && (matrixNode[posI][posK][0] == 'S' || matrixNode[posI][posK][0] == 'D' || matrixNode[posI][posK][0] == 'R' || matrixNode[posI][posK][0] == 'V'))
-						|| (directionX == 1 && directionY == -1 && (matrixNode[posI][posK][0] == 'S' || matrixNode[posI][posK][0] == 'A' || matrixNode[posI][posK][0] == 'R' || matrixNode[posI][posK][0] == 'V')))
-					{
-						height_1 = fabs(yNet[posK] - yNet[posJ]);
-						break;
-					}
-				}
-				for (k = i + 1; k < endX * directionX; k++) //ширина 1
-				{
-					posK = k * directionX;
-					if (directionY == 1 && (matrixNode[posK][posJ][0] == 'S' || matrixNode[posK][posJ][0] == 'R') ||
-						directionY == -1 && (matrixNode[posK][posJ][0] == 'W' || matrixNode[posK][posJ][0] == 'R'))
-					{
-						width_1 = fabs(xNet[posK] - xNet[posI]);
-						granX = posK;
-						break;
-					}
-				}
-				for (k = j + 1; k <= endY * directionY; k++) //высота 2
-				{
-					posK = k * directionY;
-					if (directionY == 1 && (matrixNode[granX][posK][0] == 'W' || matrixNode[granX][posK][0] == 'R') ||
-						directionY == -1 && (matrixNode[granX][posK][0] == 'S' || matrixNode[granX][posK][0] == 'R'))
-					{
-						height_2 = fabs(yNet[posK] - yNet[posJ]);
-						granY = posK;
-						break;
-					}
-				}
-				if (height_2 == height_1)
-				{
-					for (k = granX * directionX + 1; k <= endX * directionX; k++)
-					{
-						posK = k * directionX;
-						if (directionX == 1 && directionY == 1 && (matrixNode[posK][posJ][0] == 'D' || matrixNode[posK][posJ][0] == 'S' || matrixNode[posK][posJ][0] == 'R' || matrixNode[posK][posJ][0] == 'V') ||
-							directionX == -1 && directionY == 1 && (matrixNode[posK][posJ][0] == 'A' || matrixNode[posK][posJ][0] == 'S' || matrixNode[posK][posJ][0] == 'R' || matrixNode[posK][posJ][0] == 'V') ||
-							directionX == -1 && directionY == -1 && (matrixNode[posK][posJ][0] == 'A' || matrixNode[posK][posJ][0] == 'W' || matrixNode[posK][posJ][0] == 'R' || matrixNode[posK][posJ][0] == 'V') ||
-							directionX == 1 && directionY == -1 && (matrixNode[posK][posJ][0] == 'D' || matrixNode[posK][posJ][0] == 'W' || matrixNode[posK][posJ][0] == 'R' || matrixNode[posK][posJ][0] == 'V'))
-						{
-							width_2 = width_1 + fabs(xNet[posK] - xNet[granX]);
-							break;
-						}
-					}
-					if (LikeASquare(width_1, height_1) > LikeASquare(width_2, height_2))
-					{
-						if (directionY == 1)
-						{
-							if (matrixNode[granX][posJ][0] == 'S')
-								matrixNode[granX][posJ][0] = 'Y';
-							else
-								matrixNode[granX][posJ][0] = 'W';
-							if (matrixNode[granX][granY][0] == 'W')
-								matrixNode[granX][granY][0] = 'Y';
-							else
-								matrixNode[granX][granY][0] = 'S';
-						}
-						else
-						{
-							if (matrixNode[granX][posJ][0] == 'W')
-								matrixNode[granX][posJ][0] = 'Y';
-							else
-								matrixNode[granX][posJ][0] = 'S';
-							if (matrixNode[granX][granY][0] == 'S')
-								matrixNode[granX][granY][0] = 'Y';
-							else
-								matrixNode[granX][granY][0] = 'W';
-						}
-					}
-				}
-			}
-		}
-	}
+double otn(double val1, double val2) {
+	if (val1 > val2)return val2 / val1;
+	return val1 / val2;
 }
 
-void normDividing()
-{
-	for (int i = 0; i < nX; i++)
-	{
-		matrixNode[i] = new char*[nY];
-		for (int j = 0; j < nY; j++)
-		{
-			matrixNode[i][j] = new char[nZ];
-			for (int k = 0; k < nZ; k++)
-			{
-				if (i == 0)
-					matrixNode[i][j][k] = 'A';
-				else if (i == nX - 1)
-					matrixNode[i][j][k] = 'D';
-				else if (j == 0)
-					matrixNode[i][j][k] = 'S';
-				else if (j == nY - 1)
-					matrixNode[i][j][k] = 'W';
-				else if (k == 0)
-					matrixNode[i][j][k] = 'F';
-				else if (k == nZ - 1)
-					matrixNode[i][j][k] = 'B';
-				else
-					matrixNode[i][j][k] = 'R';
-				if ((k == 0 || k == nZ - 1) && (i == 0 || j == 0 || i == nX - 1 || j == nY - 1) ||
-					(i == 0 || i == nX - 1) && (k == 0 || j == 0 || k == nZ - 1 || j == nY - 1) ||
-					(j == 0 || j == nY - 1) && (i == 0 || k == 0 || i == nX - 1 || k == nZ - 1))
-					matrixNode[i][j][k] = 'V';
-			}
-		}
-	}
+double LikeACube(double x, double y, double z) {
+	return (otn(x, y) + otn(x, z) + otn(y, z)) / 3.0;
 }
 
 int FindLocate(double* massiv, int razm, double x)
@@ -361,90 +283,267 @@ int FindLocate(double* massiv, int razm, double x)
 	return -1;
 }
 
-void duplicatingOfXY()
-{
-	for (int i = 0; i < nX; i++)
-	{
-		matrixNode[i] = new char*[nY];
-		for (int j = 0; j < nY; j++)
-		{
-			matrixNode[i][j] = new char[nZ];
-			int k = 0;
+bool hasLeft(bitset<BIT_SIZE> node) {
+	return node.test(LEFT_BACK) || node.test(LEFT_FORE)
+		|| node.test(LEFT_DOWN) || node.test(LEFT_UP);
+}
 
-			if (i == 0)
-				matrixNode[i][j][k] = 'A';
-			else if (i == nX - 1)
-				matrixNode[i][j][k] = 'D';
-			else if (j == 0)
-				matrixNode[i][j][k] = 'S';
-			else if (j == nY - 1)
-				matrixNode[i][j][k] = 'W';
+bool hasRight(bitset<BIT_SIZE> node) {
+	return node.test(RIGHT_BACK) || node.test(RIGHT_FORE)
+		|| node.test(RIGHT_DOWN) || node.test(RIGHT_UP);
+}
+
+bool hasUp(bitset<BIT_SIZE> node) {
+	return node.test(LEFT_UP) || node.test(RIGHT_UP)
+		|| node.test(BACK_UP) || node.test(FORE_UP);
+}
+
+bool hasDown(bitset<BIT_SIZE> node) {
+	return node.test(LEFT_DOWN) || node.test(RIGHT_DOWN)
+		|| node.test(BACK_DOWN) || node.test(FORE_DOWN);
+}
+
+bool hasBack(bitset<BIT_SIZE> node) {
+	return node.test(LEFT_BACK) || node.test(RIGHT_BACK)
+		|| node.test(BACK_UP) || node.test(BACK_DOWN);
+}
+
+bool hasFore(bitset<BIT_SIZE> node) {
+	return node.test(LEFT_FORE) || node.test(RIGHT_FORE)
+		|| node.test(FORE_UP) || node.test(FORE_DOWN);
+}
+
+bool hasXLines(bitset<BIT_SIZE> node) {
+	return hasLeft(node) && hasRight(node);
+}
+
+bool hasYLines(bitset<BIT_SIZE> node) {
+	return hasBack(node) && hasFore(node);
+}
+
+bool hasZLines(bitset<BIT_SIZE> node) {
+	return hasUp(node) && hasDown(node);
+}
+
+bool hasAll(bitset<BIT_SIZE> node) {
+	return hasXLines(node) && hasYLines(node) && hasZLines(node);
+}
+
+bool canOptimize(int directionX, int directionY, int directionZ, bitset<BIT_SIZE> node) {
+	if (directionX == 1)
+		if (directionY == 1)
+			if (directionZ == 1)
+				return node.test(RIGHT_BACK) && node.test(RIGHT_UP) && node.test(BACK_UP);
 			else
-				matrixNode[i][j][k] = 'R';
+				return node.test(RIGHT_BACK) && node.test(RIGHT_DOWN) && node.test(BACK_DOWN);
+		else
+			if (directionZ == 1)
+				return node.test(RIGHT_FORE) && node.test(RIGHT_UP) && node.test(FORE_UP);
+			else
+				return node.test(RIGHT_FORE) && node.test(RIGHT_DOWN) && node.test(FORE_DOWN);
+	else
+		if (directionY == 1)
+			if (directionZ == 1)
+				return node.test(LEFT_BACK) && node.test(LEFT_UP) && node.test(BACK_UP);
+			else
+				return node.test(LEFT_BACK) && node.test(LEFT_DOWN) && node.test(BACK_DOWN);
+		else
+			if (directionZ == 1)
+				return node.test(LEFT_FORE) && node.test(LEFT_UP) && node.test(FORE_UP);
+			else
+				return node.test(LEFT_FORE) && node.test(LEFT_DOWN) && node.test(FORE_DOWN);
+	logError("something goes wrong in \"canOptimize\"");
+}
+
+int findNextX(int directionX, int directionY, int directionZ,
+	int startPositionX, int endPositionX, int posJ, int posT) {
+	int posK;
+	for (int k = startPositionX + 1; k <= endPositionX * directionX; k++)
+	{
+		posK = k * directionX;
+		if (canOptimize(-1 * directionX, directionY, directionZ, newNodes[posK][posJ][posT]))
+		{
+			return posK;
 		}
 	}
-	matrixNode[0][0][0] = matrixNode[0][nY - 1][0] = matrixNode[nX - 1][0][0] = matrixNode[nX - 1][nY - 1][0] = 'V';
+	return -1;
+}
 
-	double height_1, height_2, width_1, width_2;
-	int locateSourceX, locateSourceY;
-	for (int indSreda = 0; indSreda < sreda.size(); indSreda++)
+int findNextY(int directionX, int directionY, int directionZ,
+	int startPositionY, int endPositionY, int posI, int posT) {
+	int posK;
+	for (int k = startPositionY + 1; k <= endPositionY * directionY; k++)
 	{
-		if (koordSourceX <= sreda[indSreda].x1)
-			locateSourceX = FindLocate(xNet, nX, sreda[indSreda].x1);
-		else if (koordSourceX >= sreda[indSreda].x2)
-			locateSourceX = FindLocate(xNet, nX, sreda[indSreda].x2);
-		else
-			locateSourceX = FindLocate(xNet, nX, koordSourceX);
-
-		if (koordSourceY <= sreda[indSreda].y1)
-			locateSourceY = FindLocate(yNet, nY, sreda[indSreda].y1);
-		else if (koordSourceY >= sreda[indSreda].y2)
-			locateSourceY = FindLocate(yNet, nY, sreda[indSreda].y2);
-		else
-			locateSourceY = FindLocate(yNet, nY, koordSourceY);
-
-		//1-€ четверть
-		OptimizationQuarterXforDuplication(1, 1, locateSourceX, locateSourceY, FindLocate(xNet, nX, sreda[indSreda].x2), FindLocate(yNet, nY, sreda[indSreda].y2));
-		//OptimizationQuarterY(1, 1, locateSourceX, locateSourceY, FindLocate(xNet, nX, sreda[indSreda].x2), FindLocate(yNet, nY, sreda[indSreda].y2));
-
-		//2-€ четверть
-		OptimizationQuarterXforDuplication(-1, 1, locateSourceX, locateSourceY, FindLocate(xNet, nX, sreda[indSreda].x1), FindLocate(yNet, nY, sreda[indSreda].y2));
-		//OptimizationQuarterY(-1, 1, locateSourceX, locateSourceY, FindLocate(xNet, nX, sreda[indSreda].x1), FindLocate(yNet, nY, sreda[indSreda].y2));
-
-		//3-€ четверть
-		OptimizationQuarterXforDuplication(-1, -1, locateSourceX, locateSourceY, FindLocate(xNet, nX, sreda[indSreda].x1), FindLocate(yNet, nY, sreda[indSreda].y1));
-		//OptimizationQuarterY(-1, -1, locateSourceX, locateSourceY, FindLocate(xNet, nX, sreda[indSreda].x1), FindLocate(yNet, nY, sreda[indSreda].y1));
-
-		//4-€ четверть
-		OptimizationQuarterXforDuplication(1, -1, locateSourceX, locateSourceY, FindLocate(xNet, nX, sreda[indSreda].x2), FindLocate(yNet, nY, sreda[indSreda].y1));
-		//OptimizationQuarterY(1, -1, locateSourceX, locateSourceY, FindLocate(xNet, nX, sreda[indSreda].x2), FindLocate(yNet, nY, sreda[indSreda].y1));
-	}
-
-	for (int k = 1; k < nZ; k++)
-	{
-		for (int i = 0; i < nX; i++)
-			for (int j = 0; j < nY; j++)
-			{
-				matrixNode[i][j][k] = matrixNode[i][j][0];
-			}
-	}
-	for (int i = 0; i < nX;i++)
-	{
-		for (int j = 0; j < nY;j++)
+		posK = k * directionY;
+		if (canOptimize(directionX, -1 * directionY, directionZ, newNodes[posI][posK][posT]))
 		{
-			if (i == 0 || i == nX - 1 || j == 0 || j == nY - 1)
+			return posK;
+		}
+	}
+	return -1;
+}
+
+int findNextZ(int directionX, int directionY, int directionZ,
+	int startPositionZ, int endPositionZ, int posI, int posJ) {
+	int posK;
+	for (int k = startPositionZ + 1; k <= endPositionZ * directionZ; k++)
+	{
+		posK = k * directionX;
+		if (canOptimize(directionX, directionY, -1 * directionZ, newNodes[posI][posJ][posK]))
+		{
+			return posK;
+		}
+	}
+	return -1;
+}
+
+void deletePlaneX(int xPlane, int y1, int y2, int z1, int z2) {
+	newNodes[xPlane][y1][z1].reset(IS_REGULAR);
+	newNodes[xPlane][y1][z2].reset(IS_REGULAR);
+	newNodes[xPlane][y2][z1].reset(IS_REGULAR);
+	newNodes[xPlane][y2][z2].reset(IS_REGULAR);
+
+	newNodes[xPlane][y1][z1].reset(BACK_UP);
+	newNodes[xPlane][y1][z2].reset(BACK_DOWN);
+	newNodes[xPlane][y2][z1].reset(FORE_UP);
+	newNodes[xPlane][y2][z2].reset(FORE_DOWN);
+
+	//нижн€€
+	if (!newNodes[xPlane][y1][z1].test(BACK_DOWN))
+		newNodes[xPlane][y1][z1].reset(LEFT_BACK).reset(RIGHT_BACK);
+	if (!newNodes[xPlane][y2][z1].test(FORE_DOWN))
+		newNodes[xPlane][y2][z1].reset(LEFT_FORE).reset(RIGHT_FORE);
+	//верхн€€
+	if (!newNodes[xPlane][y1][z2].test(BACK_UP))
+		newNodes[xPlane][y1][z2].reset(LEFT_BACK).reset(RIGHT_BACK);
+	if (!newNodes[xPlane][y2][z2].test(FORE_UP))
+		newNodes[xPlane][y2][z2].reset(LEFT_FORE).reset(RIGHT_FORE);
+	//ближн€€
+	if (!newNodes[xPlane][y1][z1].test(FORE_UP))
+		newNodes[xPlane][y1][z1].reset(LEFT_UP).reset(RIGHT_UP);
+	if (!newNodes[xPlane][y1][z2].test(FORE_DOWN))
+		newNodes[xPlane][y1][z2].reset(LEFT_DOWN).reset(RIGHT_DOWN);
+	//дальн€€
+	if (!newNodes[xPlane][y2][z1].test(BACK_UP))
+		newNodes[xPlane][y2][z1].reset(LEFT_UP).reset(RIGHT_UP);
+	if (!newNodes[xPlane][y2][z2].test(BACK_DOWN))
+		newNodes[xPlane][y2][z2].reset(LEFT_DOWN).reset(RIGHT_DOWN);
+}
+
+void OptimizationQuarterX(int directionX, int directionY, int directionZ,
+	int startX, int startY, int startZ, int endX, int endY, int endZ)
+{
+	int i, j, t, k, granX, granY, posI, posJ, posT, posK;
+	double width_1, width_2;
+	bool error;
+	for (t = startZ * directionZ; t < endZ * directionZ; t++)
+	{
+		posT = t * directionZ;
+		for (j = startY * directionY; j < endY * directionY; j++)
+		{
+			posJ = j * directionY;
+			for (i = startX * directionX; i < endX * directionX - 1; i++)
 			{
-				if(matrixNode[i][j][0]!='Y' && matrixNode[i][j][0] != 'V')
+				posI = i * directionX;
+				//обработка вершины при попытке расширени€
+				if (canOptimize(directionX, directionY, directionZ, newNodes[posI][posJ][posT]))
 				{
-					matrixNode[i][j][0] = matrixNode[i][j][nZ - 1] = 'V';
+					width_1 = width_2 = granX = granY =  0;
+
+					//ширина 1
+					int nextX = findNextX(directionX, directionY, directionZ, i, endX, posJ, posT);
+					if (nextX == -1) {
+						logError("error optimizationX: no width in KE "/* + posI + " " + posJ + " " + posT*/);
+					}
+					width_1 = fabs(xNet[nextX] - xNet[posI]);
+
+					//глубина 1
+					int nextY = findNextY(directionX, directionY, directionZ, j, endY, posI, posT);
+					//глубина 2
+					int checkY = findNextY(directionX, directionY, directionZ, j, endY, nextX*directionX, posT);
+
+					//высота 1
+					int nextZ = findNextZ(directionX, directionY, directionZ, t, endZ, posI, posJ);
+					//высота 2
+					int checkZ = findNextZ(directionX, directionY, directionZ, t, endZ, nextX*directionX, posJ);
+
+					if (nextY == checkY && nextZ == checkZ) {
+						double deep = fabs(yNet[nextY] - yNet[posJ]);
+						double height = fabs(zNet[nextZ] - zNet[posT]);
+						//ширина 2
+						int nextX2 = findNextX(directionX, directionY, directionZ, nextX*directionX, endX, posJ, posT);
+						width_2 = fabs(xNet[nextX2] - xNet[posI]);
+
+						if (LikeACube(width_1, deep, height) < LikeACube(width_2, deep, height)) {
+							if (directionY == 1)
+								if (directionZ == 1)
+									deletePlaneX(nextX, posJ, nextY, posT, nextZ);
+								else
+									deletePlaneX(nextX, posJ, nextY, nextZ, posT);
+							else
+								if (directionZ == 1)
+									deletePlaneX(nextX, nextY, posJ, posT, nextZ);
+								else
+									deletePlaneX(nextX, nextY, posJ, nextZ, posT);
+						}
+					}
 				}
-			} else
+			}
+		}
+	}
+}
+
+void initNet(double* xNet, int nX, double* yNet, int nY, double* zNet, int nZ) {
+	newNodes = new bitset<BIT_SIZE>**[nX];
+	for (int i = 0; i < nX; i++)
+	{
+		newNodes[i] = new bitset<BIT_SIZE>*[nY];
+		for (int j = 0; j < nY; j++)
+		{
+			newNodes[i][j] = new bitset<BIT_SIZE>[nZ];
+			for (int k = 0; k < nZ; k++)
 			{
-				if(matrixNode[i][j][0]=='R')
-				{
-					matrixNode[i][j][0] = 'F';
-					matrixNode[i][j][nZ - 1] = 'B';
+				bitset<BIT_SIZE> tmp;
+				tmp.set();
+				if (k == 0) {
+					tmp.reset(LEFT_DOWN);
+					tmp.reset(RIGHT_DOWN);
+					tmp.reset(FORE_DOWN);
+					tmp.reset(BACK_DOWN);
 				}
+				else if (k == nZ - 1) {
+					tmp.reset(LEFT_UP);
+					tmp.reset(RIGHT_UP);
+					tmp.reset(FORE_UP);
+					tmp.reset(BACK_UP);
+				}
+
+				if (j == 0) {
+					tmp.reset(LEFT_FORE);
+					tmp.reset(RIGHT_FORE);
+					tmp.reset(FORE_UP);
+					tmp.reset(FORE_DOWN);
+				}
+				else if (j == nY - 1) {
+					tmp.reset(LEFT_BACK);
+					tmp.reset(RIGHT_BACK);
+					tmp.reset(BACK_UP);
+					tmp.reset(BACK_DOWN);
+				}
+
+				if (i == 0) {
+					tmp.reset(LEFT_FORE);
+					tmp.reset(LEFT_BACK);
+					tmp.reset(LEFT_UP);
+					tmp.reset(LEFT_DOWN);
+				}
+				else if (i == nX - 1) {
+					tmp.reset(RIGHT_FORE);
+					tmp.reset(RIGHT_BACK);
+					tmp.reset(RIGHT_UP);
+					tmp.reset(RIGHT_DOWN);
+				}
+				newNodes[i][j][k] = tmp;
 			}
 		}
 	}
@@ -462,39 +561,35 @@ void duplicatingOfXY()
 //Y - отсутствует вершина или лежит на линии
 void DivideArea(double* xNet, int nX, double* yNet, int nY, double* zNet, int nZ)
 {
-	matrixNode = new char**[nX];
-	for (int i = 0; i < nX; i++)
+	double height_1, height_2, width_1, width_2;
+	int locateSourceX, locateSourceY, locateSourceZ;
+	for (int indSreda = 0; indSreda < sreda.size(); indSreda++)
 	{
-		matrixNode[i] = new char*[nY];
-		for (int j = 0; j < nY; j++)
-		{
-			matrixNode[i][j] = new char[nZ];
+		if (koordSourceX <= sreda[indSreda].x1)
+			locateSourceX = FindLocate(xNet, nX, sreda[indSreda].x1);
+		else if (koordSourceX >= sreda[indSreda].x2)
+			locateSourceX = FindLocate(xNet, nX, sreda[indSreda].x2);
+		else
+			locateSourceX = FindLocate(xNet, nX, koordSourceX);
 
-			/*for (int k = 0; k < nZ; k++)
-			{
-				if (i == 0)
-					matrixNode[i][j][k] = 'A';
-				else if (i == nX - 1)
-					matrixNode[i][j][k] = 'D';
-				else if (j == 0)
-					matrixNode[i][j][k] = 'S';
-				else if (j == nY - 1)
-					matrixNode[i][j][k] = 'W';
-				else if (k == 0)
-					matrixNode[i][j][k] = 'F';
-				else if (k == nZ - 1)
-					matrixNode[i][j][k] = 'B';
-				else
-					matrixNode[i][j][k] = 'R';
-				if ((k == 0 || k == nZ - 1) && (i == 0 || j == 0 || i == nX - 1 || j == nY - 1) ||
-					(i == 0 || i == nX - 1) && (k == 0 || j == 0 || k == nZ - 1 || j == nY - 1) ||
-					(j == 0 || j == nY - 1) && (i == 0 || k == 0 || i == nX - 1 || k == nZ - 1))
-					matrixNode[i][j][k] = 'V';
-			}*/
-		}
+		if (koordSourceY <= sreda[indSreda].y1)
+			locateSourceY = FindLocate(yNet, nY, sreda[indSreda].y1);
+		else if (koordSourceY >= sreda[indSreda].y2)
+			locateSourceY = FindLocate(yNet, nY, sreda[indSreda].y2);
+		else
+			locateSourceY = FindLocate(yNet, nY, koordSourceY);
+
+		if (koordSourceZ <= sreda[indSreda].z1)
+			locateSourceZ = FindLocate(zNet, nZ, sreda[indSreda].z1);
+		else if (koordSourceZ >= sreda[indSreda].z2)
+			locateSourceZ = FindLocate(zNet, nZ, sreda[indSreda].z2);
+		else
+			locateSourceY = FindLocate(zNet, nZ, koordSourceZ);
+
+		OptimizationQuarterX(1, 1, 1, locateSourceX, locateSourceY, locateSourceZ, FindLocate(xNet, nX, sreda[indSreda].x2), 
+			FindLocate(yNet, nY, sreda[indSreda].y2), FindLocate(zNet, nZ, sreda[indSreda].z2));
 	}
-	duplicatingOfXY();
-
+	//duplicatingOfXY();
 }
 
 void inputNet()
@@ -709,6 +804,139 @@ void generatePortrait()
 	}
 }
 
+void generatePortraitNesoglas()
+{
+	int kolvoRegularNode = xyz_points.size();
+	int countLocalIndex = 8;
+	set<size_t>* portrait = new set<size_t>[kolvoRegularNode];
+	for (size_t k = 0; k < KE.size(); k++)
+	{
+		for (size_t i = 0; i < countLocalIndex; i++)
+		{
+			size_t a = KE[k].uzel[i];
+			for (size_t j = 0; j < i; j++)
+			{
+				size_t b = KE[k].uzel[j];
+				// ≈сли оба узла не €вл€ютс€ терминальными
+				if (a < kolvoRegularNode && b < kolvoRegularNode)
+				{
+					if (b > a)
+						portrait[b].insert(a);
+					else
+						portrait[a].insert(b);
+				}
+				else if (a >= kolvoRegularNode && b < kolvoRegularNode)
+				{
+					for (size_t mu = igT[a - kolvoRegularNode]; mu < igT[a - kolvoRegularNode + 1]; mu++)
+					{
+						size_t pos_a = jgT[mu];
+						if (b != pos_a)
+						{
+							if (b > pos_a)
+								portrait[b].insert(pos_a);
+							else
+								portrait[pos_a].insert(b);
+						}
+					}
+				}
+				else if (a < kolvoRegularNode && b >= kolvoRegularNode)
+				{
+					for (size_t nu = igT[b - kolvoRegularNode]; nu < igT[b - kolvoRegularNode + 1]; nu++)
+					{
+						size_t pos_b = jgT[nu];
+						if (a != pos_b)
+						{
+							if (pos_b > a)
+								portrait[pos_b].insert(a);
+							else
+								portrait[a].insert(pos_b);
+						}
+					}
+				}
+				else
+				{
+					for (size_t mu = igT[a - kolvoRegularNode]; mu < igT[a - kolvoRegularNode + 1]; mu++)
+					{
+						size_t pos_a = jgT[mu];
+						for (size_t nu = igT[b - kolvoRegularNode]; nu < igT[b - kolvoRegularNode + 1]; nu++)
+						{
+							size_t pos_b = jgT[nu];
+							if (pos_b != pos_a)
+							{
+								if (pos_b > pos_a)
+									portrait[pos_b].insert(pos_a);
+								else
+									portrait[pos_a].insert(pos_b);
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+
+	size_t gg_size = 0;
+	for (size_t i = 0; i < kolvoRegularNode; i++)
+		gg_size += portrait[i].size();
+
+	ig = new int[kolvoRegularNode + 1];
+	di = new double[kolvoRegularNode];
+	b = new double[kolvoRegularNode];
+	q = new double[kolvoRegularNode];
+	ig[0] = ig[1] = 0;
+	for (size_t i = 0; i < kolvoRegularNode; i++)
+	{
+		di[i] = b[i] = q[i] = 0;
+		//for (set<size_t>::iterator j = portrait[i].begin(); j != portrait[i].end(); ++j)
+		//{
+		//	slae.jg[tmp] = *j;
+		//	tmp++;
+		//}
+		ig[i + 1] = ig[i] + portrait[i].size();
+	}
+	jg = new int[ig[kolvoRegularNode]];
+	ggl = new double[ig[kolvoRegularNode]];
+	ggu = new double[ig[kolvoRegularNode]];
+
+	for (size_t i = 0; i < ig[kolvoRegularNode]; i++)
+	{
+		ggl[i] = 0;
+		ggu[i] = 0;
+	}
+
+	size_t tmp = 0;
+	for (size_t i = 0; i < kolvoRegularNode; i++)
+	{
+		for (set<size_t>::iterator j = portrait[i].begin(); j != portrait[i].end(); ++j)
+		{
+			jg[tmp] = *j;
+			tmp++;
+		}
+		portrait[i].clear();
+	}
+	delete[] portrait;
+
+	int i, j;
+	ofstream igOut("ig.txt");
+	ofstream jgOut("jg.txt");
+	for (i = 0; i <= kolvoRegularNode; i++)
+	{
+		igOut << ig[i] << "   " << i << "   ";
+		if (i != kolvoRegularNode)
+			igOut << ig[i + 1] - ig[i] << endl;
+	}
+	cout << endl;
+	for (j = 0; j < kolvoRegularNode; j++)
+	{
+		jgOut << "string " << j << ": ";
+		for (i = ig[j]; i < ig[j + 1]; i++)
+		{
+			jgOut << jg[i] << " ";
+		}
+		jgOut << endl;
+	}
+}
+
 double analiticSolution(point goal)
 {
 	return 1 + goal.x + goal.y + goal.z;
@@ -806,11 +1034,11 @@ void Addition(int ielem)
 		{
 			b[KE[ielem].uzel[i]] += localB[i];
 		}
-		//else
-		//	for (k = igT[KE[ielem].uzel[i] - kolvoRegularNode]; k < igT[KE[ielem].uzel[i] - kolvoRegularNode + 1]; k++)
-		//	{
-		//		b[jgT[k]] += localB[i] * ggT[k];
-		//	}
+		else
+			for (int k = igT[KE[ielem].uzel[i] - kolvoRegularNode]; k < igT[KE[ielem].uzel[i] - kolvoRegularNode + 1]; k++)
+			{
+				b[jgT[k]] += localB[i] * ggT[k];
+			}
 		for (j = 0; j < 8; j++)
 		{
 			if (KE[ielem].uzel[i] < kolvoRegularNode)
@@ -819,13 +1047,13 @@ void Addition(int ielem)
 				{
 					AddToMatrix(KE[ielem].uzel[i], KE[ielem].uzel[j], localMatrix[i][j]);
 				}
-				/*else
+				else
 				{
-					for (k = igT[KE[ielem].uzel[j] - kolvoRegularNode]; k < igT[KE[ielem].uzel[j] - kolvoRegularNode + 1]; k++)
+					for (int k = igT[KE[ielem].uzel[j] - kolvoRegularNode]; k < igT[KE[ielem].uzel[j] - kolvoRegularNode + 1]; k++)
 					{
-						posJ = jgT[k];
-						koefJ = ggT[k];
-						AddToMatrix(KE[ielem].uzel[i], posJ, koefJ*localMatrix[i][j]);
+						//posJ = jgT[k];
+						//koefJ = ggT[k];
+						AddToMatrix(KE[ielem].uzel[i], jgT[k], ggT[k] * localMatrix[i][j]);
 					}
 				}
 			}
@@ -833,23 +1061,23 @@ void Addition(int ielem)
 			{
 				if (KE[ielem].uzel[j] < kolvoRegularNode)
 				{
-					for (k = igT[KE[ielem].uzel[i] - kolvoRegularNode]; k < igT[KE[ielem].uzel[i] - kolvoRegularNode + 1]; k++)
+					for (int k = igT[KE[ielem].uzel[i] - kolvoRegularNode]; k < igT[KE[ielem].uzel[i] - kolvoRegularNode + 1]; k++)
 					{
-						posI = jgT[k];
-						koefI = ggT[k];
-						AddToMatrix(posI, KE[ielem].uzel[j], koefI*localMatrix[i][j]);
+						//posI = jgT[k];
+						//koefI = ggT[k];
+						AddToMatrix(jgT[k], KE[ielem].uzel[j], ggT[k] * localMatrix[i][j]);
 					}
 				}
 				else
 				{
-					for (k = igT[KE[ielem].uzel[i] - kolvoRegularNode]; k < igT[KE[ielem].uzel[i] - kolvoRegularNode + 1]; k++)
+					for (int k = igT[KE[ielem].uzel[i] - kolvoRegularNode]; k < igT[KE[ielem].uzel[i] - kolvoRegularNode + 1]; k++)
 					{
-						for (l = igT[KE[ielem].uzel[j] - kolvoRegularNode]; l < igT[KE[ielem].uzel[j] - kolvoRegularNode + 1]; l++)
+						for (int l = igT[KE[ielem].uzel[j] - kolvoRegularNode]; l < igT[KE[ielem].uzel[j] - kolvoRegularNode + 1]; l++)
 						{
 							AddToMatrix(jgT[k], jgT[l], ggT[k] * ggT[l] * localMatrix[i][j]);
 						}
 					}
-				}*/
+				}
 			}
 		}
 	}
@@ -1255,7 +1483,7 @@ void outputWithoutOptimisation()
 	ofstream fileXY("xyz.txt");
 	ofstream fileNvtr("nvtr.txt");
 
-	for (int k = 0; k<nZ; k++)
+	for (int k = 0; k < nZ; k++)
 	{
 		for (int j = 0; j < nY; j++)
 		{
@@ -1302,7 +1530,7 @@ int findAreaNumber(int nodes[])
 	int i;
 	for (i = 0; i < sreda.size(); i++)
 	{
-		if (xyz_points[nodes[0]].x >= sreda[i].x1 && xyz_points[nodes[1]].x <= sreda[i].x2 && 
+		if (xyz_points[nodes[0]].x >= sreda[i].x1 && xyz_points[nodes[1]].x <= sreda[i].x2 &&
 			xyz_points[nodes[0]].y >= sreda[i].y1 && xyz_points[nodes[2]].y <= sreda[i].y2 &&
 			xyz_points[nodes[0]].z >= sreda[i].z1 && xyz_points[nodes[4]].z <= sreda[i].z2)
 			return i;
@@ -1317,26 +1545,27 @@ void outputKEandXYZ()
 {
 	ofstream fileXY("xyz.txt");
 	ofstream fileNvtr("nvtr.txt");
+	ofstream viewNet("viewNet.txt");
 	vector<point> ncPoint;
 
 	//формируем массивы регул€рных и терминальных вершин
-	for (int k = 0; k < nZ;k++)
-	for (int j = 0; j < nY; j++)
-		for (int i = 0; i < nX; i++)
-		{
-			if (matrixNode[i][j][k] != 'Y')
-				if ((k == 0 && matrixNode[i][j][k]=='F' || k == nZ - 1 && matrixNode[i][j][k]=='B'
-					|| i == 0 && matrixNode[i][j][k]=='A' || i == nX - 1 && matrixNode[i][j][k]=='D'
-					|| j == 0 && matrixNode[i][j][k] =='S' || j == nY - 1 && matrixNode[i][j][k]=='W') 
-					|| matrixNode[i][j][k]=='V' || matrixNode[i][j][k] == 'R')
-				{
-					xyz_points.push_back(point(xNet[i], yNet[j], zNet[k]));
-				}
-				else
-				{
-					ncPoint.push_back(point(xNet[i], yNet[j], zNet[k]));
-				}
-		}
+	for (int k = 0; k < nZ; k++)
+		for (int j = 0; j < nY; j++)
+			for (int i = 0; i < nX; i++)
+			{
+				if (matrixNode[i][j][k] != 'Y')
+					if ((k == 0 && matrixNode[i][j][k] == 'F' || k == nZ - 1 && matrixNode[i][j][k] == 'B'
+							|| i == 0 && matrixNode[i][j][k] == 'A' || i == nX - 1 && matrixNode[i][j][k] == 'D'
+							|| j == 0 && matrixNode[i][j][k] == 'S' || j == nY - 1 && matrixNode[i][j][k] == 'W')
+						|| matrixNode[i][j][k] == 'V' || matrixNode[i][j][k] == 'R')
+					{
+						xyz_points.push_back(point(xNet[i], yNet[j], zNet[k]));
+					}
+					else
+					{
+						ncPoint.push_back(point(xNet[i], yNet[j], zNet[k]));
+					}
+			}
 
 	//добавл€ем в  ќЌ≈÷ массива вершин терминальные вершины
 	for (vector<point>::iterator it = ncPoint.begin(); it < ncPoint.end(); it++)
@@ -1355,52 +1584,66 @@ void outputKEandXYZ()
 		fileXY << xyz_points[i].x << " " << xyz_points[i].y << " " << xyz_points[i].z << endl;
 	}
 
+	for (int iZ = 0; iZ < nZ; iZ++)
+	{
+		for (int iY = nY - 1; iY >= 0; iY--)
+		{
+			for (int iX = 0; iX < nX; iX++)
+			{
+				viewNet << matrixNode[iX][iY][iZ] << " ";
+			}
+			viewNet << endl;
+		}
+		viewNet << "-----------------------" << endl;
+	}
+	viewNet.close();
+
 	//формируем структуру  Ё
 	nvtr tempNvtr;
 	for (int iZ = 0; iZ < nZ - 1; iZ++)
-	for (int iY = 0; iY < nY - 1; iY++)
-		for (int iX = 0; iX < nX - 1; iX++)
-		{
-			if (matrixNode[iX][iY][iZ] == 'V' || matrixNode[iX][iY][iZ] == 'S' || matrixNode[iX][iY][iZ] == 'A'
-				|| matrixNode[iX][iY][iZ] == 'R' || matrixNode[iX][iY][iZ] == 'F')
+		for (int iY = 0; iY < nY - 1; iY++)
+			for (int iX = 0; iX < nX - 1; iX++)
 			{
-				tempNvtr.uzel[0] = indexXYZ(xNet[iX], yNet[iY],zNet[iZ]);
-				for (int k = iX + 1; k < nX; k++)
+				if (matrixNode[iX][iY][iZ] == 'V' || matrixNode[iX][iY][iZ] == 'S' || matrixNode[iX][iY][iZ] == 'A'
+					|| matrixNode[iX][iY][iZ] == 'R' || matrixNode[iX][iY][iZ] == 'F')
 				{
-					if (matrixNode[k][iY][iZ] == 'S' || matrixNode[k][iY][iZ] == 'R' || matrixNode[k][iY][iZ] == 'D' 
-						|| matrixNode[k][iY][iZ] == 'V' || matrixNode[k][iY][iZ] == 'F')
+					tempNvtr.uzel[0] = indexXYZ(xNet[iX], yNet[iY], zNet[iZ]);
+					for (int k = iX + 1; k < nX; k++)
 					{
-						tempNvtr.uzel[1] = indexXYZ(xNet[k], yNet[iY],zNet[iZ]);
-						for (int t = iY + 1; t < nY; t++)
+						if (matrixNode[k][iY][iZ] == 'S' || matrixNode[k][iY][iZ] == 'R' || matrixNode[k][iY][iZ] == 'D'
+							|| matrixNode[k][iY][iZ] == 'V' || matrixNode[k][iY][iZ] == 'F')
 						{
-							if (matrixNode[k][t][iZ] == 'W' || matrixNode[k][t][iZ] == 'R' || matrixNode[k][t][iZ] == 'D' 
-								|| matrixNode[k][t][iZ] == 'V' || matrixNode[k][t][iZ] == 'F')
+							tempNvtr.uzel[1] = indexXYZ(xNet[k], yNet[iY], zNet[iZ]);
+							for (int t = iY + 1; t < nY; t++)
 							{
-								tempNvtr.uzel[3] = indexXYZ(xNet[k], yNet[t],zNet[iZ]);
-								tempNvtr.uzel[2] = indexXYZ(xNet[iX], yNet[t], zNet[iZ]);
-
-								for (int h = iZ; h < nZ;h++)
+								if (matrixNode[k][t][iZ] == 'W' || matrixNode[k][t][iZ] == 'R' || matrixNode[k][t][iZ] == 'D'
+									|| matrixNode[k][t][iZ] == 'V' || matrixNode[k][t][iZ] == 'F')
 								{
-									if (matrixNode[iX][iY][h] == 'S' || matrixNode[iX][iY][h] == 'R' || matrixNode[iX][iY][h] == 'A'
-										|| matrixNode[iX][iY][h] == 'V' || matrixNode[iX][iY][h] == 'B')
+									tempNvtr.uzel[3] = indexXYZ(xNet[k], yNet[t], zNet[iZ]);
+									tempNvtr.uzel[2] = indexXYZ(xNet[iX], yNet[t], zNet[iZ]);
+
+									for (int h = iZ + 1; h < nZ; h++)
 									{
-										tempNvtr.uzel[4] = indexXYZ(xNet[iX], yNet[iY], zNet[h]);
-										tempNvtr.uzel[5] = indexXYZ(xNet[k], yNet[iY], zNet[h]);
-										tempNvtr.uzel[6] = indexXYZ(xNet[iX], yNet[t], zNet[h]);
-										tempNvtr.uzel[7] = indexXYZ(xNet[k], yNet[t], zNet[h]);
-										break;
+										if (matrixNode[iX][iY][h] == 'S' || matrixNode[iX][iY][h] == 'R' || matrixNode[iX][iY][h] == 'A'
+											|| matrixNode[iX][iY][h] == 'V' || matrixNode[iX][iY][h] == 'B')
+										{
+											tempNvtr.uzel[4] = indexXYZ(xNet[iX], yNet[iY], zNet[h]);
+											tempNvtr.uzel[5] = indexXYZ(xNet[k], yNet[iY], zNet[h]);
+											tempNvtr.uzel[6] = indexXYZ(xNet[iX], yNet[t], zNet[h]);
+											tempNvtr.uzel[7] = indexXYZ(xNet[k], yNet[t], zNet[h]);
+											break;
+										}
 									}
+									break;
 								}
-								break;
 							}
+							break;
 						}
-						break;
 					}
+					tempNvtr.numberField = findAreaNumber(tempNvtr.uzel);
+					KE.push_back(tempNvtr);
 				}
-				tempNvtr.numberField = findAreaNumber(tempNvtr.uzel);
-				KE.push_back(tempNvtr);
 			}
-	}
 
 	//формируем файл nvtr.txt
 	fileNvtr << KE.size() << endl;
@@ -1410,149 +1653,298 @@ void outputKEandXYZ()
 		{
 			fileNvtr << KE[i].uzel[j] << " ";
 		}
-		fileNvtr <<KE[i].numberField<< endl;
+		fileNvtr << KE[i].numberField << endl;
 	}
 }
 
-//void GenerateT()
-//{
-//	ofstream outT("Tmatrix.txt");
-//	igT = new int[nColT + 1];
-//
-//	//формируем вспомогательную сигм-структуру
-//	int i, j, k, indNeib1, indNeib2;
-//	sigmT = new sigmStruct[kolvoRegularNode];
-//	for (i = kolvoRegularNode; i < xyz_points.size(); i++)
-//	{
-//		sigmT[i - kolvoRegularNode].terminalNode = i;
-//		locateOfPoint term = FindLocate(xyz_points[i]);
-//		if (matrixNode[term.i][term.j] == 'W' || matrixNode[term.i][term.j] == 'S')
-//		{
-//			for (indNeib1 = term.i - 1; indNeib1 >= 0 && matrixNode[indNeib1][term.j] != 'A' && matrixNode[indNeib1][term.j] != 'R'; indNeib1--);
-//			sigmT[i - kolvoRegularNode].neighbors.push_back(NumberNode(xNet[indNeib1], yNet[term.j]));
-//			for (indNeib2 = term.i + 1; indNeib2 < nX && matrixNode[indNeib2][term.j] != 'D' && matrixNode[indNeib2][term.j] != 'R'; indNeib2++);
-//			sigmT[i - kolvoRegularNode].neighbors.push_back(NumberNode(xNet[indNeib2], yNet[term.j]));
-//			sigmT[i - kolvoRegularNode].tNeighbors.push_back(fabs((xNet[indNeib2] - xNet[term.i]) / (xNet[indNeib2] - xNet[indNeib1])));
-//			sigmT[i - kolvoRegularNode].tNeighbors.push_back(fabs((xNet[indNeib1] - xNet[term.i]) / (xNet[indNeib2] - xNet[indNeib1])));
-//		}
-//		else
-//		{
-//			for (indNeib1 = term.j - 1; indNeib1 >= 0 && matrixNode[term.i][indNeib1] != 'S' && matrixNode[term.i][indNeib1] != 'R'; indNeib1--);
-//			sigmT[i - kolvoRegularNode].neighbors.push_back(NumberNode(xNet[term.i], yNet[indNeib1]));
-//			for (indNeib2 = term.j + 1; indNeib2 < nY && matrixNode[term.i][indNeib2] != 'W' && matrixNode[term.i][indNeib2] != 'R'; indNeib2++);
-//			sigmT[i - kolvoRegularNode].neighbors.push_back(NumberNode(xNet[term.i], yNet[indNeib2]));
-//			sigmT[i - kolvoRegularNode].tNeighbors.push_back(fabs((yNet[indNeib2] - yNet[term.j]) / (yNet[indNeib2] - yNet[indNeib1])));
-//			sigmT[i - kolvoRegularNode].tNeighbors.push_back(fabs((yNet[indNeib1] - yNet[term.j]) / (yNet[indNeib2] - yNet[indNeib1])));
-//		}
-//	}
-//
-//	for (i = 0; i < nColT; i++)
-//	{
-//		for (j = 0; j < 2; j++)
-//		{
-//			if (sigmT[i].neighbors[j] >= kolvoRegularNode)
-//			{
-//				sigmTChain(i, sigmT[i].neighbors[j] - kolvoRegularNode, sigmT[i].tNeighbors[j]);
-//			}
-//		}
-//	}
-//
-//	for (i = 0; i < nColT; i++)
-//		for (j = 1; j >= 0; j--)
-//			if (sigmT[i].neighbors[j] >= kolvoRegularNode)
-//			{
-//				sigmT[i].neighbors.erase(sigmT[i].neighbors.begin() + j);
-//				sigmT[i].tNeighbors.erase(sigmT[i].tNeighbors.begin() + j);
-//			}
-//
-//	//сортируем по узлам
-//	double tmp_sort;
-//	for (k = 0; k < nColT; k++)
-//		for (i = 0; i < sigmT[k].neighbors.size(); ++i) // i - номер текущего шага
-//		{
-//			int pos = i;
-//			tmp_sort = sigmT[k].neighbors[i];
-//			for (int j = i + 1; j < sigmT[k].neighbors.size(); ++j) // цикл выбора наименьшего элемента
-//			{
-//				if (sigmT[k].neighbors[j] < tmp_sort)
-//				{
-//					pos = j;
-//					tmp_sort = sigmT[k].neighbors[j];
-//				}
-//			}
-//			sigmT[k].neighbors[pos] = sigmT[k].neighbors[i];
-//			sigmT[k].neighbors[i] = tmp_sort; // мен€ем местами наименьший с a[i]
-//
-//			tmp_sort = sigmT[k].tNeighbors[pos];
-//			sigmT[k].tNeighbors[pos] = sigmT[k].tNeighbors[i];
-//			sigmT[k].tNeighbors[i] = tmp_sort; // мен€ем местами наименьший с a[i]
-//
-//		}
-//
-//	for (i = 0; i < nColT; i++)
-//	{
-//		outT << sigmT[i].terminalNode << " ";
-//		for (j = 0; j < sigmT[i].neighbors.size(); j++)
-//		{
-//			outT << sigmT[i].neighbors[j] << " " << sigmT[i].tNeighbors[j] << " ";
-//		}
-//		outT << endl;
-//	}
-//	igT[0] = 0;
-//	for (i = 0; i < nColT; i++)
-//	{
-//		igT[i + 1] = igT[i] + sigmT[i].neighbors.size();
-//	}
-//	ggT = new double[igT[nColT]];
-//	jgT = new int[igT[nColT]];
-//	for (i = 0, j = 0; i < nColT && j < igT[nColT]; i++)
-//	{
-//		for (k = 0; k < igT[i + 1] - igT[i]; k++, j++)
-//		{
-//			jgT[j] = sigmT[i].neighbors[k];
-//			ggT[j] = sigmT[i].tNeighbors[k];
-//		}
-//	}
-//
-//	outT << endl << "T" << endl;
-//	for (i = 0; i <= nColT; i++)
-//	{
-//		outT << igT[i] << " ";
-//	}
-//	outT << endl;
-//	for (i = 0; i < igT[nColT]; i++)
-//	{
-//		outT << jgT[i] << " ";
-//	}
-//	outT << endl;
-//	for (i = 0; i < igT[nColT]; i++)
-//	{
-//		outT << ggT[i] << " ";
-//	}
-//	outT << endl;
-//
-//}
+locateOfPoint FindLocate(point sample)
+{
+	locateOfPoint a;
+	a.i = -1;
+	a.j = -1;
+	a.k = -1;
+	for (int i = 0; i < nX; i++)
+	{
+		if (xNet[i] == sample.x)
+			a.i = i;
+	}
+	for (int j = 0; j < nY; j++)
+	{
+		if (yNet[j] == sample.y)
+			a.j = j;
+	}
+	for (int k = 0; k < nY; k++)
+	{
+		if (zNet[k] == sample.z)
+			a.k = k;
+	}
+	if (a.i == -1 || a.j == -1 || a.k == -1)
+	{
+		cout << "ќшибка FindLocate: не найдена точка" << endl;
+		exit(1);
+	}
+	return a;
+}
+
+void sigmTChain(int nTermNode, int startOfChain, double mnojT, set<int> visitedNodes)
+{
+	int i, j;
+	for each (neighbor var in tmpSigm[startOfChain].neighbors)
+	{
+		//if (!WithoutPerehlest)
+			//for (i = 0; i < sigmT[nTermNode].neighbors.size(); i++)
+			//{
+			//	if (sigmT[nTermNode].neighbors[i] == sigmT[startOfChain].neighbors[j])
+			//	{
+			//		cout << "ќбнаружена цепочка терминальных узлов в " << nTermNode << endl;
+			//		//system("pause");
+			//		//exit(1);
+			//	}
+			//}
+		if (visitedNodes.find(var.index) != visitedNodes.end()) continue;
+		visitedNodes.insert(var.index);
+		if (var.index >= kolvoRegularNode)
+		{
+			sigmTChain(nTermNode, var.index - kolvoRegularNode, mnojT * var.weight, visitedNodes);
+		} else {
+			sigmNewT[nTermNode].neighbors.insert(neighbor(var.index, mnojT*var.weight));
+		}
+	}
+}
+
+void genT3D() {
+	ofstream outT("Tmatrix.txt");
+	igT = new int[nColT + 1];
+
+	//формируем вспомогательную сигм-структуру
+	sigmNewT = new sigmStruct3D[nColT];
+	tmpSigm = new sigmStruct3D[nColT];
+
+	for (int i = kolvoRegularNode; i < xyz_points.size(); i++)
+	{
+		int inc = i - kolvoRegularNode;
+		tmpSigm[inc].terminalNode = i;
+		locateOfPoint term = FindLocate(xyz_points[i]);
+		if (newNodes[term.i][term.j][term.k].test(IS_REGULAR))
+			throw new exception("wrong terminal node in genT3D");
+		if (hasXLines(newNodes[term.i][term.j][term.k]))
+		{
+			int neibLeft;
+			for (neibLeft = term.i - 1; neibLeft >= 0; neibLeft--)
+			{
+				if (!newNodes[neibLeft][term.j][term.k].none()) break;
+			}
+			int neibRight;
+			for (neibRight = term.i + 1; neibRight < nX; neibRight++)
+			{
+				if (!newNodes[neibRight][term.j][term.k].none()) break;
+			}
+			double length = xNet[neibRight] - xNet[neibLeft];
+			int iL = indexXYZ(xNet[neibLeft], yNet[term.j], zNet[term.k]);
+			int iR = indexXYZ(xNet[neibRight], yNet[term.j], zNet[term.k]);
+			tmpSigm[inc].neighbors.insert(neighbor(iL, (xNet[neibRight] - xNet[term.i]) / length));
+			tmpSigm[inc].neighbors.insert(neighbor(iR, (xNet[term.i] - xNet[neibLeft]) / length));
+		}
+		if (hasYLines(newNodes[term.i][term.j][term.k]))
+		{
+			int neibFore;
+			for (neibFore = term.j + 1; neibFore < nY; neibFore++)
+			{
+				if (!newNodes[term.i][neibFore][term.k].none()) break;
+			}
+			int neibBack;
+			for (neibBack = term.j - 1; neibBack >= 0; neibBack--)
+			{
+				if (!newNodes[term.i][neibBack][term.k].none()) break;
+			}
+			double length = yNet[neibBack] - yNet[neibFore];
+			int iF = indexXYZ(xNet[term.i], yNet[neibFore], zNet[term.k]);
+			int iB = indexXYZ(xNet[term.i], yNet[neibBack], zNet[term.k]);
+			tmpSigm[inc].neighbors.insert(neighbor(iF, (yNet[neibBack] - yNet[term.j]) / length));
+			tmpSigm[inc].neighbors.insert(neighbor(iB, (yNet[term.j] - yNet[neibFore]) / length));
+		}
+		if (hasZLines(newNodes[term.i][term.j][term.k]))
+		{
+			int neibDown;
+			for (neibDown = term.k + 1; neibDown < nZ; neibDown++)
+			{
+				if (!newNodes[term.i][term.j][neibDown].none()) break;
+			}
+			int neibUp;
+			for (neibUp = term.k - 1; neibUp >= 0; neibUp--)
+			{
+				if (!newNodes[term.i][term.j][neibUp].none()) break;
+			}
+			double length = yNet[neibUp] - yNet[neibDown];
+			int iD = indexXYZ(xNet[term.i], yNet[term.j], zNet[neibDown]);
+			int iU = indexXYZ(xNet[term.i], yNet[term.j], zNet[neibUp]);
+			tmpSigm[inc].neighbors.insert(neighbor(iD, (zNet[neibUp] - zNet[term.k]) / length));
+			tmpSigm[inc].neighbors.insert(neighbor(iU, (zNet[term.k] - zNet[neibDown]) / length));
+		}
+		if (tmpSigm[inc].neighbors.empty())
+			throw new exception("cannot find neighbors for tmpSigm");
+	}
+
+	for (int i = 0; i < nColT; i++)
+	{
+		set<int> visitedNodes;
+		visitedNodes.insert(tmpSigm[i].terminalNode);
+		sigmNewT[i].terminalNode = tmpSigm[i].terminalNode;
+		for each (neighbor var in tmpSigm[i].neighbors)
+		{
+			visitedNodes.insert(var.index);
+			if (var.index >= kolvoRegularNode) {
+				sigmTChain(i, var.index - kolvoRegularNode, var.weight, visitedNodes);
+			}
+			else {
+				sigmNewT[i].neighbors.insert(var);
+			}
+		}
+	}
+
+	for (int i = 0; i < nColT; i++)
+	{
+		outT << sigmNewT[i].terminalNode << " ";
+		for each (neighbor var in sigmNewT[i].neighbors)
+		{
+			outT << var.index << " " << var.weight << " ";
+		}
+		outT << endl;
+	}
+	igT[0] = 0;
+	for (int i = 0; i < nColT; i++)
+	{
+		igT[i + 1] = igT[i] + sigmNewT[i].neighbors.size();
+	}
+	ggT = new double[igT[nColT]];
+	jgT = new int[igT[nColT]];
+	for (int i = 0, j = 0; i < nColT && j < igT[nColT]; i++)
+	{
+		for each (neighbor var in sigmNewT[i].neighbors)
+		{
+			jgT[j] = var.index;
+			ggT[j] = var.weight;
+			j++;
+		}
+	}
+
+	outT << endl << "T" << endl;
+	for (int i = 0; i <= nColT; i++)
+	{
+		outT << igT[i] << " ";
+	}
+	outT << endl;
+	for (int i = 0; i < igT[nColT]; i++)
+	{
+		outT << jgT[i] << " ";
+	}
+	outT << endl;
+	for (int i = 0; i < igT[nColT]; i++)
+	{
+		outT << ggT[i] << " ";
+	}
+	outT << endl;
+}
+
+void Output()
+{
+	int i, j, t, k;
+	ofstream fileXY("xyz.txt");
+	ofstream fileNvtr("nvtr.txt");
+	vector<point> ncPoint;
+
+	//формируем массивы регул€рных и терминальных вершин
+	for (t = 0; t < nZ; t++)
+	{
+		for (j = 0; j < nY; j++)
+		{
+			for (i = 0; i < nX; i++)
+			{
+				if (newNodes[i][j][t].test(IS_REGULAR) || hasAll(newNodes[i][j][t]))
+				{
+					xyz_points.push_back(point(xNet[i], yNet[j],zNet[t]));
+				}
+				else if (!newNodes[i][j][t].none())
+				{
+					ncPoint.push_back(point(xNet[i], yNet[j], zNet[t]));
+				}
+			}
+		}
+	}
+
+	//добавл€ем в конец массива вершин терминальные вершины
+	for (vector<point>::iterator it = ncPoint.begin(); it < ncPoint.end(); it++)
+	{
+		xyz_points.push_back(*it);
+	}
+
+	//количество столбцов в T
+	nColT = ncPoint.size();
+	kolvoRegularNode = xyz_points.size() - nColT;
+
+	//формируем файл xyz.txt
+	fileXY << xyz_points.size() << " " << kolvoRegularNode << endl;
+	for (i = 0; i < xyz_points.size(); i++)
+	{
+		fileXY << xyz_points[i].x << " " << xyz_points[i].y << " " << xyz_points[i].z << endl;
+	}
+
+	//формируем структуру  Ё
+	nvtr tempNvtr;
+	for (int z = 0; z < nZ - 1; z++)
+	{
+		for (j = 0; j < nY - 1; j++)
+		{
+			for (i = 0; i < nX - 1; i++)
+			{
+				if (canOptimize(1, 1, 1, newNodes[i][j][z]))
+				{
+					int nextX = findNextX(1, 1, 1, i, nX, j, z);
+					int nextY = findNextY(1, 1, 1, j, nY, i, z);
+					int nextZ = findNextZ(1, 1, 1, z, nZ, i, j);
+
+					tempNvtr.uzel[0] = indexXYZ(xNet[i], yNet[j], zNet[z]);
+					tempNvtr.uzel[1] = indexXYZ(xNet[nextX], yNet[j], zNet[z]);
+					tempNvtr.uzel[2] = indexXYZ(xNet[i], yNet[nextY], zNet[z]);
+					tempNvtr.uzel[3] = indexXYZ(xNet[nextX], yNet[nextY], zNet[z]);
+
+					tempNvtr.uzel[4] = indexXYZ(xNet[i], yNet[j], zNet[nextZ]);
+					tempNvtr.uzel[5] = indexXYZ(xNet[nextX], yNet[j], zNet[nextZ]);
+					tempNvtr.uzel[6] = indexXYZ(xNet[i], yNet[nextY], zNet[nextZ]);
+					tempNvtr.uzel[7] = indexXYZ(xNet[nextX], yNet[nextY], zNet[nextZ]);
+
+					tempNvtr.numberField = 1; //FindAreaNumber(tempNvtr.uzel);
+					KE.push_back(tempNvtr);
+				}
+			}
+		}
+	}
+
+	//формируем файл nvtr.txt
+	fileNvtr << KE.size()
+		<< "\t" << xNet[0] << "\t" << xNet[nX - 1]
+		<< "\t" << yNet[0] << "\t" << yNet[nY - 1]
+		<< "\t" << zNet[0] << "\t" << zNet[nZ - 1] << endl;
+	for (i = 0; i < KE.size(); i++)
+	{
+		for (j = 0; j < 8; j++)
+		{
+			fileNvtr << KE[i].uzel[j] << " ";
+		}
+		fileNvtr << endl;
+	}
+}
 
 int main(int argc, char* argv[])
 {
+	setlocale(LC_ALL, "rus");
 	inputConfig();
 	inputNet();
+
+	initNet(xNet, nX, yNet, nY, zNet, nZ);
 	DivideArea(xNet, nX, yNet, nY, zNet, nZ);
-	//outputWithoutOptimisation();
-	outputKEandXYZ();
-	/*generatePortrait();
-	GenerateMatrix();
 
-	bool flagLU = false;
-	if (flagLU)
-	{
-		int numberIteration = LosLU(ggl, ggu, di, xyz_points.size(), ig, jg, b, q);
-		output << "numberIteration = " << numberIteration << endl;
-	}
-	else
-	{
-		runLOS();
-	}
+	Output();
 
-	calcPogreshnost(output);*/
+	genT3D();
 }

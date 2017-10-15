@@ -19,4 +19,26 @@
       <Filter>Файлы исходного кода</Filter>
     </ClCompile>
   </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="glut.h">
+      <Filter>Заголовочные файлы</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="возможные проблемы.txt">
+      <Filter>Файлы ресурсов</Filter>
+    </Text>
+    <Text Include="..\МАГА\Tmatrix.txt">
+      <Filter>Файлы ресурсов</Filter>
+    </Text>
+    <Text Include="..\МАГА\nvtr.txt">
+      <Filter>Файлы ресурсов</Filter>
+    </Text>
+    <Text Include="..\МАГА\xyz.txt">
+      <Filter>Файлы ресурсов</Filter>
+    </Text>
+    <Text Include="..\МАГА\viewNet.txt">
+      <Filter>Файлы ресурсов</Filter>
+    </Text>
+  </ItemGroup>
 </Project>
