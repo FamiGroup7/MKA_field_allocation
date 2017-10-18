@@ -4,9 +4,12 @@
 #include <fstream>
 #include <vector>
 #include <set>
+#include <map>
 #include <locale>
 #include <bitset>
 #include <Windows.h>
+#include "Edge.h"
+
 const size_t BIT_SIZE = 13;
 const size_t LEFT_UP = 0;
 const size_t LEFT_DOWN = 1;
@@ -22,7 +25,7 @@ const size_t LEFT_BACK = 10;
 const size_t RIGHT_BACK = 11;
 const size_t IS_REGULAR = 12;
 
-const double EPS = 1e-15;
+const bool DEBUG = true;
 
 using namespace std;
 
@@ -32,11 +35,6 @@ struct colour // цвет точки
 	int green;
 	int blue;
 };
-
-bool equals(double val1, double val2) {
-	if (fabs(val1 - val2) < EPS)return true;
-	return false;
-}
 
 struct point // точка
 {
@@ -55,9 +53,9 @@ struct point // точка
 
 	friend bool operator==(const point& lhs, const point& rhs)
 	{
-		return equals(lhs.x, rhs.x)
-			&& equals(lhs.y, rhs.y)
-			&& equals(lhs.z, rhs.z);
+		return MkaUtils::equals(lhs.x, rhs.x)
+			&& MkaUtils::equals(lhs.y, rhs.y)
+			&& MkaUtils::equals(lhs.z, rhs.z);
 	}
 
 	friend bool operator!=(const point& lhs, const point& rhs)
@@ -133,7 +131,8 @@ struct neighbor {
 struct sigmStruct3D {
 	int terminalNode;
 	set<neighbor> neighbors;
-} *sigmNewT, *tmpSigm;
+} *tmpSigm;
+vector<sigmStruct3D> sigmNewT;
 
 int *igT, *jgT;
 double* ggT;
@@ -143,6 +142,8 @@ int LosLU(double* ggl, double* ggu, double* diag, int N, int* ig, int* jg, doubl
 vector<point> xyz_points;
 vector<nvtr> KE;
 vector<field> sreda;
+map<Point, Edge> termNodeOnEdge;
+
 
 double leftX, rightX, leftY, rightY, leftZ, rightZ;
 double koordSourceX, koordSourceY, koordSourceZ;
@@ -164,6 +165,7 @@ double M2[4][4] = {
 	{1,2,2,4}
 };
 ofstream output("solution.txt");
+ofstream logger("log.txt");
 
 void inputConfig()
 {
@@ -171,8 +173,7 @@ void inputConfig()
 
 void logError(char* message) {
 	cout << message << endl;
-	system("pause");
-	exit(1);
+	throw exception(message);
 }
 
 void GenerateNetLikeTelma(set<double>& mas, ifstream& fileNet)
@@ -398,6 +399,8 @@ int findNextZ(int directionX, int directionY, int directionZ,
 }
 
 void deletePlaneX(int xPlane, int y1, int y2, int z1, int z2) {
+	logger << "Deleted plane x = " << xPlane << ", y1=" << y1 << ", y2=" << y2 << ", z1=" << z1 << ", z2=" << z2 << endl;
+	
 	newNodes[xPlane][y1][z1].reset(IS_REGULAR);
 	newNodes[xPlane][y1][z2].reset(IS_REGULAR);
 	newNodes[xPlane][y2][z1].reset(IS_REGULAR);
@@ -428,6 +431,15 @@ void deletePlaneX(int xPlane, int y1, int y2, int z1, int z2) {
 		newNodes[xPlane][y2][z1].reset(LEFT_UP).reset(RIGHT_UP);
 	if (!newNodes[xPlane][y2][z2].test(BACK_DOWN))
 		newNodes[xPlane][y2][z2].reset(LEFT_DOWN).reset(RIGHT_DOWN);
+}
+
+void addTermNodeToMap(int middleX, int x1, int x2, int y, int z) {
+	termNodeOnEdge.insert(pair<Point, Edge>(
+		Point(xNet[middleX], yNet[y], zNet[z]),
+		Edge(
+			Point(xNet[x1], yNet[y], zNet[z]),
+			Point(xNet[x2], yNet[y], zNet[z]))
+		));
 }
 
 void OptimizationQuarterX(int directionX, int directionY, int directionZ,
@@ -485,6 +497,11 @@ void OptimizationQuarterX(int directionX, int directionY, int directionZ,
 									deletePlaneX(nextX, nextY, posJ, posT, nextZ);
 								else
 									deletePlaneX(nextX, nextY, posJ, nextZ, posT);
+
+							addTermNodeToMap(nextX, posI, nextX2, posJ, posT);
+							addTermNodeToMap(nextX, posI, nextX2, posJ, nextZ);
+							addTermNodeToMap(nextX, posI, nextX2, nextY, posT);
+							addTermNodeToMap(nextX, posI, nextX2, nextY, nextZ);
 						}
 					}
 				}
@@ -549,16 +566,6 @@ void initNet(double* xNet, int nX, double* yNet, int nY, double* zNet, int nZ) {
 	}
 }
 
-//W - сзади нет ребра
-//A - слева нет ребра
-//S - спереди нет ребра
-//D - справа нет ребра
-//F - снизу нет ребра
-//B - сверху нет ребра
-
-//V - вершины
-//R - регулярные узлы, 6 ребер примыкают
-//Y - отсутствует вершина или лежит на линии
 void DivideArea(double* xNet, int nX, double* yNet, int nY, double* zNet, int nZ)
 {
 	double height_1, height_2, width_1, width_2;
@@ -1686,7 +1693,7 @@ locateOfPoint FindLocate(point sample)
 	return a;
 }
 
-void sigmTChain(int nTermNode, int startOfChain, double mnojT, set<int> visitedNodes)
+void sigmTChain(int nTermNode, int startOfChain, double mnojT, set<int> &visitedNodes)
 {
 	int i, j;
 	for each (neighbor var in tmpSigm[startOfChain].neighbors)
@@ -1701,7 +1708,10 @@ void sigmTChain(int nTermNode, int startOfChain, double mnojT, set<int> visitedN
 			//		//exit(1);
 			//	}
 			//}
-		if (visitedNodes.find(var.index) != visitedNodes.end()) continue;
+		if (visitedNodes.find(var.index) != visitedNodes.end()) {
+			logger << "found circle " << var.index << " in node " << startOfChain << endl;
+			continue;
+		}
 		visitedNodes.insert(var.index);
 		if (var.index >= kolvoRegularNode)
 		{
@@ -1717,7 +1727,8 @@ void genT3D() {
 	igT = new int[nColT + 1];
 
 	//формируем вспомогательную сигм-структуру
-	sigmNewT = new sigmStruct3D[nColT];
+	//sigmNewT = new sigmStruct3D[nColT];
+	sigmNewT.resize(nColT);
 	tmpSigm = new sigmStruct3D[nColT];
 
 	for (int i = kolvoRegularNode; i < xyz_points.size(); i++)
@@ -1727,6 +1738,16 @@ void genT3D() {
 		locateOfPoint term = FindLocate(xyz_points[i]);
 		if (newNodes[term.i][term.j][term.k].test(IS_REGULAR))
 			throw new exception("wrong terminal node in genT3D");
+		if (hasXLines(newNodes[term.i][term.j][term.k]) && hasYLines(newNodes[term.i][term.j][term.k])) {
+			bool downResult = hasDown(newNodes[term.i][term.j][term.k]);
+			bool upResult = hasUp(newNodes[term.i][term.j][term.k]);
+			if (DEBUG && (downResult && upResult || !downResult && !upResult)) {
+				logError("something goes wrong with term nodes");
+			}
+			if (upResult) {
+
+			}
+		}
 		if (hasXLines(newNodes[term.i][term.j][term.k]))
 		{
 			int neibLeft;
@@ -1790,6 +1811,7 @@ void genT3D() {
 		set<int> visitedNodes;
 		visitedNodes.insert(tmpSigm[i].terminalNode);
 		sigmNewT[i].terminalNode = tmpSigm[i].terminalNode;
+		logger << "Start chaining " << tmpSigm[i].terminalNode << " node" << endl;
 		for each (neighbor var in tmpSigm[i].neighbors)
 		{
 			visitedNodes.insert(var.index);
@@ -1799,6 +1821,15 @@ void genT3D() {
 			else {
 				sigmNewT[i].neighbors.insert(var);
 			}
+		}
+		//check
+		double sum = 0;
+		for each (neighbor var in sigmNewT[i].neighbors)
+		{
+			sum += var.weight;
+		}
+		if (!MkaUtils::equals(sum, 1)) {
+			logError("Incorrect chain of matrix T, weights sum not equals to 1");
 		}
 	}
 
@@ -1860,7 +1891,9 @@ void Output()
 		{
 			for (i = 0; i < nX; i++)
 			{
-				if (newNodes[i][j][t].test(IS_REGULAR) || hasAll(newNodes[i][j][t]))
+				if (DEBUG && !newNodes[i][j][t].test(IS_REGULAR) && hasAll(newNodes[i][j][t]))
+					throw new exception("it is happened!");
+				if (newNodes[i][j][t].test(IS_REGULAR) || hasAll(newNodes[i][j][t]))	//может быть и терминальным, добавить проверку
 				{
 					xyz_points.push_back(point(xNet[i], yNet[j],zNet[t]));
 				}

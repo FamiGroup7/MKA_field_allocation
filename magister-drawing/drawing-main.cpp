@@ -30,6 +30,9 @@ void GLInit();
 void GLRenderScene();
 void GLKeyDown(unsigned char key, int x, int y);
 void Reshape(GLint w, GLint h);
+void glEnter2D(void);
+void glLeave2D(void);
+void glWrite(float x, float y, int *font, char text[256], int kls);
 
 string location = "../МАГА/";
 
@@ -294,6 +297,11 @@ void GLRenderScene()
 	glRotatef(yAngle, 0, 1, 0);
 	glRotatef(zAngle, 0, 0, 1);
 
+	glEnter2D();
+	glColor3f(0, 0, 0);
+	glWrite(200, 200, (int*)GLUT_BITMAP_8_BY_13, (char*)"qwerty", 6);
+	glLeave2D();
+
 	glLineWidth(1.5); 
 	glBegin(GL_LINE_STRIP);
 	{
@@ -376,4 +384,33 @@ void Reshape(GLint w, GLint h) // При изменении размеров окна
 	//glLoadIdentity();
 	//glFrustum(-1.0, 1.0, -1.0, 1.0, 1.5, 20.0);
 	//glMatrixMode(GL_MODELVIEW);
+}
+
+void glEnter2D(void) {
+	glMatrixMode(GL_PROJECTION);
+	glPushMatrix();
+	glLoadIdentity();
+	gluOrtho2D(0, Width, 0, Height);
+
+	glMatrixMode(GL_MODELVIEW);
+	glPushMatrix();
+	glLoadIdentity();
+
+	glDisable(GL_DEPTH_TEST);
+}
+
+void glLeave2D(void) {
+	glMatrixMode(GL_PROJECTION);
+	glPopMatrix();
+	glMatrixMode(GL_MODELVIEW);
+	glPopMatrix();
+
+	glEnable(GL_DEPTH_TEST);
+}
+
+void glWrite(float x, float y, int *font, char text[256], int kls) {
+	int i;
+	glRasterPos2f(x, y);
+	for (i = 0; i<kls; i++)
+		glutBitmapCharacter(font, (int)text[i]);
 }
