@@ -26,42 +26,13 @@ const size_t RIGHT_BACK = 11;
 const size_t IS_REGULAR = 12;
 
 const bool DEBUG = true;
-
-using namespace std;
+bool GRID_UNION = true;
 
 struct colour // цвет точки
 {
 	int red;
 	int green;
 	int blue;
-};
-
-struct point // точка
-{
-	double x, y, z;
-
-	point(double x, double y, double z)
-		: x(x),
-		  y(y),
-		  z(z)
-	{
-	}
-
-	point(): x(0), y(0), z(0)
-	{
-	}
-
-	friend bool operator==(const point& lhs, const point& rhs)
-	{
-		return MkaUtils::equals(lhs.x, rhs.x)
-			&& MkaUtils::equals(lhs.y, rhs.y)
-			&& MkaUtils::equals(lhs.z, rhs.z);
-	}
-
-	friend bool operator!=(const point& lhs, const point& rhs)
-	{
-		return !(lhs == rhs);
-	}
 };
 
 struct locateOfPoint
@@ -139,10 +110,10 @@ double* ggT;
 
 int LosLU(double* ggl, double* ggu, double* diag, int N, int* ig, int* jg, double* f, double* q);
 
-vector<point> xyz_points;
+vector<Point> xyz_points;
 vector<nvtr> KE;
 vector<field> sreda;
-map<Point, Edge> termNodeOnEdge;
+multimap<Point, Edge> termNodeOnEdge;
 
 
 double leftX, rightX, leftY, rightY, leftZ, rightZ;
@@ -152,6 +123,9 @@ int nX, nY, nZ;
 char*** matrixNode;
 bitset<BIT_SIZE>*** newNodes;
 int nColT, kolvoRegularNode;
+
+const int AXIS_SIZE = 6;
+enum Axis { LEFT, RIGHT, DOWN, UP, BACK, FORE };
 
 int *ig, *jg;
 double *di, *b, *q, *ggl, *ggu;
@@ -236,7 +210,7 @@ void GenerateNetLikeTelma(set<double>& mas, ifstream& fileNet)
 	}
 }
 
-int indexXYZ(point goal)
+int indexXYZ(Point goal)
 {
 	for (int i = 0; i < xyz_points.size(); i++)
 	{
@@ -252,7 +226,7 @@ int indexXYZ(point goal)
 
 int indexXYZ(double x, double y, double z)
 {
-	point goal(x, y, z);
+	Point goal(x, y, z);
 	return indexXYZ(goal);
 }
 
@@ -270,7 +244,12 @@ double otn(double val1, double val2) {
 }
 
 double LikeACube(double x, double y, double z) {
-	return (otn(x, y) + otn(x, z) + otn(y, z)) / 3.0;
+	//double xy = x*y;
+	//double xz = x*z;
+	//double yz = y*z;
+	//return (otn(x, y) + otn(x, z) + otn(y, z)) / 3.0;
+	double min = MkaUtils::compare(x, y) == -1 ? x: y;
+	return MkaUtils::compare(min, z) == -1 ? min : z;
 }
 
 int FindLocate(double* massiv, int razm, double x)
@@ -328,6 +307,18 @@ bool hasZLines(bitset<BIT_SIZE> node) {
 
 bool hasAll(bitset<BIT_SIZE> node) {
 	return hasXLines(node) && hasYLines(node) && hasZLines(node);
+}
+
+vector<Axis>* nodeInfo(bitset<BIT_SIZE> node) {
+	int n = 0;
+	vector<Axis>* result = new vector<Axis>;
+	if (hasLeft(node)) result->push_back(LEFT);
+	if (hasRight(node)) result->push_back(RIGHT);
+	if (hasDown(node)) result->push_back(DOWN);
+	if (hasUp(node)) result->push_back(UP);
+	if (hasBack(node)) result->push_back(BACK);
+	if (hasFore(node)) result->push_back(FORE);
+	return result;
 }
 
 bool canOptimize(int directionX, int directionY, int directionZ, bitset<BIT_SIZE> node) {
@@ -389,7 +380,7 @@ int findNextZ(int directionX, int directionY, int directionZ,
 	int posK;
 	for (int k = startPositionZ + 1; k <= endPositionZ * directionZ; k++)
 	{
-		posK = k * directionX;
+		posK = k * directionZ;
 		if (canOptimize(directionX, directionY, -1 * directionZ, newNodes[posI][posJ][posK]))
 		{
 			return posK;
@@ -398,8 +389,18 @@ int findNextZ(int directionX, int directionY, int directionZ,
 	return -1;
 }
 
-void deletePlaneX(int xPlane, int y1, int y2, int z1, int z2) {
-	logger << "Deleted plane x = " << xPlane << ", y1=" << y1 << ", y2=" << y2 << ", z1=" << z1 << ", z2=" << z2 << endl;
+void addTermNodeToMap(int middleX, int x1, int x2, int y, int z) {
+	termNodeOnEdge.insert(pair<Point, Edge>(
+		Point(xNet[middleX], yNet[y], zNet[z]),
+		Edge(
+			Point(xNet[x1], yNet[y], zNet[z]),
+			Point(xNet[x2], yNet[y], zNet[z]))
+		));
+}
+
+void deletePlaneX(int xPlane, int x1, int x2, int y1, int y2, int z1, int z2) {
+	logger << "Deleted plane x = " << xNet[xPlane] << ", y1 = " << yNet[y1] << ", y2 = " << yNet[y2] 
+		<< ", z1 = " << zNet[z1] << ", z2 = " << zNet[z2] << endl;
 	
 	newNodes[xPlane][y1][z1].reset(IS_REGULAR);
 	newNodes[xPlane][y1][z2].reset(IS_REGULAR);
@@ -431,15 +432,11 @@ void deletePlaneX(int xPlane, int y1, int y2, int z1, int z2) {
 		newNodes[xPlane][y2][z1].reset(LEFT_UP).reset(RIGHT_UP);
 	if (!newNodes[xPlane][y2][z2].test(BACK_DOWN))
 		newNodes[xPlane][y2][z2].reset(LEFT_DOWN).reset(RIGHT_DOWN);
-}
 
-void addTermNodeToMap(int middleX, int x1, int x2, int y, int z) {
-	termNodeOnEdge.insert(pair<Point, Edge>(
-		Point(xNet[middleX], yNet[y], zNet[z]),
-		Edge(
-			Point(xNet[x1], yNet[y], zNet[z]),
-			Point(xNet[x2], yNet[y], zNet[z]))
-		));
+	addTermNodeToMap(xPlane, x1, x2, y1, z1);
+	addTermNodeToMap(xPlane, x1, x2, y1, z2);
+	addTermNodeToMap(xPlane, x1, x2, y2, z1);
+	addTermNodeToMap(xPlane, x1, x2, y2, z2);
 }
 
 void OptimizationQuarterX(int directionX, int directionY, int directionZ,
@@ -489,19 +486,14 @@ void OptimizationQuarterX(int directionX, int directionY, int directionZ,
 						if (LikeACube(width_1, deep, height) < LikeACube(width_2, deep, height)) {
 							if (directionY == 1)
 								if (directionZ == 1)
-									deletePlaneX(nextX, posJ, nextY, posT, nextZ);
+									deletePlaneX(nextX, posI, nextX2, posJ, nextY, posT, nextZ);
 								else
-									deletePlaneX(nextX, posJ, nextY, nextZ, posT);
+									deletePlaneX(nextX, posI, nextX2, posJ, nextY, nextZ, posT);
 							else
 								if (directionZ == 1)
-									deletePlaneX(nextX, nextY, posJ, posT, nextZ);
+									deletePlaneX(nextX, posI, nextX2, nextY, posJ, posT, nextZ);
 								else
-									deletePlaneX(nextX, nextY, posJ, nextZ, posT);
-
-							addTermNodeToMap(nextX, posI, nextX2, posJ, posT);
-							addTermNodeToMap(nextX, posI, nextX2, posJ, nextZ);
-							addTermNodeToMap(nextX, posI, nextX2, nextY, posT);
-							addTermNodeToMap(nextX, posI, nextX2, nextY, nextZ);
+									deletePlaneX(nextX, posI, nextX2, nextY, posJ, nextZ, posT);
 						}
 					}
 				}
@@ -570,6 +562,10 @@ void DivideArea(double* xNet, int nX, double* yNet, int nY, double* zNet, int nZ
 {
 	double height_1, height_2, width_1, width_2;
 	int locateSourceX, locateSourceY, locateSourceZ;
+	if (!GRID_UNION) {
+		logger << "Grid optimization disabled" << endl;
+		return;
+	}
 	for (int indSreda = 0; indSreda < sreda.size(); indSreda++)
 	{
 		if (koordSourceX <= sreda[indSreda].x1)
@@ -597,6 +593,70 @@ void DivideArea(double* xNet, int nX, double* yNet, int nY, double* zNet, int nZ
 			FindLocate(yNet, nY, sreda[indSreda].y2), FindLocate(zNet, nZ, sreda[indSreda].z2));
 	}
 	//duplicatingOfXY();
+}
+
+void PrintLocalMatrix()
+{
+	int i, j;
+	for (i = 0; i < 8; i++)
+	{
+		for (j = 0; j < 8; j++)
+		{
+			logger << setw(15) << localMatrix[i][j];
+		}
+		logger << endl;
+	}
+	logger << endl;
+}
+
+void PrintPlotMatrix(bool flag_simmeric)
+{
+	int i, j;
+	double**APlot = new double*[kolvoRegularNode];
+	for (i = 0; i < kolvoRegularNode; i++)
+	{
+		APlot[i] = new double[kolvoRegularNode];
+		for (j = 0; j < kolvoRegularNode; j++)
+		{
+			APlot[i][j] = 0;
+		}
+	}
+	if (flag_simmeric)
+		for (i = 0; i < kolvoRegularNode; i++)
+		{
+			APlot[i][i] = di[i];
+			for (j = ig[i]; j < ig[i + 1]; j++)
+			{
+				APlot[i][jg[j]] = ggl[j];
+				APlot[jg[j]][i] = ggl[j];
+			}
+		}
+	else
+		for (i = 0; i < kolvoRegularNode; i++)
+		{
+			APlot[i][i] = di[i];
+			for (j = ig[i]; j < ig[i + 1]; j++)
+			{
+				APlot[i][jg[j]] = ggl[j];
+				APlot[jg[j]][i] = ggu[j];
+			}
+		}
+
+	for (i = 0; i < kolvoRegularNode; i++)
+	{
+		for (j = 0; j < kolvoRegularNode; j++)
+		{
+			logger << setw(15) << APlot[i][j];
+		}
+		logger << endl;
+	}
+	logger << endl;
+
+	for (i = 0; i < kolvoRegularNode; i++)
+	{
+		logger << setw(15) << b[i];
+	}
+	logger << endl;	logger << endl;
 }
 
 void inputNet()
@@ -678,142 +738,9 @@ void inputNet()
 	}
 }
 
-void generatePortrait()
-{
-	int kolvoRegularNode = xyz_points.size();
-	int countLocalIndex = 8;
-	set<size_t>* portrait = new set<size_t>[kolvoRegularNode];
-	for (size_t k = 0; k < KE.size(); k++)
-	{
-		for (size_t i = 0; i < countLocalIndex; i++)
-		{
-			size_t a = KE[k].uzel[i];
-			for (size_t j = 0; j < i; j++)
-			{
-				size_t b = KE[k].uzel[j];
-				// ≈сли оба узла не €вл€ютс€ терминальными
-				if (a < kolvoRegularNode && b < kolvoRegularNode)
-				{
-					if (b > a)
-						portrait[b].insert(a);
-					else
-						portrait[a].insert(b);
-				}
-				/*else if (a >= kolvoRegularNode && b < kolvoRegularNode)
-				{
-					for (size_t mu = igT[a - kolvoRegularNode]; mu < igT[a - kolvoRegularNode + 1]; mu++)
-					{
-						size_t pos_a = jgT[mu];
-						if (b != pos_a)
-						{
-							if (b > pos_a)
-								portrait[b].insert(pos_a);
-							else
-								portrait[pos_a].insert(b);
-						}
-					}
-				}
-				else if (a < kolvoRegularNode && b >= kolvoRegularNode)
-				{
-					for (size_t nu = igT[b - kolvoRegularNode]; nu < igT[b - kolvoRegularNode + 1]; nu++)
-					{
-						size_t pos_b = jgT[nu];
-						if (a != pos_b)
-						{
-							if (pos_b > a)
-								portrait[pos_b].insert(a);
-							else
-								portrait[a].insert(pos_b);
-						}
-					}
-				}
-				else
-				{
-					for (size_t mu = igT[a - kolvoRegularNode]; mu < igT[a - kolvoRegularNode + 1]; mu++)
-					{
-						size_t pos_a = jgT[mu];
-						for (size_t nu = igT[b - kolvoRegularNode]; nu < igT[b - kolvoRegularNode + 1]; nu++)
-						{
-							size_t pos_b = jgT[nu];
-							if (pos_b != pos_a)
-							{
-								if (pos_b > pos_a)
-									portrait[pos_b].insert(pos_a);
-								else
-									portrait[pos_a].insert(pos_b);
-							}
-						}
-					}
-				}*/
-			}
-		}
-	}
-
-	size_t gg_size = 0;
-	for (size_t i = 0; i < kolvoRegularNode; i++)
-		gg_size += portrait[i].size();
-
-	ig = new int[kolvoRegularNode + 1];
-	di = new double[kolvoRegularNode];
-	b = new double[kolvoRegularNode];
-	q = new double[kolvoRegularNode];
-	ig[0] = ig[1] = 0;
-	for (size_t i = 0; i < kolvoRegularNode; i++)
-	{
-		di[i] = b[i] = q[i] = 0;
-		//for (set<size_t>::iterator j = portrait[i].begin(); j != portrait[i].end(); ++j)
-		//{
-		//	slae.jg[tmp] = *j;
-		//	tmp++;
-		//}
-		ig[i + 1] = ig[i] + portrait[i].size();
-	}
-	jg = new int[ig[kolvoRegularNode]];
-	ggl = new double[ig[kolvoRegularNode]];
-	ggu = new double[ig[kolvoRegularNode]];
-
-	for (size_t i = 0; i < ig[kolvoRegularNode]; i++)
-	{
-		ggl[i] = 0;
-		ggu[i] = 0;
-	}
-
-	size_t tmp = 0;
-	for (size_t i = 0; i < kolvoRegularNode; i++)
-	{
-		for (set<size_t>::iterator j = portrait[i].begin(); j != portrait[i].end(); ++j)
-		{
-			jg[tmp] = *j;
-			tmp++;
-		}
-		portrait[i].clear();
-	}
-	delete[] portrait;
-
-	int i, j;
-	ofstream igOut("ig.txt");
-	ofstream jgOut("jg.txt");
-	for (i = 0; i <= kolvoRegularNode; i++)
-	{
-		igOut << ig[i] << "   " << i << "   ";
-		if (i != kolvoRegularNode)
-			igOut << ig[i + 1] - ig[i] << endl;
-	}
-	cout << endl;
-	for (j = 0; j < kolvoRegularNode; j++)
-	{
-		jgOut << "string " << j << ": ";
-		for (i = ig[j]; i < ig[j + 1]; i++)
-		{
-			jgOut << jg[i] << " ";
-		}
-		jgOut << endl;
-	}
-}
-
 void generatePortraitNesoglas()
 {
-	int kolvoRegularNode = xyz_points.size();
+	//int kolvoRegularNode = xyz_points.size();
 	int countLocalIndex = 8;
 	set<size_t>* portrait = new set<size_t>[kolvoRegularNode];
 	for (size_t k = 0; k < KE.size(); k++)
@@ -944,7 +871,7 @@ void generatePortraitNesoglas()
 	}
 }
 
-double analiticSolution(point goal)
+double analiticSolution(Point goal)
 {
 	return 1 + goal.x + goal.y + goal.z;
 	//return goal.x*goal.x + goal.y*goal.y + goal.z*goal.z;
@@ -953,7 +880,7 @@ double analiticSolution(point goal)
 
 double analiticSolution(double x, double y, double z)
 {
-	return analiticSolution(point(x, y, z));
+	return analiticSolution(Point(x, y, z));
 }
 
 double Lambda(int ielem)
@@ -1031,85 +958,105 @@ void AddToMatrix(int posI, int posJ, double el)
 	}
 }
 
-void Addition(int ielem)
-{
-	int i, j;
-	int kolvoRegularNode = xyz_points.size();
-	for (i = 0; i < 8; i++)
+void AddToA(int i, int j, double value) {
+	if (i < kolvoRegularNode)
 	{
-		if (KE[ielem].uzel[i] < kolvoRegularNode)
+		if (j < kolvoRegularNode)
 		{
-			b[KE[ielem].uzel[i]] += localB[i];
+			AddToMatrix(i, j, value);
 		}
 		else
-			for (int k = igT[KE[ielem].uzel[i] - kolvoRegularNode]; k < igT[KE[ielem].uzel[i] - kolvoRegularNode + 1]; k++)
-			{
-				b[jgT[k]] += localB[i] * ggT[k];
-			}
-		for (j = 0; j < 8; j++)
 		{
-			if (KE[ielem].uzel[i] < kolvoRegularNode)
+			for (int k = igT[j - kolvoRegularNode]; k < igT[j - kolvoRegularNode + 1]; k++)
 			{
-				if (KE[ielem].uzel[j] < kolvoRegularNode)
-				{
-					AddToMatrix(KE[ielem].uzel[i], KE[ielem].uzel[j], localMatrix[i][j]);
-				}
-				else
-				{
-					for (int k = igT[KE[ielem].uzel[j] - kolvoRegularNode]; k < igT[KE[ielem].uzel[j] - kolvoRegularNode + 1]; k++)
-					{
-						//posJ = jgT[k];
-						//koefJ = ggT[k];
-						AddToMatrix(KE[ielem].uzel[i], jgT[k], ggT[k] * localMatrix[i][j]);
-					}
-				}
+				AddToMatrix(i, jgT[k], ggT[k] * value);
 			}
-			else
+		}
+	}
+	else
+	{
+		if (j < kolvoRegularNode)
+		{
+			for (int k = igT[i - kolvoRegularNode]; k < igT[i - kolvoRegularNode + 1]; k++)
 			{
-				if (KE[ielem].uzel[j] < kolvoRegularNode)
+				AddToMatrix(jgT[k], j, ggT[k] * value);
+			}
+		}
+		else
+		{
+			for (int k = igT[i - kolvoRegularNode]; k < igT[i - kolvoRegularNode + 1]; k++)
+			{
+				for (int l = igT[j - kolvoRegularNode]; l < igT[j - kolvoRegularNode + 1]; l++)
 				{
-					for (int k = igT[KE[ielem].uzel[i] - kolvoRegularNode]; k < igT[KE[ielem].uzel[i] - kolvoRegularNode + 1]; k++)
-					{
-						//posI = jgT[k];
-						//koefI = ggT[k];
-						AddToMatrix(jgT[k], KE[ielem].uzel[j], ggT[k] * localMatrix[i][j]);
-					}
-				}
-				else
-				{
-					for (int k = igT[KE[ielem].uzel[i] - kolvoRegularNode]; k < igT[KE[ielem].uzel[i] - kolvoRegularNode + 1]; k++)
-					{
-						for (int l = igT[KE[ielem].uzel[j] - kolvoRegularNode]; l < igT[KE[ielem].uzel[j] - kolvoRegularNode + 1]; l++)
-						{
-							AddToMatrix(jgT[k], jgT[l], ggT[k] * ggT[l] * localMatrix[i][j]);
-						}
-					}
+					AddToMatrix(jgT[k], jgT[l], ggT[k] * ggT[l] * value);
 				}
 			}
 		}
 	}
 }
 
-//intXorYorZ can be 0,1 or 2
-void doEdge1(ofstream& outEdge1File, int intXorYorZ, int kolvoRegularNode, double* varNet1, int nVarNet1, double* varNet2, int nVarNet2, double uncnownValuePlosk)
+void AddToB(int i, double value) {
+	if (i < kolvoRegularNode)
+	{
+		b[i] += value;
+	}
+	else
+		for (int k = igT[i - kolvoRegularNode]; k < igT[i - kolvoRegularNode + 1]; k++)
+		{
+			b[jgT[k]] += value * ggT[k];
+		}
+}
+
+void Addition(int ielem)
 {
+	int i, j;
+	for (i = 0; i < 8; i++)
+	{
+		AddToB(KE[ielem].uzel[i], localB[i]);
+		for (j = 0; j < 8; j++)
+		{
+			AddToA(KE[ielem].uzel[i], KE[ielem].uzel[j], localMatrix[i][j]);
+		}
+	}
+}
+
+//intXorYorZ can be 0,1 or 2
+void doEdge1(ofstream& outEdge1File, const int intXorYorZ, const int kolvoRegularNode, 
+	double* varNet1, const int nVarNet1, double* varNet2, const int nVarNet2, const int unknownIndex)
+{
+	vector<Axis>*info;
 	for (int iVar1 = 0; iVar1 < nVarNet1; iVar1 ++)
 	{
 		for (int iVar2 = 0; iVar2 < nVarNet2; iVar2++)
 		{
-			point goal;
-			if (intXorYorZ == 0)
-				goal = point(uncnownValuePlosk, varNet1[iVar1], varNet2[iVar2]);
-			else
-			{
-				if (intXorYorZ == 1)
-					goal = point(varNet1[iVar1], uncnownValuePlosk, varNet2[iVar2]);
-				else
-					goal = point(varNet1[iVar1], varNet2[iVar2], uncnownValuePlosk);
+			Point *goal;
+			bitset<BIT_SIZE> *condition;
+			if (intXorYorZ == 0) {
+				goal = &Point(xNet[unknownIndex], varNet1[iVar1], varNet2[iVar2]);
+				condition = &newNodes[unknownIndex][iVar1][iVar2];
 			}
-			int k = indexXYZ(goal);
-			di[k] = 1;
-			b[k] = analiticSolution(goal);
+			else if (intXorYorZ == 1) {
+				goal = &Point(varNet1[iVar1], yNet[unknownIndex], varNet2[iVar2]);
+				condition = &newNodes[iVar1][unknownIndex][iVar2];
+			}
+			else {
+				goal = &Point(varNet1[iVar1], varNet2[iVar2], zNet[unknownIndex]);
+				condition = &newNodes[iVar1][iVar2][unknownIndex];
+			}
+			if (condition->none()) {
+				continue;
+			}
+			int k = indexXYZ(*goal);
+			if (DEBUG) {
+				info = nodeInfo(*condition);
+			}
+			if (k < kolvoRegularNode) {
+				di[k] = 1;
+				b[k] = analiticSolution(*goal);
+			}
+			else {
+				continue;
+			}
 			for (int m = ig[k]; m < ig[k + 1]; m++)
 			{
 				ggl[m] = 0;
@@ -1124,6 +1071,7 @@ void doEdge1(ofstream& outEdge1File, int intXorYorZ, int kolvoRegularNode, doubl
 					}
 				}
 			}
+			if (DEBUG) delete info;
 			outEdge1File << k << '\t' << b[k] << endl;
 		}
 	}
@@ -1132,19 +1080,19 @@ void doEdge1(ofstream& outEdge1File, int intXorYorZ, int kolvoRegularNode, doubl
 void Edge1_not_sim(bool up, bool down, bool left, bool right, bool fore, bool behind)
 {
 	ofstream ku1("ku1.txt");
-	int kolvoRegularNode = xyz_points.size();
+	//int kolvoRegularNode = xyz_points.size();
 	if (down)
-		doEdge1(ku1, 2, kolvoRegularNode, xNet, nX, yNet, nY, zNet[0]);
+		doEdge1(ku1, 2, kolvoRegularNode, xNet, nX, yNet, nY, 0);
 	if (up)
-		doEdge1(ku1, 2, kolvoRegularNode, xNet, nX, yNet, nY, zNet[nZ - 1]);
+		doEdge1(ku1, 2, kolvoRegularNode, xNet, nX, yNet, nY, nZ - 1);
 	if (left)
-		doEdge1(ku1, 0, kolvoRegularNode, yNet, nY, zNet, nZ, xNet[0]);
+		doEdge1(ku1, 0, kolvoRegularNode, yNet, nY, zNet, nZ, 0);
 	if (right)
-		doEdge1(ku1, 0, kolvoRegularNode, yNet, nY, zNet, nZ, xNet[nX - 1]);
+		doEdge1(ku1, 0, kolvoRegularNode, yNet, nY, zNet, nZ, nX - 1);
 	if (fore)
-		doEdge1(ku1, 1, kolvoRegularNode, xNet, nX, zNet, nZ, yNet[0]);
+		doEdge1(ku1, 1, kolvoRegularNode, xNet, nX, zNet, nZ, 0);
 	if (behind)
-		doEdge1(ku1, 1, kolvoRegularNode, xNet, nX, zNet, nZ, yNet[nY - 1]);
+		doEdge1(ku1, 1, kolvoRegularNode, xNet, nX, zNet, nZ, nY - 1);
 }
 
 int findKE(int ind_nodes[4])
@@ -1173,68 +1121,107 @@ int findKE(int ind_nodes[4])
 }
 
 //intXorYorZ can be 0,1 or 2
-void doEdge2(ofstream& outEdge2File, int intXorYorZ, int normalDirect, int kolvoRegularNode, double* varNet1, int nVarNet1, double* varNet2, int nVarNet2, double uncnownValuePlosk)
+void doEdge2(ofstream& outEdge2File, const int intXorYorZ, const int normalDirect, const int kolvoRegularNode,
+	double* varNet1, const int nVarNet1, double* varNet2, const int nVarNet2, const int unknownIndex)
 {
-	double dUdn[4], h = 0.01, dh1, dh2;
+	double dUdn[4], h = 0.02, dh1, dh2;
 	int indNodes[4];
-	for (int iVar1 = 0; iVar1 < nVarNet1 - 1; iVar1++)
+	for (int iVar1 = 0; iVar1 < nVarNet1; iVar1++)
 	{
-		for (int iVar2 = 0; iVar2 < nVarNet2 - 1; iVar2++)
+		for (int iVar2 = 0; iVar2 < nVarNet2; iVar2++)
 		{
-			point goal;
+			int nextVar1, nextVar2;
+			Point *dPoint, *gran;
+			gran = new Point[4];
+			bitset<BIT_SIZE> *condition;
 			if (intXorYorZ == 0)
 			{
-				goal = point(uncnownValuePlosk, varNet1[iVar1], varNet2[iVar2]);
-				dUdn[0] = normalDirect * (analiticSolution(uncnownValuePlosk + h, varNet1[iVar1], varNet2[iVar2]) - analiticSolution(uncnownValuePlosk - h, varNet1[iVar1], varNet2[iVar2])) / (2.0 * h);
-				dUdn[1] = normalDirect * (analiticSolution(uncnownValuePlosk + h, varNet1[iVar1], varNet2[iVar2 + 1]) - analiticSolution(uncnownValuePlosk - h, varNet1[iVar1], varNet2[iVar2 + 1])) / (2.0 * h);
-				dUdn[2] = normalDirect * (analiticSolution(uncnownValuePlosk + h, varNet1[iVar1 + 1], varNet2[iVar2]) - analiticSolution(uncnownValuePlosk - h, varNet1[iVar1 + 1], varNet2[iVar2])) / (2.0 * h);
-				dUdn[3] = normalDirect * (analiticSolution(uncnownValuePlosk + h, varNet1[iVar1 + 1], varNet2[iVar2 + 1]) - analiticSolution(uncnownValuePlosk - h, varNet1[iVar1 + 1], varNet2[iVar2 + 1])) / (2.0 * h);
-				indNodes[0] = indexXYZ(goal);
-				indNodes[1] = indexXYZ(uncnownValuePlosk, varNet1[iVar1 + 1], varNet2[iVar2]);
-				indNodes[2] = indexXYZ(uncnownValuePlosk, varNet1[iVar1], varNet2[iVar2 + 1]);
-				indNodes[3] = indexXYZ(uncnownValuePlosk, varNet1[iVar1 + 1], varNet2[iVar2 + 1]);
+				condition = &newNodes[unknownIndex][iVar1][iVar2];
+				if (condition->none() || !canOptimize(-1 * normalDirect, 1, 1, *condition)) {
+					continue;
+				}
+				nextVar1 = findNextY(-1 * normalDirect, 1, 1, iVar1, nVarNet1, unknownIndex, iVar2);
+				nextVar2 = findNextZ(-1 * normalDirect, 1, 1, iVar2, nVarNet2, unknownIndex, iVar1);
+				if (DEBUG) {
+					if (nextVar1 == -1 || nextVar2 == -1
+						|| findNextY(-1 * normalDirect, 1, -1, iVar1, nVarNet1, unknownIndex, nextVar2) != nextVar1
+						|| findNextZ(-1 * normalDirect, -1, 1, iVar2, nVarNet2, unknownIndex, nextVar1) != nextVar2) {
+						logError("Error, no square");
+					}
+				}
+				dPoint = new Point(h, 0, 0);
+				gran[0] = Point(xNet[unknownIndex], varNet1[iVar1], varNet2[iVar2]);
+				gran[1] = Point(xNet[unknownIndex], varNet1[iVar1], varNet2[nextVar2]);
+				gran[2] = Point(xNet[unknownIndex], varNet1[nextVar1], varNet2[iVar2]);
+				gran[3] = Point(xNet[unknownIndex], varNet1[nextVar1], varNet2[nextVar2]);
+			}
+			else if (intXorYorZ == 1) {
+				condition = &newNodes[iVar1][unknownIndex][iVar2];
+				if (condition->none() || !canOptimize(1, -1 * normalDirect, 1, *condition)) {
+					continue;
+				}
+				nextVar1 = findNextX(1, -1 * normalDirect, 1, iVar1, nVarNet1, unknownIndex, iVar2);
+				nextVar2 = findNextZ(1, -1 * normalDirect, 1, iVar2, nVarNet2, iVar1, unknownIndex);
+				if (DEBUG) {
+					if (nextVar1 == -1 || nextVar2 == -1
+						|| findNextX(1, -1 * normalDirect, -1, iVar1, nVarNet1, unknownIndex, nextVar2) != nextVar1
+						|| findNextZ(-1, -1 * normalDirect, 1, iVar2, nVarNet2, nextVar1, unknownIndex) != nextVar2) {
+						logError("Error, no square");
+					}
+				}
+				dPoint = new Point(0, h, 0);
+				gran[0] = Point(varNet1[iVar1], yNet[unknownIndex], varNet2[iVar2]);
+				gran[1] = Point(varNet1[iVar1], yNet[unknownIndex], varNet2[nextVar2]);
+				gran[2] = Point(varNet1[nextVar1], yNet[unknownIndex], varNet2[iVar2]);
+				gran[3] = Point(varNet1[nextVar1], yNet[unknownIndex], varNet2[nextVar2]);
 			}
 			else
 			{
-				if (intXorYorZ == 1)
-				{
-					goal = point(varNet1[iVar1], uncnownValuePlosk, varNet2[iVar2]);
-					dUdn[0] = normalDirect * (analiticSolution(varNet1[iVar1], uncnownValuePlosk + h, varNet2[iVar2]) - analiticSolution(varNet1[iVar1], uncnownValuePlosk - h, varNet2[iVar2])) / (2.0 * h);
-					dUdn[1] = normalDirect * (analiticSolution(varNet1[iVar1], uncnownValuePlosk + h, varNet2[iVar2 + 1]) - analiticSolution(varNet1[iVar1], uncnownValuePlosk - h, varNet2[iVar2 + 1])) / (2.0 * h);
-					dUdn[2] = normalDirect * (analiticSolution(varNet1[iVar1 + 1], uncnownValuePlosk + h, varNet2[iVar2]) - analiticSolution(varNet1[iVar1 + 1], uncnownValuePlosk - h, varNet2[iVar2])) / (2.0 * h);
-					dUdn[3] = normalDirect * (analiticSolution(varNet1[iVar1 + 1], uncnownValuePlosk + h, varNet2[iVar2 + 1]) - analiticSolution(varNet1[iVar1 + 1], uncnownValuePlosk - h, varNet2[iVar2 + 1])) / (2.0 * h);
-					indNodes[0] = indexXYZ(goal);
-					indNodes[1] = indexXYZ(varNet1[iVar1 + 1], uncnownValuePlosk, varNet2[iVar2]);
-					indNodes[2] = indexXYZ(varNet1[iVar1], uncnownValuePlosk, varNet2[iVar2 + 1]);
-					indNodes[3] = indexXYZ(varNet1[iVar1 + 1], uncnownValuePlosk, varNet2[iVar2 + 1]);
+				condition = &newNodes[iVar1][iVar2][unknownIndex];
+				if (condition->none() || !canOptimize(1, 1, -1 * normalDirect, *condition)) {
+					continue;
 				}
-				else
-				{
-					goal = point(varNet1[iVar1], varNet2[iVar2], uncnownValuePlosk);
-					dUdn[0] = normalDirect * (analiticSolution(varNet1[iVar1], varNet2[iVar2], uncnownValuePlosk + h) - analiticSolution(varNet1[iVar1], varNet2[iVar2], uncnownValuePlosk - h)) / (2.0 * h);
-					dUdn[1] = normalDirect * (analiticSolution(varNet1[iVar1], varNet2[iVar2 + 1], uncnownValuePlosk + h) - analiticSolution(varNet1[iVar1], varNet2[iVar2 + 1], uncnownValuePlosk - h)) / (2.0 * h);
-					dUdn[2] = normalDirect * (analiticSolution(varNet1[iVar1 + 1], varNet2[iVar2], uncnownValuePlosk + h) - analiticSolution(varNet1[iVar1 + 1], varNet2[iVar2], uncnownValuePlosk - h)) / (2.0 * h);
-					dUdn[3] = normalDirect * (analiticSolution(varNet1[iVar1 + 1], varNet2[iVar2 + 1], uncnownValuePlosk + h) - analiticSolution(varNet1[iVar1 + 1], varNet2[iVar2 + 1], uncnownValuePlosk - h)) / (2.0 * h);
-					indNodes[0] = indexXYZ(goal);
-					indNodes[1] = indexXYZ(varNet1[iVar1 + 1], varNet2[iVar2], uncnownValuePlosk);
-					indNodes[2] = indexXYZ(varNet1[iVar1], varNet2[iVar2 + 1], uncnownValuePlosk);
-					indNodes[3] = indexXYZ(varNet1[iVar1 + 1], varNet2[iVar2 + 1], uncnownValuePlosk);
+				nextVar1 = findNextX(1, 1, -1 * normalDirect, iVar1, nVarNet1, iVar2, unknownIndex);
+				nextVar2 = findNextY(1, 1, -1 * normalDirect, iVar2, nVarNet2, iVar1, unknownIndex);
+				if (DEBUG) {
+					if (nextVar1 == -1 || nextVar2 == -1
+						|| findNextX(1, -1, -1 * normalDirect, iVar1, nVarNet1, nextVar2, unknownIndex) != nextVar1
+						|| findNextY(-1, 1, -1 * normalDirect, iVar2, nVarNet2, nextVar1, unknownIndex) != nextVar2) {
+						logError("Error, no square");
+					}
 				}
+				dPoint = new Point(0, 0, h);
+				gran[0] = Point(varNet1[iVar1], varNet2[iVar2], zNet[unknownIndex]);
+				gran[1] = Point(varNet1[iVar1], varNet2[nextVar2], zNet[unknownIndex]);
+				gran[2] = Point(varNet1[nextVar1], varNet2[iVar2], zNet[unknownIndex]);
+				gran[3] = Point(varNet1[nextVar1], varNet2[nextVar2], zNet[unknownIndex]);
 			}
+
+			dUdn[0] = normalDirect * (analiticSolution(gran[0] + *dPoint) - analiticSolution(gran[0] - *dPoint)) / (2.0 * h);
+			dUdn[1] = normalDirect * (analiticSolution(gran[1] + *dPoint) - analiticSolution(gran[1] - *dPoint)) / (2.0 * h);
+			dUdn[2] = normalDirect * (analiticSolution(gran[2] + *dPoint) - analiticSolution(gran[2] - *dPoint)) / (2.0 * h);
+			dUdn[3] = normalDirect * (analiticSolution(gran[3] + *dPoint) - analiticSolution(gran[3] - *dPoint)) / (2.0 * h);
+			indNodes[0] = indexXYZ(gran[0]);
+			indNodes[1] = indexXYZ(gran[1]);
+			indNodes[2] = indexXYZ(gran[2]);
+			indNodes[3] = indexXYZ(gran[3]);
+
 			int indKE = findKE(indNodes);
-			dh1 = varNet1[iVar1 + 1] - varNet1[iVar1];
-			dh2 = varNet2[iVar2 + 1] - varNet2[iVar2];
+			dh1 = varNet1[nextVar1] - varNet1[iVar1];
+			dh2 = varNet2[nextVar2] - varNet2[iVar2];
+			if (dh1*dh2 == 0) throw new exception("incorrect dh");
 
 			for (size_t linux = 0; linux < 4; linux++)
 			{
 				double value = 0;
-				for (size_t linux2 = 0; linux2 < 4; linux2 ++)
+				for (size_t linux2 = 0; linux2 < 4; linux2++)
 				{
 					value += dUdn[linux2] * M2[linux][linux2] * dh1 * dh2 / 36.0 * Lambda(indKE);
 				}
-				b[indNodes[linux]] += value;
+				AddToB(indNodes[linux], value);
 				outEdge2File << setw(10) << indNodes[linux] << setw(15) << value << endl;
 			}
+			delete dPoint;
 		}
 	}
 }
@@ -1242,75 +1229,111 @@ void doEdge2(ofstream& outEdge2File, int intXorYorZ, int normalDirect, int kolvo
 void Edge2_not_sim(bool up, bool down, bool left, bool right, bool fore, bool behind)
 {
 	ofstream ku2("ku2.txt");
-	int kolvoRegularNode = xyz_points.size();
+	//int kolvoRegularNode = xyz_points.size();
 	if (up)
-		doEdge2(ku2, 2, 1, kolvoRegularNode, xNet, nX, yNet, nY, zNet[nZ - 1]);
+		doEdge2(ku2, 2, 1, kolvoRegularNode, xNet, nX - 1, yNet, nY - 1, nZ - 1);
 	if (down)
-		doEdge2(ku2, 2, -1, kolvoRegularNode, xNet, nX, yNet, nY, zNet[0]);
+		doEdge2(ku2, 2, -1, kolvoRegularNode, xNet, nX - 1, yNet, nY - 1, 0);
 	if (left)
-		doEdge2(ku2, 0, -1, kolvoRegularNode, yNet, nY, zNet, nZ, xNet[0]);
+		doEdge2(ku2, 0, -1, kolvoRegularNode, yNet, nY - 1, zNet, nZ - 1, 0);
 	if (right)
-		doEdge2(ku2, 0, 1, kolvoRegularNode, yNet, nY, zNet, nZ, xNet[nX - 1]);
+		doEdge2(ku2, 0, 1, kolvoRegularNode, yNet, nY - 1, zNet, nZ - 1, nX - 1);
 	if (fore)
-		doEdge2(ku2, 1, -1, kolvoRegularNode, xNet, nX, zNet, nZ, yNet[0]);
+		doEdge2(ku2, 1, -1, kolvoRegularNode, xNet, nX - 1, zNet, nZ - 1, 0);
 	if (behind)
-		doEdge2(ku2, 1, 1, kolvoRegularNode, xNet, nX, zNet, nZ, yNet[nY - 1]);
+		doEdge2(ku2, 1, 1, kolvoRegularNode, xNet, nX - 1, zNet, nZ - 1, nY - 1);
 }
 
 //intXorYorZ can be 0,1 or 2
-void doEdge3(ofstream& outEdge3File, int intXorYorZ, int normalDirect, int kolvoRegularNode, double* varNet1, int nVarNet1, double* varNet2, int nVarNet2, double uncnownValuePlosk)
+void doEdge3(ofstream& outEdge3File, int intXorYorZ, int normalDirect, int kolvoRegularNode,
+	double* varNet1, int nVarNet1, double* varNet2, int nVarNet2, int unknownIndex)
 {
 	double dUdn[4], h = 0.01, dh1, dh2, ubetta[4], betta;
 	int indNodes[4];
-	for (int iVar1 = 0; iVar1 < nVarNet1 - 1; iVar1++)
+	for (int iVar1 = 0; iVar1 < nVarNet1; iVar1++)
 	{
-		for (int iVar2 = 0; iVar2 < nVarNet2 - 1; iVar2++)
+		for (int iVar2 = 0; iVar2 < nVarNet2; iVar2++)
 		{
-			point goal;
+			int nextVar1, nextVar2;
+			Point *dPoint, *gran;
+			gran = new Point[4];
+			bitset<BIT_SIZE> *condition;
 			if (intXorYorZ == 0)
 			{
-				goal = point(uncnownValuePlosk, varNet1[iVar1], varNet2[iVar2]);
-				dUdn[0] = normalDirect * (analiticSolution(uncnownValuePlosk + h, varNet1[iVar1], varNet2[iVar2]) - analiticSolution(uncnownValuePlosk - h, varNet1[iVar1], varNet2[iVar2])) / (2.0 * h);
-				dUdn[1] = normalDirect * (analiticSolution(uncnownValuePlosk + h, varNet1[iVar1], varNet2[iVar2 + 1]) - analiticSolution(uncnownValuePlosk - h, varNet1[iVar1], varNet2[iVar2 + 1])) / (2.0 * h);
-				dUdn[2] = normalDirect * (analiticSolution(uncnownValuePlosk + h, varNet1[iVar1 + 1], varNet2[iVar2]) - analiticSolution(uncnownValuePlosk - h, varNet1[iVar1 + 1], varNet2[iVar2])) / (2.0 * h);
-				dUdn[3] = normalDirect * (analiticSolution(uncnownValuePlosk + h, varNet1[iVar1 + 1], varNet2[iVar2 + 1]) - analiticSolution(uncnownValuePlosk - h, varNet1[iVar1 + 1], varNet2[iVar2 + 1])) / (2.0 * h);
-				indNodes[0] = indexXYZ(goal);
-				indNodes[1] = indexXYZ(uncnownValuePlosk, varNet1[iVar1 + 1], varNet2[iVar2]);
-				indNodes[2] = indexXYZ(uncnownValuePlosk, varNet1[iVar1], varNet2[iVar2 + 1]);
-				indNodes[3] = indexXYZ(uncnownValuePlosk, varNet1[iVar1 + 1], varNet2[iVar2 + 1]);
+				condition = &newNodes[unknownIndex][iVar1][iVar2];
+				if (condition->none() || !canOptimize(-1 * normalDirect, 1, 1, *condition)) {
+					continue;
+				}
+				nextVar1 = findNextY(-1 * normalDirect, 1, 1, iVar1, nVarNet1, unknownIndex, iVar2);
+				nextVar2 = findNextZ(-1 * normalDirect, 1, 1, iVar2, nVarNet2, unknownIndex, iVar1);
+				if (DEBUG) {
+					if (nextVar1 == -1 || nextVar2 == -1
+						|| findNextY(-1 * normalDirect, 1, -1, iVar1, nVarNet1, unknownIndex, nextVar2) != nextVar1
+						|| findNextZ(-1 * normalDirect, -1, 1, iVar2, nVarNet2, unknownIndex, nextVar1) != nextVar2) {
+						logError("Error, no square");
+					}
+				}
+				dPoint = new Point(h, 0, 0);
+				gran[0] = Point(xNet[unknownIndex], varNet1[iVar1], varNet2[iVar2]);
+				gran[1] = Point(xNet[unknownIndex], varNet1[iVar1], varNet2[nextVar2]);
+				gran[2] = Point(xNet[unknownIndex], varNet1[nextVar1], varNet2[iVar2]);
+				gran[3] = Point(xNet[unknownIndex], varNet1[nextVar1], varNet2[nextVar2]);
+			}
+			else if (intXorYorZ == 1) {
+				condition = &newNodes[iVar1][unknownIndex][iVar2];
+				if (condition->none() || !canOptimize(1, -1 * normalDirect, 1, *condition)) {
+					continue;
+				}
+				nextVar1 = findNextX(1, -1 * normalDirect, 1, iVar1, nVarNet1, unknownIndex, iVar2);
+				nextVar2 = findNextZ(1, -1 * normalDirect, 1, iVar2, nVarNet2, iVar1, unknownIndex);
+				if (DEBUG) {
+					if (nextVar1 == -1 || nextVar2 == -1
+						|| findNextX(1, -1 * normalDirect, -1, iVar1, nVarNet1, unknownIndex, nextVar2) != nextVar1
+						|| findNextZ(-1, -1 * normalDirect, 1, iVar2, nVarNet2, nextVar1, unknownIndex) != nextVar2) {
+						logError("Error, no square");
+					}
+				}
+				dPoint = new Point(0, h, 0);
+				gran[0] = Point(varNet1[iVar1], yNet[unknownIndex], varNet2[iVar2]);
+				gran[1] = Point(varNet1[iVar1], yNet[unknownIndex], varNet2[nextVar2]);
+				gran[2] = Point(varNet1[nextVar1], yNet[unknownIndex], varNet2[iVar2]);
+				gran[3] = Point(varNet1[nextVar1], yNet[unknownIndex], varNet2[nextVar2]);
 			}
 			else
 			{
-				if (intXorYorZ == 1)
-				{
-					goal = point(varNet1[iVar1], uncnownValuePlosk, varNet2[iVar2]);
-					dUdn[0] = normalDirect * (analiticSolution(varNet1[iVar1], uncnownValuePlosk + h, varNet2[iVar2]) - analiticSolution(varNet1[iVar1], uncnownValuePlosk - h, varNet2[iVar2])) / (2.0 * h);
-					dUdn[1] = normalDirect * (analiticSolution(varNet1[iVar1], uncnownValuePlosk + h, varNet2[iVar2 + 1]) - analiticSolution(varNet1[iVar1], uncnownValuePlosk - h, varNet2[iVar2 + 1])) / (2.0 * h);
-					dUdn[2] = normalDirect * (analiticSolution(varNet1[iVar1 + 1], uncnownValuePlosk + h, varNet2[iVar2]) - analiticSolution(varNet1[iVar1 + 1], uncnownValuePlosk - h, varNet2[iVar2])) / (2.0 * h);
-					dUdn[3] = normalDirect * (analiticSolution(varNet1[iVar1 + 1], uncnownValuePlosk + h, varNet2[iVar2 + 1]) - analiticSolution(varNet1[iVar1 + 1], uncnownValuePlosk - h, varNet2[iVar2 + 1])) / (2.0 * h);
-					indNodes[0] = indexXYZ(goal);
-					indNodes[1] = indexXYZ(varNet1[iVar1 + 1], uncnownValuePlosk, varNet2[iVar2]);
-					indNodes[2] = indexXYZ(varNet1[iVar1], uncnownValuePlosk, varNet2[iVar2 + 1]);
-					indNodes[3] = indexXYZ(varNet1[iVar1 + 1], uncnownValuePlosk, varNet2[iVar2 + 1]);
+				condition = &newNodes[iVar1][iVar2][unknownIndex];
+				if (condition->none() || !canOptimize(1, 1, -1 * normalDirect, *condition)) {
+					continue;
 				}
-				else
-				{
-					goal = point(varNet1[iVar1], varNet2[iVar2], uncnownValuePlosk);
-					dUdn[0] = normalDirect * (analiticSolution(varNet1[iVar1], varNet2[iVar2], uncnownValuePlosk + h) - analiticSolution(varNet1[iVar1], varNet2[iVar2], uncnownValuePlosk - h)) / (2.0 * h);
-					dUdn[1] = normalDirect * (analiticSolution(varNet1[iVar1], varNet2[iVar2 + 1], uncnownValuePlosk + h) - analiticSolution(varNet1[iVar1], varNet2[iVar2 + 1], uncnownValuePlosk - h)) / (2.0 * h);
-					dUdn[2] = normalDirect * (analiticSolution(varNet1[iVar1 + 1], varNet2[iVar2], uncnownValuePlosk + h) - analiticSolution(varNet1[iVar1 + 1], varNet2[iVar2], uncnownValuePlosk - h)) / (2.0 * h);
-					dUdn[3] = normalDirect * (analiticSolution(varNet1[iVar1 + 1], varNet2[iVar2 + 1], uncnownValuePlosk + h) - analiticSolution(varNet1[iVar1 + 1], varNet2[iVar2 + 1], uncnownValuePlosk - h)) / (2.0 * h);
-					indNodes[0] = indexXYZ(goal);
-					indNodes[1] = indexXYZ(varNet1[iVar1 + 1], varNet2[iVar2], uncnownValuePlosk);
-					indNodes[2] = indexXYZ(varNet1[iVar1], varNet2[iVar2 + 1], uncnownValuePlosk);
-					indNodes[3] = indexXYZ(varNet1[iVar1 + 1], varNet2[iVar2 + 1], uncnownValuePlosk);
+				nextVar1 = findNextX(1, 1, -1 * normalDirect, iVar1, nVarNet1, iVar2, unknownIndex);
+				nextVar2 = findNextY(1, 1, -1 * normalDirect, iVar2, nVarNet2, iVar1, unknownIndex);
+				if (DEBUG) {
+					if (nextVar1 == -1 || nextVar2 == -1
+						|| findNextX(1, -1, -1 * normalDirect, iVar1, nVarNet1, nextVar2, unknownIndex) != nextVar1
+						|| findNextY(-1, 1, -1 * normalDirect, iVar2, nVarNet2, nextVar1, unknownIndex) != nextVar2) {
+						logError("Error, no square");
+					}
 				}
+				dPoint = new Point(0, 0, h);
+				gran[0] = Point(varNet1[iVar1], varNet2[iVar2], zNet[unknownIndex]);
+				gran[1] = Point(varNet1[iVar1], varNet2[nextVar2], zNet[unknownIndex]);
+				gran[2] = Point(varNet1[nextVar1], varNet2[iVar2], zNet[unknownIndex]);
+				gran[3] = Point(varNet1[nextVar1], varNet2[nextVar2], zNet[unknownIndex]);
 			}
 
-			int indKE = findKE(indNodes);
+			dUdn[0] = normalDirect * (analiticSolution(gran[0] + *dPoint) - analiticSolution(gran[0] - *dPoint)) / (2.0 * h);
+			dUdn[1] = normalDirect * (analiticSolution(gran[1] + *dPoint) - analiticSolution(gran[1] - *dPoint)) / (2.0 * h);
+			dUdn[2] = normalDirect * (analiticSolution(gran[2] + *dPoint) - analiticSolution(gran[2] - *dPoint)) / (2.0 * h);
+			dUdn[3] = normalDirect * (analiticSolution(gran[3] + *dPoint) - analiticSolution(gran[3] - *dPoint)) / (2.0 * h);
+			indNodes[0] = indexXYZ(gran[0]);
+			indNodes[1] = indexXYZ(gran[1]);
+			indNodes[2] = indexXYZ(gran[2]);
+			indNodes[3] = indexXYZ(gran[3]);
 
-			dh1 = varNet1[iVar1 + 1] - varNet1[iVar1];
-			dh2 = varNet2[iVar2 + 1] - varNet2[iVar2];
+			int indKE = findKE(indNodes);
+			dh1 = varNet1[nextVar1] - varNet1[iVar1];
+			dh2 = varNet2[nextVar2] - varNet2[iVar2];
+			if (dh1*dh2 == 0) throw new exception("incorrect dh");
 			betta = -dUdn[0] * Lambda(indKE);
 
 			for (size_t i = 0; i < 4; i++)
@@ -1324,9 +1347,9 @@ void doEdge3(ofstream& outEdge3File, int intXorYorZ, int normalDirect, int kolvo
 				for (size_t linux2 = 0; linux2 < 4; linux2++)
 				{
 					value += ubetta[linux2] * M2[linux][linux2] * dh1 * dh2 / 36.0;
-					AddToMatrix(indNodes[linux], indNodes[linux2], betta * M2[linux][linux2] * dh1 * dh2 / 36.0);
+					AddToA(indNodes[linux], indNodes[linux2], betta * M2[linux][linux2] * dh1 * dh2 / 36.0);
 				}
-				b[indNodes[linux]] += betta * value;
+				AddToB(indNodes[linux], betta * value);
 				outEdge3File << setw(10) << indNodes[linux] << setw(15) << value << endl;
 			}
 		}
@@ -1336,44 +1359,47 @@ void doEdge3(ofstream& outEdge3File, int intXorYorZ, int normalDirect, int kolvo
 void Edge3_not_sim(bool up, bool down, bool left, bool right, bool fore, bool behind)
 {
 	ofstream ku3("ku3.txt");
-	int kolvoRegularNode = xyz_points.size();
+	//int kolvoRegularNode = xyz_points.size();
 	if (up)
-		doEdge3(ku3, 2, 1, kolvoRegularNode, xNet, nX, yNet, nY, zNet[nZ - 1]);
+		doEdge3(ku3, 2, 1, kolvoRegularNode, xNet, nX - 1, yNet, nY - 1, nZ - 1);
 	if (down)
-		doEdge3(ku3, 2, -1, kolvoRegularNode, xNet, nX, yNet, nY, zNet[0]);
+		doEdge3(ku3, 2, -1, kolvoRegularNode, xNet, nX - 1, yNet, nY - 1, 0);
 	if (left)
-		doEdge3(ku3, 0, -1, kolvoRegularNode, yNet, nY, zNet, nZ, xNet[0]);
+		doEdge3(ku3, 0, -1, kolvoRegularNode, yNet, nY - 1, zNet, nZ - 1, 0);
 	if (right)
-		doEdge3(ku3, 0, 1, kolvoRegularNode, yNet, nY, zNet, nZ, xNet[nX - 1]);
+		doEdge3(ku3, 0, 1, kolvoRegularNode, yNet, nY - 1, zNet, nZ - 1, nX - 1);
 	if (fore)
-		doEdge3(ku3, 1, -1, kolvoRegularNode, xNet, nX, zNet, nZ, yNet[0]);
+		doEdge3(ku3, 1, -1, kolvoRegularNode, xNet, nX - 1, zNet, nZ - 1, 0);
 	if (behind)
-		doEdge3(ku3, 1, 1, kolvoRegularNode, xNet, nX, zNet, nZ, yNet[nY - 1]);
+		doEdge3(ku3, 1, 1, kolvoRegularNode, xNet, nX - 1, zNet, nZ - 1, nY - 1);
 }
 
 void GenerateMatrix()
 {
 	int ielem, i;
-	int kolvoRegularNode = xyz_points.size();
+	//int kolvoRegularNode = xyz_points.size();
 	for (ielem = 0; ielem < KE.size(); ielem++)
 	{
 		CreateLocalMatrixs(ielem);
 		Addition(ielem);
+		logger << "elem " << ielem << ":\n";
+		PrintLocalMatrix();
 	}
+	PrintPlotMatrix(false);
 
-	//Edge2_not_sim(0, 0, 1, 1, 0, 0);
-	//Edge3_not_sim(0, 0, 0, 0, 1, 1);
+	Edge2_not_sim(1, 1, 1, 1, 1, 1);
+	//Edge3_not_sim(1, 1, 1, 1, 1, 1);
 	for (i = 0; i < ig[kolvoRegularNode]; i++)
 	{
 		ggu[i] = ggl[i];
 	}
 	//Edge1_not_sim(1, 1, 0, 0, 0, 0);
-	Edge1_not_sim(1, 1, 1, 1, 1, 1);
+	//Edge1_not_sim(1, 1, 1, 1, 1, 1);
 }
 
 void mult(double* res, double* v)
 {
-	int kolvoRegularNode = xyz_points.size();
+	//int kolvoRegularNode = xyz_points.size();
 	for (int i = 0; i < kolvoRegularNode; i++)
 		res[i] = 0;
 	for (int i = 0; i < kolvoRegularNode; i++)
@@ -1391,7 +1417,7 @@ double ScalarMult(double* v1, double* v2)
 {
 	int i;
 	double result;
-	int kolvoRegularNode = xyz_points.size();
+	//int kolvoRegularNode = xyz_points.size();
 	result = 0;
 	for (i = 0; i < kolvoRegularNode; i++)
 	{
@@ -1405,7 +1431,7 @@ void MultMatrixOnVector(double* in, double* out)
 {
 	int i, j;
 	double* out1;
-	int kolvoRegularNode = xyz_points.size();
+	//int kolvoRegularNode = xyz_points.size();
 	out1 = new double[kolvoRegularNode];
 	for (i = 0; i < kolvoRegularNode; i++)
 	{
@@ -1426,14 +1452,14 @@ void calcPogreshnost(ofstream& output)
 	int i;
 	double sumCh = 0, sumZn = 0;
 	output << setw(10) << "x" << setw(10) << "y" << setw(10) << "z" << setw(18) << "analitic" << setw(18) << "solution" << setw(18) << "pogreshn" << endl;
-	for (i = 0; i < xyz_points.size(); i++)
+	for (i = 0; i < kolvoRegularNode; i++)
 	{
 		sumCh += (q[i] - analiticSolution(xyz_points[i])) * (q[i] - analiticSolution(xyz_points[i]));
 		output << setw(10) << xyz_points[i].x << setw(10) << xyz_points[i].y << setw(10) << xyz_points[i].z << setw(18) << analiticSolution(xyz_points[i]) << setw(18) << q[i] << setw(18) << q[i] - analiticSolution(xyz_points[i]) << endl;
 		sumZn += analiticSolution(xyz_points[i]) * analiticSolution(xyz_points[i]);
 	}
 	output << "KE number = " << KE.size() << endl;
-	output << "Nodes number = " << xyz_points.size() << endl;
+	output << "Nodes number = " << kolvoRegularNode << endl;
 	output << endl << "Otnositelnaia pogreshnost = " << sqrt(sumCh / sumZn);
 }
 
@@ -1442,7 +1468,7 @@ void runLOS()
 	int maxiter = 10000, i;
 	double alfa, alfachisl, alfaznam, beta, betachisl, betaznam, checkE, epsMSG = 1e-16;
 
-	int kolvoRegularNode = xyz_points.size();
+	//int kolvoRegularNode = xyz_points.size();
 	double* r = new double[kolvoRegularNode];
 	double* s = new double[kolvoRegularNode];
 	double* z = new double[kolvoRegularNode];
@@ -1496,7 +1522,7 @@ void outputWithoutOptimisation()
 		{
 			for (int i = 0; i < nX; i++)
 			{
-				xyz_points.push_back(point(xNet[i], yNet[j], zNet[k]));
+				xyz_points.push_back(Point(xNet[i], yNet[j], zNet[k]));
 				fileXY << xNet[i] << " " << yNet[j] << " " << zNet[k] << endl;
 			}
 		}
@@ -1548,123 +1574,7 @@ int findAreaNumber(int nodes[])
 	return -1;
 }
 
-void outputKEandXYZ()
-{
-	ofstream fileXY("xyz.txt");
-	ofstream fileNvtr("nvtr.txt");
-	ofstream viewNet("viewNet.txt");
-	vector<point> ncPoint;
-
-	//формируем массивы регул€рных и терминальных вершин
-	for (int k = 0; k < nZ; k++)
-		for (int j = 0; j < nY; j++)
-			for (int i = 0; i < nX; i++)
-			{
-				if (matrixNode[i][j][k] != 'Y')
-					if ((k == 0 && matrixNode[i][j][k] == 'F' || k == nZ - 1 && matrixNode[i][j][k] == 'B'
-							|| i == 0 && matrixNode[i][j][k] == 'A' || i == nX - 1 && matrixNode[i][j][k] == 'D'
-							|| j == 0 && matrixNode[i][j][k] == 'S' || j == nY - 1 && matrixNode[i][j][k] == 'W')
-						|| matrixNode[i][j][k] == 'V' || matrixNode[i][j][k] == 'R')
-					{
-						xyz_points.push_back(point(xNet[i], yNet[j], zNet[k]));
-					}
-					else
-					{
-						ncPoint.push_back(point(xNet[i], yNet[j], zNet[k]));
-					}
-			}
-
-	//добавл€ем в  ќЌ≈÷ массива вершин терминальные вершины
-	for (vector<point>::iterator it = ncPoint.begin(); it < ncPoint.end(); it++)
-	{
-		xyz_points.push_back(*it);
-	}
-
-	//количество столбцов в T
-	nColT = ncPoint.size();
-	kolvoRegularNode = xyz_points.size() - nColT;
-
-	//формируем файл xy.txt
-	fileXY << xyz_points.size() << " " << kolvoRegularNode << endl;
-	for (int i = 0; i < xyz_points.size(); i++)
-	{
-		fileXY << xyz_points[i].x << " " << xyz_points[i].y << " " << xyz_points[i].z << endl;
-	}
-
-	for (int iZ = 0; iZ < nZ; iZ++)
-	{
-		for (int iY = nY - 1; iY >= 0; iY--)
-		{
-			for (int iX = 0; iX < nX; iX++)
-			{
-				viewNet << matrixNode[iX][iY][iZ] << " ";
-			}
-			viewNet << endl;
-		}
-		viewNet << "-----------------------" << endl;
-	}
-	viewNet.close();
-
-	//формируем структуру  Ё
-	nvtr tempNvtr;
-	for (int iZ = 0; iZ < nZ - 1; iZ++)
-		for (int iY = 0; iY < nY - 1; iY++)
-			for (int iX = 0; iX < nX - 1; iX++)
-			{
-				if (matrixNode[iX][iY][iZ] == 'V' || matrixNode[iX][iY][iZ] == 'S' || matrixNode[iX][iY][iZ] == 'A'
-					|| matrixNode[iX][iY][iZ] == 'R' || matrixNode[iX][iY][iZ] == 'F')
-				{
-					tempNvtr.uzel[0] = indexXYZ(xNet[iX], yNet[iY], zNet[iZ]);
-					for (int k = iX + 1; k < nX; k++)
-					{
-						if (matrixNode[k][iY][iZ] == 'S' || matrixNode[k][iY][iZ] == 'R' || matrixNode[k][iY][iZ] == 'D'
-							|| matrixNode[k][iY][iZ] == 'V' || matrixNode[k][iY][iZ] == 'F')
-						{
-							tempNvtr.uzel[1] = indexXYZ(xNet[k], yNet[iY], zNet[iZ]);
-							for (int t = iY + 1; t < nY; t++)
-							{
-								if (matrixNode[k][t][iZ] == 'W' || matrixNode[k][t][iZ] == 'R' || matrixNode[k][t][iZ] == 'D'
-									|| matrixNode[k][t][iZ] == 'V' || matrixNode[k][t][iZ] == 'F')
-								{
-									tempNvtr.uzel[3] = indexXYZ(xNet[k], yNet[t], zNet[iZ]);
-									tempNvtr.uzel[2] = indexXYZ(xNet[iX], yNet[t], zNet[iZ]);
-
-									for (int h = iZ + 1; h < nZ; h++)
-									{
-										if (matrixNode[iX][iY][h] == 'S' || matrixNode[iX][iY][h] == 'R' || matrixNode[iX][iY][h] == 'A'
-											|| matrixNode[iX][iY][h] == 'V' || matrixNode[iX][iY][h] == 'B')
-										{
-											tempNvtr.uzel[4] = indexXYZ(xNet[iX], yNet[iY], zNet[h]);
-											tempNvtr.uzel[5] = indexXYZ(xNet[k], yNet[iY], zNet[h]);
-											tempNvtr.uzel[6] = indexXYZ(xNet[iX], yNet[t], zNet[h]);
-											tempNvtr.uzel[7] = indexXYZ(xNet[k], yNet[t], zNet[h]);
-											break;
-										}
-									}
-									break;
-								}
-							}
-							break;
-						}
-					}
-					tempNvtr.numberField = findAreaNumber(tempNvtr.uzel);
-					KE.push_back(tempNvtr);
-				}
-			}
-
-	//формируем файл nvtr.txt
-	fileNvtr << KE.size() << endl;
-	for (int i = 0; i < KE.size(); i++)
-	{
-		for (int j = 0; j < 8; j++)
-		{
-			fileNvtr << KE[i].uzel[j] << " ";
-		}
-		fileNvtr << KE[i].numberField << endl;
-	}
-}
-
-locateOfPoint FindLocate(point sample)
+locateOfPoint FindLocate(Point sample)
 {
 	locateOfPoint a;
 	a.i = -1;
@@ -1687,8 +1597,7 @@ locateOfPoint FindLocate(point sample)
 	}
 	if (a.i == -1 || a.j == -1 || a.k == -1)
 	{
-		cout << "ќшибка FindLocate: не найдена точка" << endl;
-		exit(1);
+		throw new exception("ќшибка FindLocate: не найдена точка");
 	}
 	return a;
 }
@@ -1709,7 +1618,7 @@ void sigmTChain(int nTermNode, int startOfChain, double mnojT, set<int> &visited
 			//	}
 			//}
 		if (visitedNodes.find(var.index) != visitedNodes.end()) {
-			logger << "found circle " << var.index << " in node " << startOfChain << endl;
+			logger << "found circle " << var.index << " in " << startOfChain << endl;
 			continue;
 		}
 		visitedNodes.insert(var.index);
@@ -1720,6 +1629,16 @@ void sigmTChain(int nTermNode, int startOfChain, double mnojT, set<int> &visited
 			sigmNewT[nTermNode].neighbors.insert(neighbor(var.index, mnojT*var.weight));
 		}
 	}
+}
+
+set<Edge> getValues(pair<map<Point, Edge>::iterator, map<Point, Edge>::iterator> &range) {
+	set<Edge> result;
+	for (map<Point, Edge>::iterator it = range.first; it != range.second; it++)
+	{
+		Edge e = it->second;
+		result.insert(e);
+	}
+	return result;
 }
 
 void genT3D() {
@@ -1735,19 +1654,15 @@ void genT3D() {
 	{
 		int inc = i - kolvoRegularNode;
 		tmpSigm[inc].terminalNode = i;
+		Point target = xyz_points[i];
 		locateOfPoint term = FindLocate(xyz_points[i]);
 		if (newNodes[term.i][term.j][term.k].test(IS_REGULAR))
 			throw new exception("wrong terminal node in genT3D");
-		if (hasXLines(newNodes[term.i][term.j][term.k]) && hasYLines(newNodes[term.i][term.j][term.k])) {
-			bool downResult = hasDown(newNodes[term.i][term.j][term.k]);
-			bool upResult = hasUp(newNodes[term.i][term.j][term.k]);
-			if (DEBUG && (downResult && upResult || !downResult && !upResult)) {
-				logError("something goes wrong with term nodes");
-			}
-			if (upResult) {
 
-			}
-		}
+		pair<map<Point, Edge>::iterator, map<Point, Edge>::iterator> range
+			= termNodeOnEdge.equal_range(Point(xyz_points[i].x, xyz_points[i].y, xyz_points[i].z));
+		set<Edge> edges = getValues(range);
+
 		if (hasXLines(newNodes[term.i][term.j][term.k]))
 		{
 			int neibLeft;
@@ -1763,8 +1678,16 @@ void genT3D() {
 			double length = xNet[neibRight] - xNet[neibLeft];
 			int iL = indexXYZ(xNet[neibLeft], yNet[term.j], zNet[term.k]);
 			int iR = indexXYZ(xNet[neibRight], yNet[term.j], zNet[term.k]);
-			tmpSigm[inc].neighbors.insert(neighbor(iL, (xNet[neibRight] - xNet[term.i]) / length));
-			tmpSigm[inc].neighbors.insert(neighbor(iR, (xNet[term.i] - xNet[neibLeft]) / length));
+			Edge edge(
+				Point(xNet[neibLeft], yNet[term.j], zNet[term.k]),
+				Point(xNet[neibRight], yNet[term.j], zNet[term.k]));
+			if (edges.find(edge) == edges.end()) {
+				logger << "Found edge that dont contains in termNodeOnEdge" << endl << edge;
+			}
+			else {
+				tmpSigm[inc].neighbors.insert(neighbor(iL, (xNet[neibRight] - xNet[term.i]) / length));
+				tmpSigm[inc].neighbors.insert(neighbor(iR, (xNet[term.i] - xNet[neibLeft]) / length));
+			}
 		}
 		if (hasYLines(newNodes[term.i][term.j][term.k]))
 		{
@@ -1781,8 +1704,16 @@ void genT3D() {
 			double length = yNet[neibBack] - yNet[neibFore];
 			int iF = indexXYZ(xNet[term.i], yNet[neibFore], zNet[term.k]);
 			int iB = indexXYZ(xNet[term.i], yNet[neibBack], zNet[term.k]);
-			tmpSigm[inc].neighbors.insert(neighbor(iF, (yNet[neibBack] - yNet[term.j]) / length));
-			tmpSigm[inc].neighbors.insert(neighbor(iB, (yNet[term.j] - yNet[neibFore]) / length));
+			Edge edge(
+				Point(xNet[term.i], yNet[neibFore], zNet[term.k]),
+				Point(xNet[term.i], yNet[neibBack], zNet[term.k]));
+			if (edges.find(edge) == edges.end()) {
+				logger << "Found edge that dont contains in termNodeOnEdge" << endl << edge;
+			}
+			else {
+				tmpSigm[inc].neighbors.insert(neighbor(iF, (yNet[neibBack] - yNet[term.j]) / length));
+				tmpSigm[inc].neighbors.insert(neighbor(iB, (yNet[term.j] - yNet[neibFore]) / length));
+			}
 		}
 		if (hasZLines(newNodes[term.i][term.j][term.k]))
 		{
@@ -1799,8 +1730,16 @@ void genT3D() {
 			double length = yNet[neibUp] - yNet[neibDown];
 			int iD = indexXYZ(xNet[term.i], yNet[term.j], zNet[neibDown]);
 			int iU = indexXYZ(xNet[term.i], yNet[term.j], zNet[neibUp]);
-			tmpSigm[inc].neighbors.insert(neighbor(iD, (zNet[neibUp] - zNet[term.k]) / length));
-			tmpSigm[inc].neighbors.insert(neighbor(iU, (zNet[term.k] - zNet[neibDown]) / length));
+			Edge edge(
+				Point(xNet[term.i], yNet[term.j], zNet[neibDown]),
+				Point(xNet[term.i], yNet[term.j], zNet[neibUp]));
+			if (edges.find(edge) == edges.end()) {
+				logger << "Found edge that dont contains in termNodeOnEdge" << endl << edge;
+			}
+			else {
+				tmpSigm[inc].neighbors.insert(neighbor(iD, (zNet[neibUp] - zNet[term.k]) / length));
+				tmpSigm[inc].neighbors.insert(neighbor(iU, (zNet[term.k] - zNet[neibDown]) / length));
+			}
 		}
 		if (tmpSigm[inc].neighbors.empty())
 			throw new exception("cannot find neighbors for tmpSigm");
@@ -1877,12 +1816,12 @@ void genT3D() {
 	outT << endl;
 }
 
-void Output()
+void constructXyzAndNvtr()
 {
 	int i, j, t, k;
 	ofstream fileXY("xyz.txt");
 	ofstream fileNvtr("nvtr.txt");
-	vector<point> ncPoint;
+	vector<Point> ncPoint;
 
 	//формируем массивы регул€рных и терминальных вершин
 	for (t = 0; t < nZ; t++)
@@ -1891,22 +1830,27 @@ void Output()
 		{
 			for (i = 0; i < nX; i++)
 			{
-				if (DEBUG && !newNodes[i][j][t].test(IS_REGULAR) && hasAll(newNodes[i][j][t]))
-					throw new exception("it is happened!");
-				if (newNodes[i][j][t].test(IS_REGULAR) || hasAll(newNodes[i][j][t]))	//может быть и терминальным, добавить проверку
+				vector<Axis>* info;
+				if (DEBUG) {
+					info = nodeInfo(newNodes[i][j][t]);
+					//if (!newNodes[i][j][t].test(IS_REGULAR) && hasAll(newNodes[i][j][t]))
+					//	throw new exception("it is happened!");
+				}
+				if (newNodes[i][j][t].test(IS_REGULAR)/* || hasAll(newNodes[i][j][t])*/)	//может быть и терминальным, добавить проверку
 				{
-					xyz_points.push_back(point(xNet[i], yNet[j],zNet[t]));
+					xyz_points.push_back(Point(xNet[i], yNet[j],zNet[t]));
 				}
 				else if (!newNodes[i][j][t].none())
 				{
-					ncPoint.push_back(point(xNet[i], yNet[j], zNet[t]));
+					ncPoint.push_back(Point(xNet[i], yNet[j], zNet[t]));
 				}
+				if (DEBUG) delete info;
 			}
 		}
 	}
 
 	//добавл€ем в конец массива вершин терминальные вершины
-	for (vector<point>::iterator it = ncPoint.begin(); it < ncPoint.end(); it++)
+	for (vector<Point>::iterator it = ncPoint.begin(); it < ncPoint.end(); it++)
 	{
 		xyz_points.push_back(*it);
 	}
@@ -1968,6 +1912,10 @@ void Output()
 	}
 }
 
+void checkNet() {
+
+}
+
 int main(int argc, char* argv[])
 {
 	setlocale(LC_ALL, "rus");
@@ -1976,8 +1924,15 @@ int main(int argc, char* argv[])
 
 	initNet(xNet, nX, yNet, nY, zNet, nZ);
 	DivideArea(xNet, nX, yNet, nY, zNet, nZ);
+	//deletePlaneX(1, 0, 2, 1, 2, 1, 2);
 
-	Output();
-
+	checkNet();
+	constructXyzAndNvtr();
 	genT3D();
+	generatePortraitNesoglas();
+
+	GenerateMatrix();
+	//LosLU(ggl, ggu, di, kolvoRegularNode, ig, jg, b, q);
+	runLOS();
+	calcPogreshnost(output);
 }
