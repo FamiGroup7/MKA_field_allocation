@@ -126,6 +126,30 @@ int nColT, kolvoRegularNode;
 
 const int AXIS_SIZE = 6;
 enum Axis { LEFT, RIGHT, DOWN, UP, BACK, FORE };
+struct qube {
+	locateOfPoint start;
+	int i_nextX, i_nextY, i_nextZ;
+	qube(locateOfPoint loc) {
+		start = loc;
+		i_nextX = i_nextY = i_nextZ = -1;
+	}
+	qube(locateOfPoint loc, int nextX, int nextY, int nextZ) {
+		start = loc;
+		i_nextX = nextX;
+		i_nextY = nextY;
+		i_nextZ = nextZ;
+	}
+
+	double getWidth() {
+		return fabs(xNet[i_nextX] - xNet[start.i]);
+	}
+	double getDepth() {
+		return fabs(yNet[i_nextY] - yNet[start.j]);
+	}
+	double getHeight() {
+		return fabs(zNet[i_nextZ] - zNet[start.k]);
+	}
+};
 
 int *ig, *jg;
 double *di, *b, *q, *ggl, *ggu;
@@ -252,6 +276,7 @@ double LikeACube(double x, double y, double z) {
 	return MkaUtils::compare(min, z) == -1 ? min : z;
 }
 
+//TODO search in sorted array
 int FindLocate(double* massiv, int razm, double x)
 {
 	int i;
@@ -348,12 +373,12 @@ bool canOptimize(int directionX, int directionY, int directionZ, bitset<BIT_SIZE
 }
 
 int findNextX(int directionX, int directionY, int directionZ,
-	int startPositionX, int endPositionX, int posJ, int posT) {
+	int from_x, int to_x, int u_j, int u_t) {
 	int posK;
-	for (int k = startPositionX + 1; k <= endPositionX * directionX; k++)
+	for (int k = from_x*directionX + 1; k <= to_x * directionX; k++)
 	{
 		posK = k * directionX;
-		if (canOptimize(-1 * directionX, directionY, directionZ, newNodes[posK][posJ][posT]))
+		if (canOptimize(-1 * directionX, directionY, directionZ, newNodes[posK][u_j][u_t]))
 		{
 			return posK;
 		}
@@ -362,9 +387,9 @@ int findNextX(int directionX, int directionY, int directionZ,
 }
 
 int findNextY(int directionX, int directionY, int directionZ,
-	int startPositionY, int endPositionY, int posI, int posT) {
+	int from_y, int to_y, int posI, int posT) {
 	int posK;
-	for (int k = startPositionY + 1; k <= endPositionY * directionY; k++)
+	for (int k = from_y*directionY + 1; k <= to_y * directionY; k++)
 	{
 		posK = k * directionY;
 		if (canOptimize(directionX, -1 * directionY, directionZ, newNodes[posI][posK][posT]))
@@ -376,9 +401,9 @@ int findNextY(int directionX, int directionY, int directionZ,
 }
 
 int findNextZ(int directionX, int directionY, int directionZ,
-	int startPositionZ, int endPositionZ, int posI, int posJ) {
+	int from_z, int to_z, int posI, int posJ) {
 	int posK;
-	for (int k = startPositionZ + 1; k <= endPositionZ * directionZ; k++)
+	for (int k = from_z*directionZ + 1; k <= to_z * directionZ; k++)
 	{
 		posK = k * directionZ;
 		if (canOptimize(directionX, directionY, -1 * directionZ, newNodes[posI][posJ][posK]))
@@ -389,12 +414,21 @@ int findNextZ(int directionX, int directionY, int directionZ,
 	return -1;
 }
 
-void addTermNodeToMap(int middleX, int x1, int x2, int y, int z) {
+void addTermNodeXToMap(int middleX, int x1, int x2, int y, int z) {
 	termNodeOnEdge.insert(pair<Point, Edge>(
 		Point(xNet[middleX], yNet[y], zNet[z]),
 		Edge(
 			Point(xNet[x1], yNet[y], zNet[z]),
 			Point(xNet[x2], yNet[y], zNet[z]))
+		));
+}
+
+void addTermNodeYToMap(int middleY, int y1, int y2, int x, int z) {
+	termNodeOnEdge.insert(pair<Point, Edge>(
+		Point(xNet[x], yNet[middleY], zNet[z]),
+		Edge(
+			Point(xNet[x], yNet[y1], zNet[z]),
+			Point(xNet[x], yNet[y2], zNet[z]))
 		));
 }
 
@@ -433,69 +467,134 @@ void deletePlaneX(int xPlane, int x1, int x2, int y1, int y2, int z1, int z2) {
 	if (!newNodes[xPlane][y2][z2].test(BACK_DOWN))
 		newNodes[xPlane][y2][z2].reset(LEFT_DOWN).reset(RIGHT_DOWN);
 
-	addTermNodeToMap(xPlane, x1, x2, y1, z1);
-	addTermNodeToMap(xPlane, x1, x2, y1, z2);
-	addTermNodeToMap(xPlane, x1, x2, y2, z1);
-	addTermNodeToMap(xPlane, x1, x2, y2, z2);
+	addTermNodeXToMap(xPlane, x1, x2, y1, z1);
+	addTermNodeXToMap(xPlane, x1, x2, y1, z2);
+	addTermNodeXToMap(xPlane, x1, x2, y2, z1);
+	addTermNodeXToMap(xPlane, x1, x2, y2, z2);
+}
+
+void deletePlaneY(int yPlane, int x1, int x2, int y1, int y2, int z1, int z2) {
+	logger << "Deleted plane y = " << yNet[yPlane] << ", x1 = " << xNet[x1] << ", x2 = " << xNet[x2]
+		<< ", z1 = " << zNet[z1] << ", z2 = " << zNet[z2] << endl;
+
+	newNodes[x1][yPlane][z1].reset(IS_REGULAR);
+	newNodes[x1][yPlane][z2].reset(IS_REGULAR);
+	newNodes[x2][yPlane][z1].reset(IS_REGULAR);
+	newNodes[x2][yPlane][z2].reset(IS_REGULAR);
+
+	newNodes[x1][yPlane][z1].reset(RIGHT_UP);
+	newNodes[x1][yPlane][z2].reset(RIGHT_DOWN);
+	newNodes[x2][yPlane][z1].reset(LEFT_UP);
+	newNodes[x2][yPlane][z2].reset(LEFT_DOWN);
+
+	//нижняя
+	if (!newNodes[x1][yPlane][z1].test(RIGHT_DOWN))
+		newNodes[x1][yPlane][z1].reset(RIGHT_FORE).reset(RIGHT_BACK);
+	if (!newNodes[x2][yPlane][z1].test(LEFT_DOWN))
+		newNodes[x2][yPlane][z1].reset(LEFT_FORE).reset(LEFT_BACK);
+	//верхняя
+	if (!newNodes[x1][yPlane][z2].test(RIGHT_UP))
+		newNodes[x1][yPlane][z2].reset(RIGHT_FORE).reset(RIGHT_BACK);
+	if (!newNodes[x2][yPlane][z2].test(LEFT_UP))
+		newNodes[x2][yPlane][z2].reset(LEFT_FORE).reset(LEFT_BACK);
+	//левая
+	if (!newNodes[x1][yPlane][z1].test(LEFT_UP))
+		newNodes[x1][yPlane][z1].reset(BACK_UP).reset(FORE_UP);
+	if (!newNodes[x1][yPlane][z2].test(LEFT_DOWN))
+		newNodes[x1][yPlane][z2].reset(BACK_DOWN).reset(FORE_DOWN);
+	//правая
+	if (!newNodes[x2][yPlane][z1].test(RIGHT_UP))
+		newNodes[x2][yPlane][z1].reset(BACK_UP).reset(FORE_UP);
+	if (!newNodes[x2][yPlane][z2].test(RIGHT_DOWN))
+		newNodes[x2][yPlane][z2].reset(BACK_DOWN).reset(FORE_DOWN);
+
+	addTermNodeYToMap(yPlane, y1, y2, x1, z1);
+	addTermNodeYToMap(yPlane, y1, y2, x1, z2);
+	addTermNodeYToMap(yPlane, y1, y2, x2, z1);
+	addTermNodeYToMap(yPlane, y1, y2, x2, z2);
+}
+
+qube* getQube(int directionX, int directionY, int directionZ,
+	int from_x, int from_y, int from_z, int to_x, int to_y, int to_z)
+{
+	int i_nextX = findNextX(directionX, directionY, directionZ, from_x, to_x, from_y, from_z);
+	int i_nextY = findNextY(directionX, directionY, directionZ, from_y, to_y, from_x, from_z);
+	int i_nextZ = findNextZ(directionX, directionY, directionZ, from_z, to_z, from_x, from_y);
+
+	if (i_nextX == i_nextY == i_nextZ == -1) {
+		return NULL;
+	}
+
+	if (DEBUG) {
+		int X_y1_z2 = findNextX(directionX, directionY, -1 * directionZ, from_x, to_x, from_y, i_nextZ);
+		int X_y2_z1 = findNextX(directionX, -1 * directionY, directionZ, from_x, to_x, i_nextY, from_z);
+		int X_y2_z2 = findNextX(directionX, -1 * directionY, -1 * directionZ, from_x, to_x, i_nextY, i_nextZ);
+		if (X_y1_z2 == -1 || X_y1_z2 != X_y2_z1 || X_y2_z1 != X_y2_z2 || X_y2_z2 != i_nextX) {
+			logError("Error in qube check X");
+		}
+
+		int Y_x1_z2 = findNextY(directionX, directionY, -1 * directionZ, from_y, to_y, from_x, i_nextZ);
+		int Y_x2_z1 = findNextY(-1 * directionX, directionY, directionZ, from_y, to_y, i_nextX, from_z);
+		int Y_x2_z2 = findNextY(-1 * directionX, directionY, -1 * directionZ, from_y, to_y, i_nextX, i_nextZ);
+		if (Y_x1_z2 == -1 || Y_x1_z2 != Y_x2_z1 || Y_x2_z1 != Y_x2_z2 || Y_x2_z2 != i_nextY) {
+			logError("Error in qube check Y");
+		}
+
+		int Z_x1_y2 = findNextZ(directionX, -1 * directionY, directionZ, from_z, to_z, from_x, i_nextY);
+		int Z_x2_y1 = findNextZ(-1 * directionX, directionY, directionZ, from_z, to_z, i_nextX, from_y);
+		int Z_x2_y2 = findNextZ(-1 * directionX, -1 * directionY, directionZ, from_z, to_z, i_nextX, i_nextY);
+		if (Z_x1_y2 == -1 || Z_x1_y2 != Z_x2_y1 || Z_x2_y1 != Z_x2_y2 || Z_x2_y2 != i_nextZ) {
+			logError("Error in qube check Z");
+		}
+	}
+	return new qube(locateOfPoint(from_x, from_y, from_z), i_nextX, i_nextY, i_nextZ);
 }
 
 void OptimizationQuarterX(int directionX, int directionY, int directionZ,
 	int startX, int startY, int startZ, int endX, int endY, int endZ)
 {
-	int i, j, t, k, granX, granY, posI, posJ, posT, posK;
-	double width_1, width_2;
-	bool error;
+	int i, j, t, u_i, u_j, u_t;
 	for (t = startZ * directionZ; t < endZ * directionZ; t++)
 	{
-		posT = t * directionZ;
+		u_t = t * directionZ;
 		for (j = startY * directionY; j < endY * directionY; j++)
 		{
-			posJ = j * directionY;
+			u_j = j * directionY;
 			for (i = startX * directionX; i < endX * directionX - 1; i++)
 			{
-				posI = i * directionX;
+				u_i = i * directionX;
 				//обработка вершины при попытке расширения
-				if (canOptimize(directionX, directionY, directionZ, newNodes[posI][posJ][posT]))
+				if (canOptimize(directionX, directionY, directionZ, newNodes[u_i][u_j][u_t]))
 				{
-					width_1 = width_2 = granX = granY =  0;
-
-					//ширина 1
-					int nextX = findNextX(directionX, directionY, directionZ, i, endX, posJ, posT);
-					if (nextX == -1) {
-						logError("error optimizationX: no width in KE "/* + posI + " " + posJ + " " + posT*/);
+					qube*current = getQube(directionX, directionY, directionZ, u_i, u_j, u_t, endX, endY, endZ);
+					if (current == NULL) {
+						continue;
 					}
-					width_1 = fabs(xNet[nextX] - xNet[posI]);
+					qube*nextQube = getQube(directionX, directionY, directionZ, current->i_nextX, u_j, u_t, endX, endY, endZ);
+					if (nextQube == NULL) {
+						continue;
+					}
+					if (current->i_nextY == nextQube->i_nextY && current->i_nextZ == nextQube->i_nextZ) {
+						double deep = current->getDepth();
+						double height = current->getHeight();
+						double width_1 = current->getWidth();
+						double width_union = width_1 + nextQube->getWidth();
 
-					//глубина 1
-					int nextY = findNextY(directionX, directionY, directionZ, j, endY, posI, posT);
-					//глубина 2
-					int checkY = findNextY(directionX, directionY, directionZ, j, endY, nextX*directionX, posT);
-
-					//высота 1
-					int nextZ = findNextZ(directionX, directionY, directionZ, t, endZ, posI, posJ);
-					//высота 2
-					int checkZ = findNextZ(directionX, directionY, directionZ, t, endZ, nextX*directionX, posJ);
-
-					if (nextY == checkY && nextZ == checkZ) {
-						double deep = fabs(yNet[nextY] - yNet[posJ]);
-						double height = fabs(zNet[nextZ] - zNet[posT]);
-						//ширина 2
-						int nextX2 = findNextX(directionX, directionY, directionZ, nextX*directionX, endX, posJ, posT);
-						width_2 = fabs(xNet[nextX2] - xNet[posI]);
-
-						if (LikeACube(width_1, deep, height) < LikeACube(width_2, deep, height)) {
+						if (LikeACube(width_1, deep, height) < LikeACube(width_union, deep, height)) {
 							if (directionY == 1)
 								if (directionZ == 1)
-									deletePlaneX(nextX, posI, nextX2, posJ, nextY, posT, nextZ);
+									deletePlaneX(current->i_nextX, u_i, nextQube->i_nextX, u_j, current->i_nextY, u_t, current->i_nextZ);
 								else
-									deletePlaneX(nextX, posI, nextX2, posJ, nextY, nextZ, posT);
+									deletePlaneX(current->i_nextX, u_i, nextQube->i_nextX, u_j, current->i_nextY, current->i_nextZ, u_t);
 							else
 								if (directionZ == 1)
-									deletePlaneX(nextX, posI, nextX2, nextY, posJ, posT, nextZ);
+									deletePlaneX(current->i_nextX, u_i, nextQube->i_nextX, current->i_nextY, u_j, u_t, current->i_nextZ);
 								else
-									deletePlaneX(nextX, posI, nextX2, nextY, posJ, nextZ, posT);
+									deletePlaneX(current->i_nextX, u_i, nextQube->i_nextX, current->i_nextY, u_j, current->i_nextZ, u_t);
 						}
 					}
+					delete current;
+					delete nextQube;
 				}
 			}
 		}
@@ -568,29 +667,50 @@ void DivideArea(double* xNet, int nX, double* yNet, int nY, double* zNet, int nZ
 	}
 	for (int indSreda = 0; indSreda < sreda.size(); indSreda++)
 	{
+		int locateX1 = FindLocate(xNet, nX, sreda[indSreda].x1);
+		int locateX2 = FindLocate(xNet, nX, sreda[indSreda].x2);
+		int locateY1 = FindLocate(yNet, nY, sreda[indSreda].y1);
+		int locateY2 = FindLocate(yNet, nY, sreda[indSreda].y2);
+		int locateZ1 = FindLocate(zNet, nZ, sreda[indSreda].z1);
+		int locateZ2 = FindLocate(zNet, nZ, sreda[indSreda].z2);
+
 		if (koordSourceX <= sreda[indSreda].x1)
-			locateSourceX = FindLocate(xNet, nX, sreda[indSreda].x1);
+			locateSourceX = locateX1;
 		else if (koordSourceX >= sreda[indSreda].x2)
-			locateSourceX = FindLocate(xNet, nX, sreda[indSreda].x2);
+			locateSourceX = locateX2;
 		else
 			locateSourceX = FindLocate(xNet, nX, koordSourceX);
 
 		if (koordSourceY <= sreda[indSreda].y1)
-			locateSourceY = FindLocate(yNet, nY, sreda[indSreda].y1);
+			locateSourceY = locateY1;
 		else if (koordSourceY >= sreda[indSreda].y2)
-			locateSourceY = FindLocate(yNet, nY, sreda[indSreda].y2);
+			locateSourceY = locateY2;
 		else
 			locateSourceY = FindLocate(yNet, nY, koordSourceY);
 
 		if (koordSourceZ <= sreda[indSreda].z1)
-			locateSourceZ = FindLocate(zNet, nZ, sreda[indSreda].z1);
+			locateSourceZ = locateZ1;
 		else if (koordSourceZ >= sreda[indSreda].z2)
-			locateSourceZ = FindLocate(zNet, nZ, sreda[indSreda].z2);
+			locateSourceZ = locateZ2;
 		else
-			locateSourceY = FindLocate(zNet, nZ, koordSourceZ);
+			locateSourceZ = FindLocate(zNet, nZ, koordSourceZ);
+		//RBU
+		OptimizationQuarterX(1, 1, 1, locateSourceX, locateSourceY, locateSourceZ, locateX2, locateY2, locateZ2);
+		//LBU
+		OptimizationQuarterX(-1, 1, 1, locateSourceX, locateSourceY, locateSourceZ, locateX1, locateY2, locateZ2);
+		//RFU
+		OptimizationQuarterX(1, -1, 1, locateSourceX, locateSourceY, locateSourceZ, locateX2, locateY1, locateZ2);
+		//LFU
+		OptimizationQuarterX(-1, -1, 1, locateSourceX, locateSourceY, locateSourceZ, locateX1, locateY1, locateZ2);
 
-		OptimizationQuarterX(1, 1, 1, locateSourceX, locateSourceY, locateSourceZ, FindLocate(xNet, nX, sreda[indSreda].x2), 
-			FindLocate(yNet, nY, sreda[indSreda].y2), FindLocate(zNet, nZ, sreda[indSreda].z2));
+		//RBD
+		OptimizationQuarterX(1, 1, -1, locateSourceX, locateSourceY, locateSourceZ, locateX2, locateY2, locateZ1);
+		//LBD
+		OptimizationQuarterX(-1, 1, -1, locateSourceX, locateSourceY, locateSourceZ, locateX1, locateY2, locateZ1);
+		//RFD
+		OptimizationQuarterX(1, -1, -1, locateSourceX, locateSourceY, locateSourceZ, locateX2, locateY1, locateZ1);
+		//LFD
+		OptimizationQuarterX(-1, -1, -1, locateSourceX, locateSourceY, locateSourceZ, locateX1, locateY1, locateZ1);
 	}
 	//duplicatingOfXY();
 }
@@ -1660,7 +1780,7 @@ void genT3D() {
 			throw new exception("wrong terminal node in genT3D");
 
 		pair<map<Point, Edge>::iterator, map<Point, Edge>::iterator> range
-			= termNodeOnEdge.equal_range(Point(xyz_points[i].x, xyz_points[i].y, xyz_points[i].z));
+			= termNodeOnEdge.equal_range(target);
 		set<Edge> edges = getValues(range);
 
 		if (hasXLines(newNodes[term.i][term.j][term.k]))
@@ -1681,10 +1801,7 @@ void genT3D() {
 			Edge edge(
 				Point(xNet[neibLeft], yNet[term.j], zNet[term.k]),
 				Point(xNet[neibRight], yNet[term.j], zNet[term.k]));
-			if (edges.find(edge) == edges.end()) {
-				logger << "Found edge that dont contains in termNodeOnEdge" << endl << edge;
-			}
-			else {
+			if (edges.find(edge) != edges.end()) {
 				tmpSigm[inc].neighbors.insert(neighbor(iL, (xNet[neibRight] - xNet[term.i]) / length));
 				tmpSigm[inc].neighbors.insert(neighbor(iR, (xNet[term.i] - xNet[neibLeft]) / length));
 			}
@@ -1707,10 +1824,7 @@ void genT3D() {
 			Edge edge(
 				Point(xNet[term.i], yNet[neibFore], zNet[term.k]),
 				Point(xNet[term.i], yNet[neibBack], zNet[term.k]));
-			if (edges.find(edge) == edges.end()) {
-				logger << "Found edge that dont contains in termNodeOnEdge" << endl << edge;
-			}
-			else {
+			if (edges.find(edge) != edges.end()) {
 				tmpSigm[inc].neighbors.insert(neighbor(iF, (yNet[neibBack] - yNet[term.j]) / length));
 				tmpSigm[inc].neighbors.insert(neighbor(iB, (yNet[term.j] - yNet[neibFore]) / length));
 			}
@@ -1733,10 +1847,7 @@ void genT3D() {
 			Edge edge(
 				Point(xNet[term.i], yNet[term.j], zNet[neibDown]),
 				Point(xNet[term.i], yNet[term.j], zNet[neibUp]));
-			if (edges.find(edge) == edges.end()) {
-				logger << "Found edge that dont contains in termNodeOnEdge" << endl << edge;
-			}
-			else {
+			if (edges.find(edge) != edges.end()) {
 				tmpSigm[inc].neighbors.insert(neighbor(iD, (zNet[neibUp] - zNet[term.k]) / length));
 				tmpSigm[inc].neighbors.insert(neighbor(iU, (zNet[term.k] - zNet[neibDown]) / length));
 			}
@@ -1925,6 +2036,7 @@ int main(int argc, char* argv[])
 	initNet(xNet, nX, yNet, nY, zNet, nZ);
 	DivideArea(xNet, nX, yNet, nY, zNet, nZ);
 	//deletePlaneX(1, 0, 2, 1, 2, 1, 2);
+	//deletePlaneY(1, 0, 2, 0, 1, 0, 1);
 
 	checkNet();
 	constructXyzAndNvtr();
@@ -1932,7 +2044,7 @@ int main(int argc, char* argv[])
 	generatePortraitNesoglas();
 
 	GenerateMatrix();
-	//LosLU(ggl, ggu, di, kolvoRegularNode, ig, jg, b, q);
-	runLOS();
+	LosLU(ggl, ggu, di, kolvoRegularNode, ig, jg, b, q);
+	//runLOS();
 	calcPogreshnost(output);
 }

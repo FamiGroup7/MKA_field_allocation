@@ -36,6 +36,25 @@ void glWrite(float x, float y, int *font, char text[256], int kls);
 
 string location = "../ְְֳּ/";
 
+void draw_string_stroke(void *font, const char* string)
+{
+	while (*string)
+		glutStrokeCharacter(font, *string++);
+}
+
+void
+output(GLfloat x, GLfloat y, char *text)
+{
+	char *p;
+
+	glPushMatrix();
+	glTranslatef(x, y, 0);
+	glScaled(0.5, 0.5, 0.5);
+	for (p = text; *p; p++)
+		glutStrokeCharacter(GLUT_STROKE_ROMAN, *p);
+	glPopMatrix();
+}
+
 struct nvtr
 {
 	int uzel[8], numberField;
@@ -299,7 +318,10 @@ void GLRenderScene()
 
 	glEnter2D();
 	glColor3f(0, 0, 0);
-	glWrite(200, 200, (int*)GLUT_BITMAP_8_BY_13, (char*)"qwerty", 6);
+	//glRotatef(0.3, 1, 1, 1);
+	output(100, 100, "Hello world!");
+	//draw_string_stroke(GLUT_STROKE_ROMAN, "hello world!");
+	//glWrite(200, 200, (int*)GLUT_BITMAP_8_BY_13, (char*)"qwerty", 6);
 	glLeave2D();
 
 	glLineWidth(1.5); 
