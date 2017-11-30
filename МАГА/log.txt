@@ -1,3 +1,8 @@
-Deleted plane x = 1.5, y1 = 0, y2 = 3, z1 = 0, z2 = 4
-Deleted plane x = 1.5, y1 = 3, y2 = 5, z1 = 0, z2 = 4
-Deleted plane y = 3, x1 = 0, x2 = 3, z1 = 0, z2 = 4
+Grid optimization disabled
+Deleted plane x = 1, y1 = 1, y2 = 2, z1 = 0, z2 = 1
+Deleted plane x = 2, y1 = 0, y2 = 1, z1 = 0, z2 = 1
+Deleted plane x = 2, y1 = 1, y2 = 2, z1 = 0, z2 = 1
+Start chaining 26 node
+Start chaining 27 node
+Start chaining 28 node
+found circle 28 in 3

@@ -25,8 +25,12 @@ const size_t LEFT_BACK = 10;
 const size_t RIGHT_BACK = 11;
 const size_t IS_REGULAR = 12;
 
+const byte X_EDGE_DELETED = 0;
+const byte Y_EDGE_DELETED = 1;
+const byte Z_EDGE_DELETED = 2;
+
 const bool DEBUG = true;
-bool GRID_UNION = true;
+bool GRID_UNION = false;
 
 struct colour // цвет точки
 {
@@ -113,7 +117,7 @@ int LosLU(double* ggl, double* ggu, double* diag, int N, int* ig, int* jg, doubl
 vector<Point> xyz_points;
 vector<nvtr> KE;
 vector<field> sreda;
-multimap<Point, Edge> termNodeOnEdge;
+multimap<Point, byte> termNodeOnEdge;
 
 
 double leftX, rightX, leftY, rightY, leftZ, rightZ;
@@ -414,24 +418,6 @@ int findNextZ(int directionX, int directionY, int directionZ,
 	return -1;
 }
 
-void addTermNodeXToMap(int middleX, int x1, int x2, int y, int z) {
-	termNodeOnEdge.insert(pair<Point, Edge>(
-		Point(xNet[middleX], yNet[y], zNet[z]),
-		Edge(
-			Point(xNet[x1], yNet[y], zNet[z]),
-			Point(xNet[x2], yNet[y], zNet[z]))
-		));
-}
-
-void addTermNodeYToMap(int middleY, int y1, int y2, int x, int z) {
-	termNodeOnEdge.insert(pair<Point, Edge>(
-		Point(xNet[x], yNet[middleY], zNet[z]),
-		Edge(
-			Point(xNet[x], yNet[y1], zNet[z]),
-			Point(xNet[x], yNet[y2], zNet[z]))
-		));
-}
-
 void deletePlaneX(int xPlane, int x1, int x2, int y1, int y2, int z1, int z2) {
 	logger << "Deleted plane x = " << xNet[xPlane] << ", y1 = " << yNet[y1] << ", y2 = " << yNet[y2] 
 		<< ", z1 = " << zNet[z1] << ", z2 = " << zNet[z2] << endl;
@@ -467,10 +453,10 @@ void deletePlaneX(int xPlane, int x1, int x2, int y1, int y2, int z1, int z2) {
 	if (!newNodes[xPlane][y2][z2].test(BACK_DOWN))
 		newNodes[xPlane][y2][z2].reset(LEFT_DOWN).reset(RIGHT_DOWN);
 
-	addTermNodeXToMap(xPlane, x1, x2, y1, z1);
-	addTermNodeXToMap(xPlane, x1, x2, y1, z2);
-	addTermNodeXToMap(xPlane, x1, x2, y2, z1);
-	addTermNodeXToMap(xPlane, x1, x2, y2, z2);
+	termNodeOnEdge.insert(pair<Point, byte>(Point(xNet[xPlane], yNet[y1], zNet[z1]), X_EDGE_DELETED));
+	termNodeOnEdge.insert(pair<Point, byte>(Point(xNet[xPlane], yNet[y1], zNet[z2]), X_EDGE_DELETED));
+	termNodeOnEdge.insert(pair<Point, byte>(Point(xNet[xPlane], yNet[y2], zNet[z1]), X_EDGE_DELETED));
+	termNodeOnEdge.insert(pair<Point, byte>(Point(xNet[xPlane], yNet[y2], zNet[z2]), X_EDGE_DELETED));
 }
 
 void deletePlaneY(int yPlane, int x1, int x2, int y1, int y2, int z1, int z2) {
@@ -508,10 +494,10 @@ void deletePlaneY(int yPlane, int x1, int x2, int y1, int y2, int z1, int z2) {
 	if (!newNodes[x2][yPlane][z2].test(RIGHT_DOWN))
 		newNodes[x2][yPlane][z2].reset(BACK_DOWN).reset(FORE_DOWN);
 
-	addTermNodeYToMap(yPlane, y1, y2, x1, z1);
-	addTermNodeYToMap(yPlane, y1, y2, x1, z2);
-	addTermNodeYToMap(yPlane, y1, y2, x2, z1);
-	addTermNodeYToMap(yPlane, y1, y2, x2, z2);
+	termNodeOnEdge.insert(pair<Point, byte>(Point(xNet[x1], yNet[yPlane], zNet[z1]), Y_EDGE_DELETED));
+	termNodeOnEdge.insert(pair<Point, byte>(Point(xNet[x1], yNet[yPlane], zNet[z2]), Y_EDGE_DELETED));
+	termNodeOnEdge.insert(pair<Point, byte>(Point(xNet[x2], yNet[yPlane], zNet[z1]), Y_EDGE_DELETED));
+	termNodeOnEdge.insert(pair<Point, byte>(Point(xNet[x2], yNet[yPlane], zNet[z2]), Y_EDGE_DELETED));
 }
 
 qube* getQube(int directionX, int directionY, int directionZ,
@@ -1751,11 +1737,11 @@ void sigmTChain(int nTermNode, int startOfChain, double mnojT, set<int> &visited
 	}
 }
 
-set<Edge> getValues(pair<map<Point, Edge>::iterator, map<Point, Edge>::iterator> &range) {
-	set<Edge> result;
-	for (map<Point, Edge>::iterator it = range.first; it != range.second; it++)
+set<byte> getValues(pair<map<Point, byte>::iterator, map<Point, byte>::iterator> &range) {
+	set<byte> result;
+	for (map<Point, byte>::iterator it = range.first; it != range.second; it++)
 	{
-		Edge e = it->second;
+		byte e = it->second;
 		result.insert(e);
 	}
 	return result;
@@ -1779,78 +1765,63 @@ void genT3D() {
 		if (newNodes[term.i][term.j][term.k].test(IS_REGULAR))
 			throw new exception("wrong terminal node in genT3D");
 
-		pair<map<Point, Edge>::iterator, map<Point, Edge>::iterator> range
+		pair<map<Point, byte>::iterator, map<Point, byte>::iterator> range
 			= termNodeOnEdge.equal_range(target);
-		set<Edge> edges = getValues(range);
+		set<byte> edges = getValues(range);
 
-		if (hasXLines(newNodes[term.i][term.j][term.k]))
+		if (edges.find(X_EDGE_DELETED) != edges.end())
 		{
 			int neibLeft;
 			for (neibLeft = term.i - 1; neibLeft >= 0; neibLeft--)
 			{
-				if (!newNodes[neibLeft][term.j][term.k].none()) break;
+				if (newNodes[neibLeft][term.j][term.k].test(IS_REGULAR) || hasYLines(newNodes[neibLeft][term.j][term.k])) break;
 			}
 			int neibRight;
 			for (neibRight = term.i + 1; neibRight < nX; neibRight++)
 			{
-				if (!newNodes[neibRight][term.j][term.k].none()) break;
+				if (newNodes[neibRight][term.j][term.k].test(IS_REGULAR) || hasYLines(newNodes[neibRight][term.j][term.k])) break;
 			}
 			double length = xNet[neibRight] - xNet[neibLeft];
 			int iL = indexXYZ(xNet[neibLeft], yNet[term.j], zNet[term.k]);
 			int iR = indexXYZ(xNet[neibRight], yNet[term.j], zNet[term.k]);
-			Edge edge(
-				Point(xNet[neibLeft], yNet[term.j], zNet[term.k]),
-				Point(xNet[neibRight], yNet[term.j], zNet[term.k]));
-			if (edges.find(edge) != edges.end()) {
-				tmpSigm[inc].neighbors.insert(neighbor(iL, (xNet[neibRight] - xNet[term.i]) / length));
-				tmpSigm[inc].neighbors.insert(neighbor(iR, (xNet[term.i] - xNet[neibLeft]) / length));
-			}
+			tmpSigm[inc].neighbors.insert(neighbor(iL, (xNet[neibRight] - xNet[term.i]) / length));
+			tmpSigm[inc].neighbors.insert(neighbor(iR, (xNet[term.i] - xNet[neibLeft]) / length));
 		}
-		if (hasYLines(newNodes[term.i][term.j][term.k]))
+		if (edges.find(Y_EDGE_DELETED) != edges.end())
 		{
 			int neibFore;
 			for (neibFore = term.j + 1; neibFore < nY; neibFore++)
 			{
-				if (!newNodes[term.i][neibFore][term.k].none()) break;
+				if (newNodes[term.i][neibFore][term.k].test(IS_REGULAR) || hasXLines(newNodes[term.i][neibFore][term.k])) break;
 			}
 			int neibBack;
 			for (neibBack = term.j - 1; neibBack >= 0; neibBack--)
 			{
-				if (!newNodes[term.i][neibBack][term.k].none()) break;
+				if (newNodes[term.i][neibBack][term.k].test(IS_REGULAR) || hasXLines(newNodes[term.i][neibBack][term.k])) break;
 			}
 			double length = yNet[neibBack] - yNet[neibFore];
 			int iF = indexXYZ(xNet[term.i], yNet[neibFore], zNet[term.k]);
 			int iB = indexXYZ(xNet[term.i], yNet[neibBack], zNet[term.k]);
-			Edge edge(
-				Point(xNet[term.i], yNet[neibFore], zNet[term.k]),
-				Point(xNet[term.i], yNet[neibBack], zNet[term.k]));
-			if (edges.find(edge) != edges.end()) {
-				tmpSigm[inc].neighbors.insert(neighbor(iF, (yNet[neibBack] - yNet[term.j]) / length));
-				tmpSigm[inc].neighbors.insert(neighbor(iB, (yNet[term.j] - yNet[neibFore]) / length));
-			}
+			tmpSigm[inc].neighbors.insert(neighbor(iF, (yNet[neibBack] - yNet[term.j]) / length));
+			tmpSigm[inc].neighbors.insert(neighbor(iB, (yNet[term.j] - yNet[neibFore]) / length));
 		}
-		if (hasZLines(newNodes[term.i][term.j][term.k]))
+		if (edges.find(Z_EDGE_DELETED) != edges.end())
 		{
 			int neibDown;
 			for (neibDown = term.k + 1; neibDown < nZ; neibDown++)
 			{
-				if (!newNodes[term.i][term.j][neibDown].none()) break;
+				if (newNodes[term.i][term.j][neibDown].test(IS_REGULAR) || hasZLines(newNodes[term.i][term.j][neibDown])) break;//!!! not z
 			}
 			int neibUp;
 			for (neibUp = term.k - 1; neibUp >= 0; neibUp--)
 			{
-				if (!newNodes[term.i][term.j][neibUp].none()) break;
+				if (newNodes[term.i][term.j][neibUp].test(IS_REGULAR) || hasZLines(newNodes[term.i][term.j][neibUp])) break;//!!! not z
 			}
 			double length = yNet[neibUp] - yNet[neibDown];
 			int iD = indexXYZ(xNet[term.i], yNet[term.j], zNet[neibDown]);
 			int iU = indexXYZ(xNet[term.i], yNet[term.j], zNet[neibUp]);
-			Edge edge(
-				Point(xNet[term.i], yNet[term.j], zNet[neibDown]),
-				Point(xNet[term.i], yNet[term.j], zNet[neibUp]));
-			if (edges.find(edge) != edges.end()) {
-				tmpSigm[inc].neighbors.insert(neighbor(iD, (zNet[neibUp] - zNet[term.k]) / length));
-				tmpSigm[inc].neighbors.insert(neighbor(iU, (zNet[term.k] - zNet[neibDown]) / length));
-			}
+			tmpSigm[inc].neighbors.insert(neighbor(iD, (zNet[neibUp] - zNet[term.k]) / length));
+			tmpSigm[inc].neighbors.insert(neighbor(iU, (zNet[term.k] - zNet[neibDown]) / length));
 		}
 		if (tmpSigm[inc].neighbors.empty())
 			throw new exception("cannot find neighbors for tmpSigm");
@@ -2036,7 +2007,11 @@ int main(int argc, char* argv[])
 	initNet(xNet, nX, yNet, nY, zNet, nZ);
 	DivideArea(xNet, nX, yNet, nY, zNet, nZ);
 	//deletePlaneX(1, 0, 2, 1, 2, 1, 2);
-	//deletePlaneY(1, 0, 2, 0, 1, 0, 1);
+	//deletePlaneY(1, 0, 2, 0, 2, 0, 1);
+
+	//deletePlaneX(1, 0, 2, 1, 2, 0, 1);
+	//deletePlaneX(2, 1, 3, 0, 1, 0, 1);
+	//deletePlaneX(2, 1, 3, 1, 2, 0, 1);
 
 	checkNet();
 	constructXyzAndNvtr();
