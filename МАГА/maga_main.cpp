@@ -30,7 +30,7 @@ const byte Y_EDGE_DELETED = 1;
 const byte Z_EDGE_DELETED = 2;
 
 const bool DEBUG = true;
-bool GRID_UNION = false;
+bool GRID_UNION = true;
 
 struct colour // цвет точки
 {
@@ -292,6 +292,20 @@ int FindLocate(double* massiv, int razm, double x)
 	return -1;
 }
 
+int FindAreaNumber(int nodes[])
+{
+	int i;
+	for (i = 0; i < sreda.size(); i++)
+	{
+		if (xyz_points[nodes[0]].x >= sreda[i].x1 && xyz_points[nodes[1]].x <= sreda[i].x2 
+			&& xyz_points[nodes[0]].y >= sreda[i].y1 && xyz_points[nodes[2]].y <= sreda[i].y2
+			&& xyz_points[nodes[0]].z >= sreda[i].z1 && xyz_points[nodes[4]].z <= sreda[i].z2)
+			return i;
+	}
+	logError("Ошибка в FindAreaNumber: не найдена подобласть.");
+	return -1;
+}
+
 bool hasLeft(bitset<BIT_SIZE> node) {
 	return node.test(LEFT_BACK) || node.test(LEFT_FORE)
 		|| node.test(LEFT_DOWN) || node.test(LEFT_UP);
@@ -507,7 +521,7 @@ qube* getQube(int directionX, int directionY, int directionZ,
 	int i_nextY = findNextY(directionX, directionY, directionZ, from_y, to_y, from_x, from_z);
 	int i_nextZ = findNextZ(directionX, directionY, directionZ, from_z, to_z, from_x, from_y);
 
-	if (i_nextX == i_nextY == i_nextZ == -1) {
+	if (i_nextX == -1 || i_nextY == -1 || i_nextZ == -1) {
 		return NULL;
 	}
 
@@ -549,7 +563,6 @@ void OptimizationQuarterX(int directionX, int directionY, int directionZ,
 			for (i = startX * directionX; i < endX * directionX - 1; i++)
 			{
 				u_i = i * directionX;
-				//обработка вершины при попытке расширения
 				if (canOptimize(directionX, directionY, directionZ, newNodes[u_i][u_j][u_t]))
 				{
 					qube*current = getQube(directionX, directionY, directionZ, u_i, u_j, u_t, endX, endY, endZ);
@@ -577,6 +590,56 @@ void OptimizationQuarterX(int directionX, int directionY, int directionZ,
 									deletePlaneX(current->i_nextX, u_i, nextQube->i_nextX, current->i_nextY, u_j, u_t, current->i_nextZ);
 								else
 									deletePlaneX(current->i_nextX, u_i, nextQube->i_nextX, current->i_nextY, u_j, current->i_nextZ, u_t);
+						}
+					}
+					delete current;
+					delete nextQube;
+				}
+			}
+		}
+	}
+}
+
+void OptimizationQuarterY(int directionX, int directionY, int directionZ,
+	int startX, int startY, int startZ, int endX, int endY, int endZ)
+{
+	int i, j, t, u_i, u_j, u_t;
+	for (t = startZ * directionZ; t < endZ * directionZ; t++)
+	{
+		u_t = t * directionZ;
+		for (i = startX * directionX; i < endX * directionX - 1; i++)
+		{
+			u_i = i * directionX;
+			for (j = startY * directionY; j < endY * directionY; j++)
+			{
+				u_j = j * directionY;
+				if (canOptimize(directionX, directionY, directionZ, newNodes[u_i][u_j][u_t]))
+				{
+					qube*current = getQube(directionX, directionY, directionZ, u_i, u_j, u_t, endX, endY, endZ);
+					if (current == NULL) {
+						continue;
+					}
+					qube*nextQube = getQube(directionX, directionY, directionZ, current->i_nextY, u_j, u_t, endX, endY, endZ);
+					if (nextQube == NULL) {
+						continue;
+					}
+					if (current->i_nextX == nextQube->i_nextX && current->i_nextZ == nextQube->i_nextZ) {
+						double width = current->getWidth();
+						double height = current->getHeight();
+						double deep_1 = current->getDepth();
+						double deep_union = deep_1 + nextQube->getDepth();
+
+						if (LikeACube(width, deep_1, height) < LikeACube(width, deep_union, height)) {
+							if (directionX == 1)
+								if (directionZ == 1)
+									deletePlaneY(current->i_nextY, u_i, nextQube->i_nextX, u_j, nextQube->i_nextY, u_t, current->i_nextZ);
+								else
+									deletePlaneY(current->i_nextY, u_i, nextQube->i_nextX, u_j, nextQube->i_nextY, current->i_nextZ, u_t);
+							else
+								if (directionZ == 1)
+									deletePlaneY(current->i_nextY, nextQube->i_nextX, u_i, u_j, nextQube->i_nextY, u_t, current->i_nextZ);
+								else
+									deletePlaneY(current->i_nextY, nextQube->i_nextX, u_i, u_j, nextQube->i_nextY, current->i_nextZ, u_t);
 						}
 					}
 					delete current;
@@ -1664,22 +1727,6 @@ void outputWithoutOptimisation()
 	}
 }
 
-int findAreaNumber(int nodes[])
-{
-	int i;
-	for (i = 0; i < sreda.size(); i++)
-	{
-		if (xyz_points[nodes[0]].x >= sreda[i].x1 && xyz_points[nodes[1]].x <= sreda[i].x2 &&
-			xyz_points[nodes[0]].y >= sreda[i].y1 && xyz_points[nodes[2]].y <= sreda[i].y2 &&
-			xyz_points[nodes[0]].z >= sreda[i].z1 && xyz_points[nodes[4]].z <= sreda[i].z2)
-			return i;
-	}
-	cout << "Ошибка в FindAreaNumber: не найдена подобласть." << endl;
-	system("pause");
-	exit(1);
-	return -1;
-}
-
 locateOfPoint FindLocate(Point sample)
 {
 	locateOfPoint a;
@@ -1754,78 +1801,78 @@ void genT3D() {
 	//формируем вспомогательную сигм-структуру
 	//sigmNewT = new sigmStruct3D[nColT];
 	sigmNewT.resize(nColT);
-	tmpSigm = new sigmStruct3D[nColT];
+	//tmpSigm = new sigmStruct3D[nColT];
 
-	for (int i = kolvoRegularNode; i < xyz_points.size(); i++)
-	{
-		int inc = i - kolvoRegularNode;
-		tmpSigm[inc].terminalNode = i;
-		Point target = xyz_points[i];
-		locateOfPoint term = FindLocate(xyz_points[i]);
-		if (newNodes[term.i][term.j][term.k].test(IS_REGULAR))
-			throw new exception("wrong terminal node in genT3D");
+	//for (int i = kolvoRegularNode; i < xyz_points.size(); i++)
+	//{
+	//	int inc = i - kolvoRegularNode;
+	//	tmpSigm[inc].terminalNode = i;
+	//	Point target = xyz_points[i];
+	//	locateOfPoint term = FindLocate(xyz_points[i]);
+	//	if (newNodes[term.i][term.j][term.k].test(IS_REGULAR))
+	//		throw new exception("wrong terminal node in genT3D");
 
-		pair<map<Point, byte>::iterator, map<Point, byte>::iterator> range
-			= termNodeOnEdge.equal_range(target);
-		set<byte> edges = getValues(range);
+	//	pair<map<Point, byte>::iterator, map<Point, byte>::iterator> range
+	//		= termNodeOnEdge.equal_range(target);
+	//	set<byte> edges = getValues(range);
 
-		if (edges.find(X_EDGE_DELETED) != edges.end())
-		{
-			int neibLeft;
-			for (neibLeft = term.i - 1; neibLeft >= 0; neibLeft--)
-			{
-				if (newNodes[neibLeft][term.j][term.k].test(IS_REGULAR) || hasYLines(newNodes[neibLeft][term.j][term.k])) break;
-			}
-			int neibRight;
-			for (neibRight = term.i + 1; neibRight < nX; neibRight++)
-			{
-				if (newNodes[neibRight][term.j][term.k].test(IS_REGULAR) || hasYLines(newNodes[neibRight][term.j][term.k])) break;
-			}
-			double length = xNet[neibRight] - xNet[neibLeft];
-			int iL = indexXYZ(xNet[neibLeft], yNet[term.j], zNet[term.k]);
-			int iR = indexXYZ(xNet[neibRight], yNet[term.j], zNet[term.k]);
-			tmpSigm[inc].neighbors.insert(neighbor(iL, (xNet[neibRight] - xNet[term.i]) / length));
-			tmpSigm[inc].neighbors.insert(neighbor(iR, (xNet[term.i] - xNet[neibLeft]) / length));
-		}
-		if (edges.find(Y_EDGE_DELETED) != edges.end())
-		{
-			int neibFore;
-			for (neibFore = term.j + 1; neibFore < nY; neibFore++)
-			{
-				if (newNodes[term.i][neibFore][term.k].test(IS_REGULAR) || hasXLines(newNodes[term.i][neibFore][term.k])) break;
-			}
-			int neibBack;
-			for (neibBack = term.j - 1; neibBack >= 0; neibBack--)
-			{
-				if (newNodes[term.i][neibBack][term.k].test(IS_REGULAR) || hasXLines(newNodes[term.i][neibBack][term.k])) break;
-			}
-			double length = yNet[neibBack] - yNet[neibFore];
-			int iF = indexXYZ(xNet[term.i], yNet[neibFore], zNet[term.k]);
-			int iB = indexXYZ(xNet[term.i], yNet[neibBack], zNet[term.k]);
-			tmpSigm[inc].neighbors.insert(neighbor(iF, (yNet[neibBack] - yNet[term.j]) / length));
-			tmpSigm[inc].neighbors.insert(neighbor(iB, (yNet[term.j] - yNet[neibFore]) / length));
-		}
-		if (edges.find(Z_EDGE_DELETED) != edges.end())
-		{
-			int neibDown;
-			for (neibDown = term.k + 1; neibDown < nZ; neibDown++)
-			{
-				if (newNodes[term.i][term.j][neibDown].test(IS_REGULAR) || hasZLines(newNodes[term.i][term.j][neibDown])) break;//!!! not z
-			}
-			int neibUp;
-			for (neibUp = term.k - 1; neibUp >= 0; neibUp--)
-			{
-				if (newNodes[term.i][term.j][neibUp].test(IS_REGULAR) || hasZLines(newNodes[term.i][term.j][neibUp])) break;//!!! not z
-			}
-			double length = yNet[neibUp] - yNet[neibDown];
-			int iD = indexXYZ(xNet[term.i], yNet[term.j], zNet[neibDown]);
-			int iU = indexXYZ(xNet[term.i], yNet[term.j], zNet[neibUp]);
-			tmpSigm[inc].neighbors.insert(neighbor(iD, (zNet[neibUp] - zNet[term.k]) / length));
-			tmpSigm[inc].neighbors.insert(neighbor(iU, (zNet[term.k] - zNet[neibDown]) / length));
-		}
-		if (tmpSigm[inc].neighbors.empty())
-			throw new exception("cannot find neighbors for tmpSigm");
-	}
+	//	if (edges.find(X_EDGE_DELETED) != edges.end())
+	//	{
+	//		int neibLeft;
+	//		for (neibLeft = term.i - 1; neibLeft >= 0; neibLeft--)
+	//		{
+	//			if (newNodes[neibLeft][term.j][term.k].test(IS_REGULAR) || hasYLines(newNodes[neibLeft][term.j][term.k])) break;	//hasXLines also need
+	//		}
+	//		int neibRight;
+	//		for (neibRight = term.i + 1; neibRight < nX; neibRight++)
+	//		{
+	//			if (newNodes[neibRight][term.j][term.k].test(IS_REGULAR) || hasYLines(newNodes[neibRight][term.j][term.k])) break;
+	//		}
+	//		double length = xNet[neibRight] - xNet[neibLeft];
+	//		int iL = indexXYZ(xNet[neibLeft], yNet[term.j], zNet[term.k]);
+	//		int iR = indexXYZ(xNet[neibRight], yNet[term.j], zNet[term.k]);
+	//		tmpSigm[inc].neighbors.insert(neighbor(iL, (xNet[neibRight] - xNet[term.i]) / length));
+	//		tmpSigm[inc].neighbors.insert(neighbor(iR, (xNet[term.i] - xNet[neibLeft]) / length));
+	//	}
+	//	if (edges.find(Y_EDGE_DELETED) != edges.end())
+	//	{
+	//		int neibFore;
+	//		for (neibFore = term.j + 1; neibFore < nY; neibFore++)
+	//		{
+	//			if (newNodes[term.i][neibFore][term.k].test(IS_REGULAR) || hasXLines(newNodes[term.i][neibFore][term.k])) break;
+	//		}
+	//		int neibBack;
+	//		for (neibBack = term.j - 1; neibBack >= 0; neibBack--)
+	//		{
+	//			if (newNodes[term.i][neibBack][term.k].test(IS_REGULAR) || hasXLines(newNodes[term.i][neibBack][term.k])) break;
+	//		}
+	//		double length = yNet[neibBack] - yNet[neibFore];
+	//		int iF = indexXYZ(xNet[term.i], yNet[neibFore], zNet[term.k]);
+	//		int iB = indexXYZ(xNet[term.i], yNet[neibBack], zNet[term.k]);
+	//		tmpSigm[inc].neighbors.insert(neighbor(iF, (yNet[neibBack] - yNet[term.j]) / length));
+	//		tmpSigm[inc].neighbors.insert(neighbor(iB, (yNet[term.j] - yNet[neibFore]) / length));
+	//	}
+	//	if (edges.find(Z_EDGE_DELETED) != edges.end())
+	//	{
+	//		int neibDown;
+	//		for (neibDown = term.k + 1; neibDown < nZ; neibDown++)
+	//		{
+	//			if (newNodes[term.i][term.j][neibDown].test(IS_REGULAR) || hasZLines(newNodes[term.i][term.j][neibDown])) break;//!!! not z
+	//		}
+	//		int neibUp;
+	//		for (neibUp = term.k - 1; neibUp >= 0; neibUp--)
+	//		{
+	//			if (newNodes[term.i][term.j][neibUp].test(IS_REGULAR) || hasZLines(newNodes[term.i][term.j][neibUp])) break;//!!! not z
+	//		}
+	//		double length = yNet[neibUp] - yNet[neibDown];
+	//		int iD = indexXYZ(xNet[term.i], yNet[term.j], zNet[neibDown]);
+	//		int iU = indexXYZ(xNet[term.i], yNet[term.j], zNet[neibUp]);
+	//		tmpSigm[inc].neighbors.insert(neighbor(iD, (zNet[neibUp] - zNet[term.k]) / length));
+	//		tmpSigm[inc].neighbors.insert(neighbor(iU, (zNet[term.k] - zNet[neibDown]) / length));
+	//	}
+	//	if (tmpSigm[inc].neighbors.empty())
+	//		throw new exception("cannot find neighbors for tmpSigm");
+	//}
 
 	for (int i = 0; i < nColT; i++)
 	{
@@ -1898,6 +1945,104 @@ void genT3D() {
 	outT << endl;
 }
 
+bool belongToInterval(double val, double l1, double l2) {
+	return MkaUtils::compare(val, l1) >= 0 && MkaUtils::compare(val, l2) <= 0;
+}
+
+bool containsPointOnVergeOfKe(int termNode, int iKe) {
+	Point& target = xyz_points[termNode];
+	for (int i = 0; i < 8; i++)
+	{
+		if (xyz_points[KE[iKe].uzel[i]] == target) {
+			return false;
+		}
+	}
+	int inc = termNode - kolvoRegularNode;
+	tmpSigm[inc].terminalNode = termNode;
+	if (MkaUtils::equals(target.x, xyz_points[KE[iKe].uzel[0]].x) || MkaUtils::equals(target.x, xyz_points[KE[iKe].uzel[1]].x)) {
+		if (belongToInterval(target.y, xyz_points[KE[iKe].uzel[0]].y, xyz_points[KE[iKe].uzel[2]].y) &&
+			belongToInterval(target.z, xyz_points[KE[iKe].uzel[0]].z, xyz_points[KE[iKe].uzel[4]].z)) {
+			locateOfPoint loc = FindLocate(target);
+			if (hasYLines(newNodes[loc.i][loc.j][loc.k])) {
+				int i1 = indexXYZ(target.x, xyz_points[KE[iKe].uzel[0]].y, target.z);
+				int i2 = indexXYZ(target.x, xyz_points[KE[iKe].uzel[2]].y, target.z);
+				if (i1 != -1 && i2 != -1) {
+					double length = xyz_points[KE[iKe].uzel[2]].y - xyz_points[KE[iKe].uzel[0]].y;
+					tmpSigm[inc].neighbors.insert(neighbor(i1, (xyz_points[KE[iKe].uzel[2]].y - target.y) / length));
+					tmpSigm[inc].neighbors.insert(neighbor(i2, (target.y - xyz_points[KE[iKe].uzel[0]].y) / length));
+					return true;
+				}
+			}
+			if (hasZLines(newNodes[loc.i][loc.j][loc.k])) {
+				int i1 = indexXYZ(target.x, target.y, xyz_points[KE[iKe].uzel[0]].z);
+				int i2 = indexXYZ(target.x, target.y, xyz_points[KE[iKe].uzel[4]].z);
+				if (i1 != -1 && i2 != -1) {
+					double length = xyz_points[KE[iKe].uzel[4]].z - xyz_points[KE[iKe].uzel[0]].z;
+					tmpSigm[inc].neighbors.insert(neighbor(i1, (xyz_points[KE[iKe].uzel[2]].z - target.z) / length));
+					tmpSigm[inc].neighbors.insert(neighbor(i2, (target.z - xyz_points[KE[iKe].uzel[0]].z) / length));
+					return true;
+				}
+			}
+			logError("WTF");
+		}
+	}
+	if (MkaUtils::equals(target.y, xyz_points[KE[iKe].uzel[0]].y) || MkaUtils::equals(target.y, xyz_points[KE[iKe].uzel[2]].y)) {
+		if (belongToInterval(target.x, xyz_points[KE[iKe].uzel[0]].x, xyz_points[KE[iKe].uzel[1]].x) &&
+			belongToInterval(target.z, xyz_points[KE[iKe].uzel[0]].z, xyz_points[KE[iKe].uzel[4]].z)) {
+			locateOfPoint loc = FindLocate(target);
+			if (hasXLines(newNodes[loc.i][loc.j][loc.k])) {
+				int i1 = indexXYZ(xyz_points[KE[iKe].uzel[0]].x, target.y, target.z);
+				int i2 = indexXYZ(xyz_points[KE[iKe].uzel[1]].x, target.y, target.z);
+				if (i1 != -1 && i2 != -1) {
+					double length = xyz_points[KE[iKe].uzel[1]].x - xyz_points[KE[iKe].uzel[0]].x;
+					tmpSigm[inc].neighbors.insert(neighbor(i1, (xyz_points[KE[iKe].uzel[1]].x - target.x) / length));
+					tmpSigm[inc].neighbors.insert(neighbor(i2, (target.x - xyz_points[KE[iKe].uzel[0]].x) / length));
+					return true;
+				}
+			}
+			if (hasZLines(newNodes[loc.i][loc.j][loc.k])) {
+				int i1 = indexXYZ(target.x, target.y, xyz_points[KE[iKe].uzel[0]].z);
+				int i2 = indexXYZ(target.x, target.y, xyz_points[KE[iKe].uzel[4]].z);
+				if (i1 != -1 && i2 != -1) {
+					double length = xyz_points[KE[iKe].uzel[4]].z - xyz_points[KE[iKe].uzel[0]].z;
+					tmpSigm[inc].neighbors.insert(neighbor(i1, (xyz_points[KE[iKe].uzel[2]].z - target.z) / length));
+					tmpSigm[inc].neighbors.insert(neighbor(i2, (target.z - xyz_points[KE[iKe].uzel[0]].z) / length));
+					return true;
+				}
+			}
+			logError("WTF");
+		}
+	}
+	if (MkaUtils::equals(target.z, xyz_points[KE[iKe].uzel[0]].z) || MkaUtils::equals(target.z, xyz_points[KE[iKe].uzel[4]].z)) {
+		if (belongToInterval(target.x, xyz_points[KE[iKe].uzel[0]].x, xyz_points[KE[iKe].uzel[1]].x) &&
+			belongToInterval(target.y, xyz_points[KE[iKe].uzel[0]].y, xyz_points[KE[iKe].uzel[2]].y)) {
+			locateOfPoint loc = FindLocate(target);
+			if (hasXLines(newNodes[loc.i][loc.j][loc.k])) {
+				int i1 = indexXYZ(xyz_points[KE[iKe].uzel[0]].x, target.y, target.z);
+				int i2 = indexXYZ(xyz_points[KE[iKe].uzel[1]].x, target.y, target.z);
+				if (i1 != -1 && i2 != -1) {
+					double length = xyz_points[KE[iKe].uzel[1]].x - xyz_points[KE[iKe].uzel[0]].x;
+					tmpSigm[inc].neighbors.insert(neighbor(i1, (xyz_points[KE[iKe].uzel[1]].x - target.x) / length));
+					tmpSigm[inc].neighbors.insert(neighbor(i2, (target.x - xyz_points[KE[iKe].uzel[0]].x) / length));
+					return true;
+				}
+			}
+			if (hasYLines(newNodes[loc.i][loc.j][loc.k])) {
+				int i1 = indexXYZ(target.x, xyz_points[KE[iKe].uzel[0]].y, target.z);
+				int i2 = indexXYZ(target.x, xyz_points[KE[iKe].uzel[2]].y, target.z);
+				if (i1 != -1 && i2 != -1) {
+					double length = xyz_points[KE[iKe].uzel[2]].y - xyz_points[KE[iKe].uzel[0]].y;
+					tmpSigm[inc].neighbors.insert(neighbor(i1, (xyz_points[KE[iKe].uzel[2]].y - target.y) / length));
+					tmpSigm[inc].neighbors.insert(neighbor(i2, (target.y - xyz_points[KE[iKe].uzel[0]].y) / length));
+					return true;
+				}
+			}
+			logError("WTF");
+		}
+	}
+	return false;
+}
+
 void constructXyzAndNvtr()
 {
 	int i, j, t, k;
@@ -1950,6 +2095,8 @@ void constructXyzAndNvtr()
 
 	//формируем структуру КЭ
 	nvtr tempNvtr;
+	int countKe = 0;
+	tmpSigm = new sigmStruct3D[nColT];
 	for (int z = 0; z < nZ - 1; z++)
 	{
 		for (j = 0; j < nY - 1; j++)
@@ -1972,8 +2119,14 @@ void constructXyzAndNvtr()
 					tempNvtr.uzel[6] = indexXYZ(xNet[i], yNet[nextY], zNet[nextZ]);
 					tempNvtr.uzel[7] = indexXYZ(xNet[nextX], yNet[nextY], zNet[nextZ]);
 
-					tempNvtr.numberField = 1; //FindAreaNumber(tempNvtr.uzel);
+					tempNvtr.numberField = FindAreaNumber(tempNvtr.uzel);
 					KE.push_back(tempNvtr);
+
+					for (int i = kolvoRegularNode; i < xyz_points.size(); i++)
+					{
+						containsPointOnVergeOfKe(i, countKe);
+					}
+					countKe++;
 				}
 			}
 		}
