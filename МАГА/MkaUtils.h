@@ -1,5 +1,15 @@
 #pragma once
 #include <math.h>
+#include <stdlib.h>
+#include <iostream>
+#include <iomanip>
+#include <fstream>
+#include <vector>
+#include <set>
+#include <map>
+#include <locale>
+#include <bitset>
+#include <Windows.h>
 
 const double EPS = 1e-15;
 

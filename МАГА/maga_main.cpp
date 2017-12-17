@@ -9,6 +9,7 @@
 #include <bitset>
 #include <Windows.h>
 #include "Edge.h"
+#include "Mka3D.h"
 
 const size_t BIT_SIZE = 13;
 const size_t LEFT_UP = 0;
@@ -30,7 +31,7 @@ const byte Y_EDGE_DELETED = 1;
 const byte Z_EDGE_DELETED = 2;
 
 const bool DEBUG = true;
-bool GRID_UNION = true;
+bool GRID_UNION = false;
 
 struct colour // цвет точки
 {
@@ -51,6 +52,9 @@ struct locateOfPoint
 	}
 
 	locateOfPoint(): i(0), j(0), k(0)
+	{
+	}
+	locateOfPoint::~locateOfPoint()
 	{
 	}
 };
@@ -2153,26 +2157,28 @@ void checkNet() {
 
 int main(int argc, char* argv[])
 {
-	setlocale(LC_ALL, "rus");
+	//setlocale(LC_ALL, "rus");
+	//inputConfig();
+	//inputNet();
+
+	//initNet(xNet, nX, yNet, nY, zNet, nZ);
+	//DivideArea(xNet, nX, yNet, nY, zNet, nZ);
+	////deletePlaneX(1, 0, 2, 1, 2, 1, 2);
+	////deletePlaneY(1, 0, 2, 0, 2, 0, 1);
+
+	////deletePlaneX(1, 0, 2, 1, 2, 0, 1);
+	////deletePlaneX(2, 1, 3, 0, 1, 0, 1);
+	////deletePlaneX(2, 1, 3, 1, 2, 0, 1);
+
+	//checkNet();
+	//constructXyzAndNvtr();
+	//genT3D();
+	//generatePortraitNesoglas();
+
+	//GenerateMatrix();
+	//LosLU(ggl, ggu, di, kolvoRegularNode, ig, jg, b, q);
+	////runLOS();
+	//calcPogreshnost(output);
+	Mka3D task;
 	inputConfig();
-	inputNet();
-
-	initNet(xNet, nX, yNet, nY, zNet, nZ);
-	DivideArea(xNet, nX, yNet, nY, zNet, nZ);
-	//deletePlaneX(1, 0, 2, 1, 2, 1, 2);
-	//deletePlaneY(1, 0, 2, 0, 2, 0, 1);
-
-	//deletePlaneX(1, 0, 2, 1, 2, 0, 1);
-	//deletePlaneX(2, 1, 3, 0, 1, 0, 1);
-	//deletePlaneX(2, 1, 3, 1, 2, 0, 1);
-
-	checkNet();
-	constructXyzAndNvtr();
-	genT3D();
-	generatePortraitNesoglas();
-
-	GenerateMatrix();
-	LosLU(ggl, ggu, di, kolvoRegularNode, ig, jg, b, q);
-	//runLOS();
-	calcPogreshnost(output);
 }
