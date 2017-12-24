@@ -1,0 +1,11 @@
+Net init and optimization               00:00:00M405
+Construct xyz and nvtr                  00:02:00M309
+Generate T matrix                       00:00:00M799
+Generate portrait                       00:00:00M781
+Generate global matrix                  00:02:00M017
+Solve slau                              00:00:00M010
+Total program duration                  00:06:00M361
+
+KE number = 783
+dim(A) = 621
+Terminal nodes = 668

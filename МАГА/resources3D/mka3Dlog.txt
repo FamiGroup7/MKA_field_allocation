@@ -1,0 +1,2424 @@
+Deleted plane x = 5.2, y1 = 5.2, y2 = 5.54, z1 = 5.2, z2 = 5.54
+Deleted plane x = 5.2, y1 = 5.54, y2 = 6.118, z1 = 5.2, z2 = 5.54
+Deleted plane x = 5.2, y1 = 6.118, y2 = 7.1006, z1 = 5.2, z2 = 5.54
+Deleted plane x = 5.2, y1 = 7.1006, y2 = 8.77102, z1 = 5.2, z2 = 5.54
+Deleted plane x = 5.2, y1 = 8.77102, y2 = 10, z1 = 5.2, z2 = 5.54
+Deleted plane x = 5.2, y1 = 5.2, y2 = 5.54, z1 = 5.54, z2 = 6.118
+Deleted plane x = 5.2, y1 = 5.54, y2 = 6.118, z1 = 5.54, z2 = 6.118
+Deleted plane x = 5.54, y1 = 5.54, y2 = 6.118, z1 = 5.54, z2 = 6.118
+Deleted plane x = 5.2, y1 = 6.118, y2 = 7.1006, z1 = 5.54, z2 = 6.118
+Deleted plane x = 5.54, y1 = 6.118, y2 = 7.1006, z1 = 5.54, z2 = 6.118
+Deleted plane x = 5.2, y1 = 7.1006, y2 = 8.77102, z1 = 5.54, z2 = 6.118
+Deleted plane x = 5.54, y1 = 7.1006, y2 = 8.77102, z1 = 5.54, z2 = 6.118
+Deleted plane x = 5.2, y1 = 8.77102, y2 = 10, z1 = 5.54, z2 = 6.118
+Deleted plane x = 5.54, y1 = 8.77102, y2 = 10, z1 = 5.54, z2 = 6.118
+Deleted plane x = 5.2, y1 = 5.2, y2 = 5.54, z1 = 6.118, z2 = 7.1006
+Deleted plane x = 5.2, y1 = 5.54, y2 = 6.118, z1 = 6.118, z2 = 7.1006
+Deleted plane x = 5.54, y1 = 5.54, y2 = 6.118, z1 = 6.118, z2 = 7.1006
+Deleted plane x = 5.2, y1 = 6.118, y2 = 7.1006, z1 = 6.118, z2 = 7.1006
+Deleted plane x = 5.54, y1 = 6.118, y2 = 7.1006, z1 = 6.118, z2 = 7.1006
+Deleted plane x = 5.2, y1 = 7.1006, y2 = 8.77102, z1 = 6.118, z2 = 7.1006
+Deleted plane x = 5.54, y1 = 7.1006, y2 = 8.77102, z1 = 6.118, z2 = 7.1006
+Deleted plane x = 5.2, y1 = 8.77102, y2 = 10, z1 = 6.118, z2 = 7.1006
+Deleted plane x = 5.54, y1 = 8.77102, y2 = 10, z1 = 6.118, z2 = 7.1006
+Deleted plane x = 5.2, y1 = 5.2, y2 = 5.54, z1 = 7.1006, z2 = 8.77102
+Deleted plane x = 5.2, y1 = 5.54, y2 = 6.118, z1 = 7.1006, z2 = 8.77102
+Deleted plane x = 5.54, y1 = 5.54, y2 = 6.118, z1 = 7.1006, z2 = 8.77102
+Deleted plane x = 5.2, y1 = 6.118, y2 = 7.1006, z1 = 7.1006, z2 = 8.77102
+Deleted plane x = 5.54, y1 = 6.118, y2 = 7.1006, z1 = 7.1006, z2 = 8.77102
+Deleted plane x = 5.2, y1 = 7.1006, y2 = 8.77102, z1 = 7.1006, z2 = 8.77102
+Deleted plane x = 5.54, y1 = 7.1006, y2 = 8.77102, z1 = 7.1006, z2 = 8.77102
+Deleted plane x = 6.118, y1 = 7.1006, y2 = 8.77102, z1 = 7.1006, z2 = 8.77102
+Deleted plane x = 5.2, y1 = 8.77102, y2 = 10, z1 = 7.1006, z2 = 8.77102
+Deleted plane x = 5.54, y1 = 8.77102, y2 = 10, z1 = 7.1006, z2 = 8.77102
+Deleted plane x = 6.118, y1 = 8.77102, y2 = 10, z1 = 7.1006, z2 = 8.77102
+Deleted plane x = 5.2, y1 = 5.2, y2 = 5.54, z1 = 8.77102, z2 = 10
+Deleted plane x = 5.2, y1 = 5.54, y2 = 6.118, z1 = 8.77102, z2 = 10
+Deleted plane x = 5.54, y1 = 5.54, y2 = 6.118, z1 = 8.77102, z2 = 10
+Deleted plane x = 5.2, y1 = 6.118, y2 = 7.1006, z1 = 8.77102, z2 = 10
+Deleted plane x = 5.54, y1 = 6.118, y2 = 7.1006, z1 = 8.77102, z2 = 10
+Deleted plane x = 5.2, y1 = 7.1006, y2 = 8.77102, z1 = 8.77102, z2 = 10
+Deleted plane x = 5.54, y1 = 7.1006, y2 = 8.77102, z1 = 8.77102, z2 = 10
+Deleted plane x = 6.118, y1 = 7.1006, y2 = 8.77102, z1 = 8.77102, z2 = 10
+Deleted plane x = 5.2, y1 = 8.77102, y2 = 10, z1 = 8.77102, z2 = 10
+Deleted plane x = 5.54, y1 = 8.77102, y2 = 10, z1 = 8.77102, z2 = 10
+Deleted plane x = 6.118, y1 = 8.77102, y2 = 10, z1 = 8.77102, z2 = 10
+Deleted plane y = 5.2, x1 = 5.54, x2 = 6.118, z1 = 5.2, z2 = 5.54
+Deleted plane y = 5.2, x1 = 6.118, x2 = 7.1006, z1 = 5.2, z2 = 5.54
+Deleted plane y = 5.2, x1 = 7.1006, x2 = 8.77102, z1 = 5.2, z2 = 5.54
+Deleted plane y = 5.2, x1 = 8.77102, x2 = 10, z1 = 5.2, z2 = 5.54
+Deleted plane y = 5.2, x1 = 5.54, x2 = 6.118, z1 = 5.54, z2 = 6.118
+Deleted plane y = 5.2, x1 = 6.118, x2 = 7.1006, z1 = 5.54, z2 = 6.118
+Deleted plane y = 5.54, x1 = 6.118, x2 = 7.1006, z1 = 5.54, z2 = 6.118
+Deleted plane y = 5.2, x1 = 7.1006, x2 = 8.77102, z1 = 5.54, z2 = 6.118
+Deleted plane y = 5.54, x1 = 7.1006, x2 = 8.77102, z1 = 5.54, z2 = 6.118
+Deleted plane y = 5.2, x1 = 8.77102, x2 = 10, z1 = 5.54, z2 = 6.118
+Deleted plane y = 5.54, x1 = 8.77102, x2 = 10, z1 = 5.54, z2 = 6.118
+Deleted plane y = 6.118, x1 = 5, x2 = 6.118, z1 = 6.118, z2 = 7.1006
+Deleted plane y = 5.2, x1 = 5.54, x2 = 6.118, z1 = 6.118, z2 = 7.1006
+Deleted plane y = 5.2, x1 = 6.118, x2 = 7.1006, z1 = 6.118, z2 = 7.1006
+Deleted plane y = 5.54, x1 = 6.118, x2 = 7.1006, z1 = 6.118, z2 = 7.1006
+Deleted plane y = 5.2, x1 = 7.1006, x2 = 8.77102, z1 = 6.118, z2 = 7.1006
+Deleted plane y = 5.54, x1 = 7.1006, x2 = 8.77102, z1 = 6.118, z2 = 7.1006
+Deleted plane y = 5.2, x1 = 8.77102, x2 = 10, z1 = 6.118, z2 = 7.1006
+Deleted plane y = 5.54, x1 = 8.77102, x2 = 10, z1 = 6.118, z2 = 7.1006
+Deleted plane y = 6.118, x1 = 5, x2 = 6.118, z1 = 7.1006, z2 = 8.77102
+Deleted plane y = 5.2, x1 = 5.54, x2 = 6.118, z1 = 7.1006, z2 = 8.77102
+Deleted plane y = 5.2, x1 = 6.118, x2 = 7.1006, z1 = 7.1006, z2 = 8.77102
+Deleted plane y = 5.54, x1 = 6.118, x2 = 7.1006, z1 = 7.1006, z2 = 8.77102
+Deleted plane y = 5.2, x1 = 7.1006, x2 = 8.77102, z1 = 7.1006, z2 = 8.77102
+Deleted plane y = 5.54, x1 = 7.1006, x2 = 8.77102, z1 = 7.1006, z2 = 8.77102
+Deleted plane y = 6.118, x1 = 7.1006, x2 = 8.77102, z1 = 7.1006, z2 = 8.77102
+Deleted plane y = 5.2, x1 = 8.77102, x2 = 10, z1 = 7.1006, z2 = 8.77102
+Deleted plane y = 5.54, x1 = 8.77102, x2 = 10, z1 = 7.1006, z2 = 8.77102
+Deleted plane y = 6.118, x1 = 8.77102, x2 = 10, z1 = 7.1006, z2 = 8.77102
+Deleted plane y = 6.118, x1 = 5, x2 = 6.118, z1 = 8.77102, z2 = 10
+Deleted plane y = 5.2, x1 = 5.54, x2 = 6.118, z1 = 8.77102, z2 = 10
+Deleted plane y = 5.2, x1 = 6.118, x2 = 7.1006, z1 = 8.77102, z2 = 10
+Deleted plane y = 5.54, x1 = 6.118, x2 = 7.1006, z1 = 8.77102, z2 = 10
+Deleted plane y = 5.2, x1 = 7.1006, x2 = 8.77102, z1 = 8.77102, z2 = 10
+Deleted plane y = 5.54, x1 = 7.1006, x2 = 8.77102, z1 = 8.77102, z2 = 10
+Deleted plane y = 6.118, x1 = 7.1006, x2 = 8.77102, z1 = 8.77102, z2 = 10
+Deleted plane y = 5.2, x1 = 8.77102, x2 = 10, z1 = 8.77102, z2 = 10
+Deleted plane y = 5.54, x1 = 8.77102, x2 = 10, z1 = 8.77102, z2 = 10
+Deleted plane y = 6.118, x1 = 8.77102, x2 = 10, z1 = 8.77102, z2 = 10
+Cannot delete plane z = 7.1006, x1 = 5, x2 = 6.118, y1 = 5.54, y2 = 7.1006
+Deleted plane z = 6.118, x1 = 5, x2 = 6.118, y1 = 7.1006, y2 = 8.77102
+Deleted plane z = 6.118, x1 = 5, x2 = 6.118, y1 = 8.77102, y2 = 10
+Cannot delete plane z = 5.54, x1 = 5.54, x2 = 6.118, y1 = 5, y2 = 5.54
+Deleted plane z = 5.2, x1 = 5.54, x2 = 6.118, y1 = 5.54, y2 = 6.118
+Deleted plane z = 5.2, x1 = 5.54, x2 = 6.118, y1 = 6.118, y2 = 7.1006
+Deleted plane z = 5.2, x1 = 5.54, x2 = 6.118, y1 = 7.1006, y2 = 8.77102
+Deleted plane z = 5.2, x1 = 5.54, x2 = 6.118, y1 = 8.77102, y2 = 10
+Cannot delete plane z = 6.118, x1 = 6.118, x2 = 7.1006, y1 = 5, y2 = 6.118
+Deleted plane z = 5.2, x1 = 6.118, x2 = 7.1006, y1 = 5.54, y2 = 6.118
+Deleted plane z = 5.2, x1 = 6.118, x2 = 7.1006, y1 = 6.118, y2 = 7.1006
+Deleted plane z = 5.54, x1 = 6.118, x2 = 7.1006, y1 = 6.118, y2 = 7.1006
+Deleted plane z = 5.2, x1 = 6.118, x2 = 7.1006, y1 = 7.1006, y2 = 8.77102
+Deleted plane z = 5.54, x1 = 6.118, x2 = 7.1006, y1 = 7.1006, y2 = 8.77102
+Deleted plane z = 5.2, x1 = 6.118, x2 = 7.1006, y1 = 8.77102, y2 = 10
+Deleted plane z = 5.54, x1 = 6.118, x2 = 7.1006, y1 = 8.77102, y2 = 10
+Deleted plane z = 6.118, x1 = 7.1006, x2 = 8.77102, y1 = 5, y2 = 6.118
+Deleted plane z = 5.2, x1 = 7.1006, x2 = 8.77102, y1 = 5.54, y2 = 6.118
+Deleted plane z = 5.2, x1 = 7.1006, x2 = 8.77102, y1 = 6.118, y2 = 7.1006
+Deleted plane z = 5.54, x1 = 7.1006, x2 = 8.77102, y1 = 6.118, y2 = 7.1006
+Deleted plane z = 5.2, x1 = 7.1006, x2 = 8.77102, y1 = 7.1006, y2 = 8.77102
+Deleted plane z = 5.54, x1 = 7.1006, x2 = 8.77102, y1 = 7.1006, y2 = 8.77102
+Deleted plane z = 6.118, x1 = 7.1006, x2 = 8.77102, y1 = 7.1006, y2 = 8.77102
+Deleted plane z = 5.2, x1 = 7.1006, x2 = 8.77102, y1 = 8.77102, y2 = 10
+Deleted plane z = 5.54, x1 = 7.1006, x2 = 8.77102, y1 = 8.77102, y2 = 10
+Deleted plane z = 6.118, x1 = 7.1006, x2 = 8.77102, y1 = 8.77102, y2 = 10
+Deleted plane z = 6.118, x1 = 8.77102, x2 = 10, y1 = 5, y2 = 6.118
+Deleted plane z = 5.2, x1 = 8.77102, x2 = 10, y1 = 5.54, y2 = 6.118
+Deleted plane z = 5.2, x1 = 8.77102, x2 = 10, y1 = 6.118, y2 = 7.1006
+Deleted plane z = 5.54, x1 = 8.77102, x2 = 10, y1 = 6.118, y2 = 7.1006
+Deleted plane z = 5.2, x1 = 8.77102, x2 = 10, y1 = 7.1006, y2 = 8.77102
+Deleted plane z = 5.54, x1 = 8.77102, x2 = 10, y1 = 7.1006, y2 = 8.77102
+Deleted plane z = 6.118, x1 = 8.77102, x2 = 10, y1 = 7.1006, y2 = 8.77102
+Deleted plane z = 5.2, x1 = 8.77102, x2 = 10, y1 = 8.77102, y2 = 10
+Deleted plane z = 5.54, x1 = 8.77102, x2 = 10, y1 = 8.77102, y2 = 10
+Deleted plane z = 6.118, x1 = 8.77102, x2 = 10, y1 = 8.77102, y2 = 10
+Deleted plane x = 4.8, y1 = 5.2, y2 = 5.54, z1 = 5.2, z2 = 5.54
+Deleted plane x = 4.8, y1 = 5.54, y2 = 6.118, z1 = 5.2, z2 = 5.54
+Deleted plane x = 4.8, y1 = 6.118, y2 = 7.1006, z1 = 5.2, z2 = 5.54
+Deleted plane x = 4.8, y1 = 7.1006, y2 = 8.77102, z1 = 5.2, z2 = 5.54
+Deleted plane x = 4.8, y1 = 8.77102, y2 = 10, z1 = 5.2, z2 = 5.54
+Deleted plane x = 4.8, y1 = 5.2, y2 = 5.54, z1 = 5.54, z2 = 6.118
+Deleted plane x = 4.8, y1 = 5.54, y2 = 6.118, z1 = 5.54, z2 = 6.118
+Deleted plane x = 4.46, y1 = 5.54, y2 = 6.118, z1 = 5.54, z2 = 6.118
+Deleted plane x = 4.8, y1 = 6.118, y2 = 7.1006, z1 = 5.54, z2 = 6.118
+Deleted plane x = 4.46, y1 = 6.118, y2 = 7.1006, z1 = 5.54, z2 = 6.118
+Deleted plane x = 4.8, y1 = 7.1006, y2 = 8.77102, z1 = 5.54, z2 = 6.118
+Deleted plane x = 4.46, y1 = 7.1006, y2 = 8.77102, z1 = 5.54, z2 = 6.118
+Deleted plane x = 4.8, y1 = 8.77102, y2 = 10, z1 = 5.54, z2 = 6.118
+Deleted plane x = 4.46, y1 = 8.77102, y2 = 10, z1 = 5.54, z2 = 6.118
+Deleted plane x = 4.8, y1 = 5.2, y2 = 5.54, z1 = 6.118, z2 = 7.1006
+Deleted plane x = 4.8, y1 = 5.54, y2 = 6.118, z1 = 6.118, z2 = 7.1006
+Deleted plane x = 4.46, y1 = 5.54, y2 = 6.118, z1 = 6.118, z2 = 7.1006
+Deleted plane x = 4.8, y1 = 6.118, y2 = 7.1006, z1 = 6.118, z2 = 7.1006
+Deleted plane x = 4.46, y1 = 6.118, y2 = 7.1006, z1 = 6.118, z2 = 7.1006
+Deleted plane x = 4.8, y1 = 7.1006, y2 = 8.77102, z1 = 6.118, z2 = 7.1006
+Deleted plane x = 4.46, y1 = 7.1006, y2 = 8.77102, z1 = 6.118, z2 = 7.1006
+Deleted plane x = 4.8, y1 = 8.77102, y2 = 10, z1 = 6.118, z2 = 7.1006
+Deleted plane x = 4.46, y1 = 8.77102, y2 = 10, z1 = 6.118, z2 = 7.1006
+Deleted plane x = 4.8, y1 = 5.2, y2 = 5.54, z1 = 7.1006, z2 = 8.77102
+Deleted plane x = 4.8, y1 = 5.54, y2 = 6.118, z1 = 7.1006, z2 = 8.77102
+Deleted plane x = 4.46, y1 = 5.54, y2 = 6.118, z1 = 7.1006, z2 = 8.77102
+Deleted plane x = 4.8, y1 = 6.118, y2 = 7.1006, z1 = 7.1006, z2 = 8.77102
+Deleted plane x = 4.46, y1 = 6.118, y2 = 7.1006, z1 = 7.1006, z2 = 8.77102
+Deleted plane x = 4.8, y1 = 7.1006, y2 = 8.77102, z1 = 7.1006, z2 = 8.77102
+Deleted plane x = 4.46, y1 = 7.1006, y2 = 8.77102, z1 = 7.1006, z2 = 8.77102
+Deleted plane x = 3.882, y1 = 7.1006, y2 = 8.77102, z1 = 7.1006, z2 = 8.77102
+Deleted plane x = 1.22898, y1 = 7.1006, y2 = 8.77102, z1 = 7.1006, z2 = 8.77102
+Deleted plane x = 4.8, y1 = 8.77102, y2 = 10, z1 = 7.1006, z2 = 8.77102
+Deleted plane x = 4.46, y1 = 8.77102, y2 = 10, z1 = 7.1006, z2 = 8.77102
+Deleted plane x = 3.882, y1 = 8.77102, y2 = 10, z1 = 7.1006, z2 = 8.77102
+Deleted plane x = 4.8, y1 = 5.2, y2 = 5.54, z1 = 8.77102, z2 = 10
+Deleted plane x = 4.8, y1 = 5.54, y2 = 6.118, z1 = 8.77102, z2 = 10
+Deleted plane x = 4.46, y1 = 5.54, y2 = 6.118, z1 = 8.77102, z2 = 10
+Deleted plane x = 4.8, y1 = 6.118, y2 = 7.1006, z1 = 8.77102, z2 = 10
+Deleted plane x = 4.46, y1 = 6.118, y2 = 7.1006, z1 = 8.77102, z2 = 10
+Deleted plane x = 4.8, y1 = 7.1006, y2 = 8.77102, z1 = 8.77102, z2 = 10
+Deleted plane x = 4.46, y1 = 7.1006, y2 = 8.77102, z1 = 8.77102, z2 = 10
+Deleted plane x = 3.882, y1 = 7.1006, y2 = 8.77102, z1 = 8.77102, z2 = 10
+Deleted plane x = 4.8, y1 = 8.77102, y2 = 10, z1 = 8.77102, z2 = 10
+Deleted plane x = 4.46, y1 = 8.77102, y2 = 10, z1 = 8.77102, z2 = 10
+Deleted plane x = 3.882, y1 = 8.77102, y2 = 10, z1 = 8.77102, z2 = 10
+Deleted plane y = 5.2, x1 = 3.882, x2 = 4.46, z1 = 5.2, z2 = 5.54
+Deleted plane y = 5.2, x1 = 2.8994, x2 = 3.882, z1 = 5.2, z2 = 5.54
+Deleted plane y = 5.2, x1 = 1.22898, x2 = 2.8994, z1 = 5.2, z2 = 5.54
+Deleted plane y = 5.2, x1 = 0, x2 = 1.22898, z1 = 5.2, z2 = 5.54
+Deleted plane y = 5.2, x1 = 3.882, x2 = 4.46, z1 = 5.54, z2 = 6.118
+Deleted plane y = 5.2, x1 = 2.8994, x2 = 3.882, z1 = 5.54, z2 = 6.118
+Deleted plane y = 5.54, x1 = 2.8994, x2 = 3.882, z1 = 5.54, z2 = 6.118
+Deleted plane y = 5.2, x1 = 1.22898, x2 = 2.8994, z1 = 5.54, z2 = 6.118
+Deleted plane y = 5.54, x1 = 1.22898, x2 = 2.8994, z1 = 5.54, z2 = 6.118
+Deleted plane y = 5.2, x1 = 0, x2 = 1.22898, z1 = 5.54, z2 = 6.118
+Deleted plane y = 5.54, x1 = 0, x2 = 1.22898, z1 = 5.54, z2 = 6.118
+Deleted plane y = 6.118, x1 = 3.882, x2 = 5, z1 = 6.118, z2 = 7.1006
+Deleted plane y = 5.2, x1 = 3.882, x2 = 4.46, z1 = 6.118, z2 = 7.1006
+Deleted plane y = 5.2, x1 = 2.8994, x2 = 3.882, z1 = 6.118, z2 = 7.1006
+Deleted plane y = 5.54, x1 = 2.8994, x2 = 3.882, z1 = 6.118, z2 = 7.1006
+Deleted plane y = 5.2, x1 = 1.22898, x2 = 2.8994, z1 = 6.118, z2 = 7.1006
+Deleted plane y = 5.54, x1 = 1.22898, x2 = 2.8994, z1 = 6.118, z2 = 7.1006
+Deleted plane y = 5.2, x1 = 0, x2 = 1.22898, z1 = 6.118, z2 = 7.1006
+Deleted plane y = 5.54, x1 = 0, x2 = 1.22898, z1 = 6.118, z2 = 7.1006
+Deleted plane y = 6.118, x1 = 3.882, x2 = 5, z1 = 7.1006, z2 = 8.77102
+Deleted plane y = 5.2, x1 = 3.882, x2 = 4.46, z1 = 7.1006, z2 = 8.77102
+Deleted plane y = 5.2, x1 = 2.8994, x2 = 3.882, z1 = 7.1006, z2 = 8.77102
+Deleted plane y = 5.54, x1 = 2.8994, x2 = 3.882, z1 = 7.1006, z2 = 8.77102
+Deleted plane y = 5.2, x1 = 1.22898, x2 = 2.8994, z1 = 7.1006, z2 = 8.77102
+Deleted plane y = 5.54, x1 = 1.22898, x2 = 2.8994, z1 = 7.1006, z2 = 8.77102
+Deleted plane y = 6.118, x1 = 1.22898, x2 = 2.8994, z1 = 7.1006, z2 = 8.77102
+Deleted plane y = 5.2, x1 = 0, x2 = 1.22898, z1 = 7.1006, z2 = 8.77102
+Deleted plane y = 5.54, x1 = 0, x2 = 1.22898, z1 = 7.1006, z2 = 8.77102
+Deleted plane y = 6.118, x1 = 0, x2 = 1.22898, z1 = 7.1006, z2 = 8.77102
+Deleted plane y = 6.118, x1 = 3.882, x2 = 5, z1 = 8.77102, z2 = 10
+Deleted plane y = 5.2, x1 = 3.882, x2 = 4.46, z1 = 8.77102, z2 = 10
+Deleted plane y = 5.2, x1 = 2.8994, x2 = 3.882, z1 = 8.77102, z2 = 10
+Deleted plane y = 5.54, x1 = 2.8994, x2 = 3.882, z1 = 8.77102, z2 = 10
+Deleted plane y = 5.2, x1 = 1.22898, x2 = 2.8994, z1 = 8.77102, z2 = 10
+Deleted plane y = 5.54, x1 = 1.22898, x2 = 2.8994, z1 = 8.77102, z2 = 10
+Deleted plane y = 6.118, x1 = 1.22898, x2 = 2.8994, z1 = 8.77102, z2 = 10
+Deleted plane y = 5.2, x1 = 0, x2 = 1.22898, z1 = 8.77102, z2 = 10
+Deleted plane y = 5.54, x1 = 0, x2 = 1.22898, z1 = 8.77102, z2 = 10
+Deleted plane y = 6.118, x1 = 0, x2 = 1.22898, z1 = 8.77102, z2 = 10
+Cannot delete plane z = 7.1006, x1 = 3.882, x2 = 5, y1 = 5.54, y2 = 7.1006
+Deleted plane z = 6.118, x1 = 3.882, x2 = 5, y1 = 7.1006, y2 = 8.77102
+Deleted plane z = 6.118, x1 = 3.882, x2 = 5, y1 = 8.77102, y2 = 10
+Cannot delete plane z = 5.54, x1 = 3.882, x2 = 4.46, y1 = 5, y2 = 5.54
+Deleted plane z = 5.2, x1 = 3.882, x2 = 4.46, y1 = 5.54, y2 = 6.118
+Deleted plane z = 5.2, x1 = 3.882, x2 = 4.46, y1 = 6.118, y2 = 7.1006
+Deleted plane z = 5.2, x1 = 3.882, x2 = 4.46, y1 = 7.1006, y2 = 8.77102
+Deleted plane z = 5.2, x1 = 3.882, x2 = 4.46, y1 = 8.77102, y2 = 10
+Cannot delete plane z = 6.118, x1 = 2.8994, x2 = 3.882, y1 = 5, y2 = 6.118
+Deleted plane z = 5.2, x1 = 2.8994, x2 = 3.882, y1 = 5.54, y2 = 6.118
+Deleted plane z = 5.2, x1 = 2.8994, x2 = 3.882, y1 = 6.118, y2 = 7.1006
+Deleted plane z = 5.54, x1 = 2.8994, x2 = 3.882, y1 = 6.118, y2 = 7.1006
+Deleted plane z = 5.2, x1 = 2.8994, x2 = 3.882, y1 = 7.1006, y2 = 8.77102
+Deleted plane z = 5.54, x1 = 2.8994, x2 = 3.882, y1 = 7.1006, y2 = 8.77102
+Deleted plane z = 5.2, x1 = 2.8994, x2 = 3.882, y1 = 8.77102, y2 = 10
+Deleted plane z = 5.54, x1 = 2.8994, x2 = 3.882, y1 = 8.77102, y2 = 10
+Deleted plane z = 6.118, x1 = 1.22898, x2 = 2.8994, y1 = 5, y2 = 6.118
+Deleted plane z = 5.2, x1 = 1.22898, x2 = 2.8994, y1 = 5.54, y2 = 6.118
+Deleted plane z = 5.2, x1 = 1.22898, x2 = 2.8994, y1 = 6.118, y2 = 7.1006
+Deleted plane z = 5.54, x1 = 1.22898, x2 = 2.8994, y1 = 6.118, y2 = 7.1006
+Deleted plane z = 5.2, x1 = 1.22898, x2 = 2.8994, y1 = 7.1006, y2 = 8.77102
+Deleted plane z = 5.54, x1 = 1.22898, x2 = 2.8994, y1 = 7.1006, y2 = 8.77102
+Deleted plane z = 6.118, x1 = 1.22898, x2 = 2.8994, y1 = 7.1006, y2 = 8.77102
+Deleted plane z = 5.2, x1 = 1.22898, x2 = 2.8994, y1 = 8.77102, y2 = 10
+Deleted plane z = 5.54, x1 = 1.22898, x2 = 2.8994, y1 = 8.77102, y2 = 10
+Deleted plane z = 6.118, x1 = 1.22898, x2 = 2.8994, y1 = 8.77102, y2 = 10
+Deleted plane z = 6.118, x1 = 0, x2 = 1.22898, y1 = 5, y2 = 6.118
+Deleted plane z = 5.2, x1 = 0, x2 = 1.22898, y1 = 5.54, y2 = 6.118
+Deleted plane z = 5.2, x1 = 0, x2 = 1.22898, y1 = 6.118, y2 = 7.1006
+Deleted plane z = 5.54, x1 = 0, x2 = 1.22898, y1 = 6.118, y2 = 7.1006
+Deleted plane z = 5.2, x1 = 0, x2 = 1.22898, y1 = 7.1006, y2 = 8.77102
+Deleted plane z = 5.54, x1 = 0, x2 = 1.22898, y1 = 7.1006, y2 = 8.77102
+Deleted plane z = 6.118, x1 = 0, x2 = 1.22898, y1 = 7.1006, y2 = 8.77102
+Deleted plane z = 5.2, x1 = 0, x2 = 1.22898, y1 = 8.77102, y2 = 10
+Deleted plane z = 5.54, x1 = 0, x2 = 1.22898, y1 = 8.77102, y2 = 10
+Deleted plane z = 6.118, x1 = 0, x2 = 1.22898, y1 = 8.77102, y2 = 10
+Deleted plane x = 5.2, y1 = 4.46, y2 = 4.8, z1 = 5.2, z2 = 5.54
+Deleted plane x = 5.2, y1 = 3.882, y2 = 4.46, z1 = 5.2, z2 = 5.54
+Deleted plane x = 5.2, y1 = 2.8994, y2 = 3.882, z1 = 5.2, z2 = 5.54
+Deleted plane x = 5.2, y1 = 1.22898, y2 = 2.8994, z1 = 5.2, z2 = 5.54
+Deleted plane x = 5.2, y1 = 0, y2 = 1.22898, z1 = 5.2, z2 = 5.54
+Deleted plane x = 5.2, y1 = 4.46, y2 = 4.8, z1 = 5.54, z2 = 6.118
+Deleted plane x = 5.2, y1 = 3.882, y2 = 4.46, z1 = 5.54, z2 = 6.118
+Deleted plane x = 5.54, y1 = 3.882, y2 = 4.46, z1 = 5.54, z2 = 6.118
+Deleted plane x = 5.2, y1 = 2.8994, y2 = 3.882, z1 = 5.54, z2 = 6.118
+Deleted plane x = 5.54, y1 = 2.8994, y2 = 3.882, z1 = 5.54, z2 = 6.118
+Deleted plane x = 5.2, y1 = 1.22898, y2 = 2.8994, z1 = 5.54, z2 = 6.118
+Deleted plane x = 5.54, y1 = 1.22898, y2 = 2.8994, z1 = 5.54, z2 = 6.118
+Deleted plane x = 5.2, y1 = 0, y2 = 1.22898, z1 = 5.54, z2 = 6.118
+Deleted plane x = 5.54, y1 = 0, y2 = 1.22898, z1 = 5.54, z2 = 6.118
+Deleted plane x = 5.2, y1 = 4.46, y2 = 4.8, z1 = 6.118, z2 = 7.1006
+Deleted plane x = 5.2, y1 = 3.882, y2 = 4.46, z1 = 6.118, z2 = 7.1006
+Deleted plane x = 5.54, y1 = 3.882, y2 = 4.46, z1 = 6.118, z2 = 7.1006
+Deleted plane x = 5.2, y1 = 2.8994, y2 = 3.882, z1 = 6.118, z2 = 7.1006
+Deleted plane x = 5.54, y1 = 2.8994, y2 = 3.882, z1 = 6.118, z2 = 7.1006
+Deleted plane x = 5.2, y1 = 1.22898, y2 = 2.8994, z1 = 6.118, z2 = 7.1006
+Deleted plane x = 5.54, y1 = 1.22898, y2 = 2.8994, z1 = 6.118, z2 = 7.1006
+Deleted plane x = 5.2, y1 = 0, y2 = 1.22898, z1 = 6.118, z2 = 7.1006
+Deleted plane x = 5.54, y1 = 0, y2 = 1.22898, z1 = 6.118, z2 = 7.1006
+Deleted plane x = 5.2, y1 = 4.46, y2 = 4.8, z1 = 7.1006, z2 = 8.77102
+Deleted plane x = 5.2, y1 = 3.882, y2 = 4.46, z1 = 7.1006, z2 = 8.77102
+Deleted plane x = 5.54, y1 = 3.882, y2 = 4.46, z1 = 7.1006, z2 = 8.77102
+Deleted plane x = 5.2, y1 = 2.8994, y2 = 3.882, z1 = 7.1006, z2 = 8.77102
+Deleted plane x = 5.54, y1 = 2.8994, y2 = 3.882, z1 = 7.1006, z2 = 8.77102
+Deleted plane x = 5.2, y1 = 1.22898, y2 = 2.8994, z1 = 7.1006, z2 = 8.77102
+Deleted plane x = 5.54, y1 = 1.22898, y2 = 2.8994, z1 = 7.1006, z2 = 8.77102
+Deleted plane x = 6.118, y1 = 1.22898, y2 = 2.8994, z1 = 7.1006, z2 = 8.77102
+Deleted plane x = 5.2, y1 = 0, y2 = 1.22898, z1 = 7.1006, z2 = 8.77102
+Deleted plane x = 5.54, y1 = 0, y2 = 1.22898, z1 = 7.1006, z2 = 8.77102
+Deleted plane x = 6.118, y1 = 0, y2 = 1.22898, z1 = 7.1006, z2 = 8.77102
+Deleted plane x = 5.2, y1 = 4.46, y2 = 4.8, z1 = 8.77102, z2 = 10
+Deleted plane x = 5.2, y1 = 3.882, y2 = 4.46, z1 = 8.77102, z2 = 10
+Deleted plane x = 5.54, y1 = 3.882, y2 = 4.46, z1 = 8.77102, z2 = 10
+Deleted plane x = 5.2, y1 = 2.8994, y2 = 3.882, z1 = 8.77102, z2 = 10
+Deleted plane x = 5.54, y1 = 2.8994, y2 = 3.882, z1 = 8.77102, z2 = 10
+Deleted plane x = 5.2, y1 = 1.22898, y2 = 2.8994, z1 = 8.77102, z2 = 10
+Deleted plane x = 5.54, y1 = 1.22898, y2 = 2.8994, z1 = 8.77102, z2 = 10
+Deleted plane x = 6.118, y1 = 1.22898, y2 = 2.8994, z1 = 8.77102, z2 = 10
+Deleted plane x = 5.2, y1 = 0, y2 = 1.22898, z1 = 8.77102, z2 = 10
+Deleted plane x = 5.54, y1 = 0, y2 = 1.22898, z1 = 8.77102, z2 = 10
+Deleted plane x = 6.118, y1 = 0, y2 = 1.22898, z1 = 8.77102, z2 = 10
+Deleted plane y = 4.8, x1 = 5.54, x2 = 6.118, z1 = 5.2, z2 = 5.54
+Deleted plane y = 4.8, x1 = 6.118, x2 = 7.1006, z1 = 5.2, z2 = 5.54
+Deleted plane y = 4.8, x1 = 7.1006, x2 = 8.77102, z1 = 5.2, z2 = 5.54
+Deleted plane y = 4.8, x1 = 8.77102, x2 = 10, z1 = 5.2, z2 = 5.54
+Deleted plane y = 4.8, x1 = 5.54, x2 = 6.118, z1 = 5.54, z2 = 6.118
+Deleted plane y = 4.8, x1 = 6.118, x2 = 7.1006, z1 = 5.54, z2 = 6.118
+Deleted plane y = 4.46, x1 = 6.118, x2 = 7.1006, z1 = 5.54, z2 = 6.118
+Deleted plane y = 4.8, x1 = 7.1006, x2 = 8.77102, z1 = 5.54, z2 = 6.118
+Deleted plane y = 4.46, x1 = 7.1006, x2 = 8.77102, z1 = 5.54, z2 = 6.118
+Deleted plane y = 4.8, x1 = 8.77102, x2 = 10, z1 = 5.54, z2 = 6.118
+Deleted plane y = 4.46, x1 = 8.77102, x2 = 10, z1 = 5.54, z2 = 6.118
+Deleted plane y = 3.882, x1 = 5, x2 = 6.118, z1 = 6.118, z2 = 7.1006
+Deleted plane y = 4.8, x1 = 5.54, x2 = 6.118, z1 = 6.118, z2 = 7.1006
+Deleted plane y = 4.8, x1 = 6.118, x2 = 7.1006, z1 = 6.118, z2 = 7.1006
+Deleted plane y = 4.46, x1 = 6.118, x2 = 7.1006, z1 = 6.118, z2 = 7.1006
+Deleted plane y = 4.8, x1 = 7.1006, x2 = 8.77102, z1 = 6.118, z2 = 7.1006
+Deleted plane y = 4.46, x1 = 7.1006, x2 = 8.77102, z1 = 6.118, z2 = 7.1006
+Deleted plane y = 4.8, x1 = 8.77102, x2 = 10, z1 = 6.118, z2 = 7.1006
+Deleted plane y = 4.46, x1 = 8.77102, x2 = 10, z1 = 6.118, z2 = 7.1006
+Deleted plane y = 3.882, x1 = 5, x2 = 6.118, z1 = 7.1006, z2 = 8.77102
+Deleted plane y = 1.22898, x1 = 5, x2 = 7.1006, z1 = 7.1006, z2 = 8.77102
+Deleted plane y = 4.8, x1 = 5.54, x2 = 6.118, z1 = 7.1006, z2 = 8.77102
+Deleted plane y = 4.8, x1 = 6.118, x2 = 7.1006, z1 = 7.1006, z2 = 8.77102
+Deleted plane y = 4.46, x1 = 6.118, x2 = 7.1006, z1 = 7.1006, z2 = 8.77102
+Deleted plane y = 4.8, x1 = 7.1006, x2 = 8.77102, z1 = 7.1006, z2 = 8.77102
+Deleted plane y = 4.46, x1 = 7.1006, x2 = 8.77102, z1 = 7.1006, z2 = 8.77102
+Deleted plane y = 3.882, x1 = 7.1006, x2 = 8.77102, z1 = 7.1006, z2 = 8.77102
+Deleted plane y = 1.22898, x1 = 7.1006, x2 = 8.77102, z1 = 7.1006, z2 = 8.77102
+Deleted plane y = 4.8, x1 = 8.77102, x2 = 10, z1 = 7.1006, z2 = 8.77102
+Deleted plane y = 4.46, x1 = 8.77102, x2 = 10, z1 = 7.1006, z2 = 8.77102
+Deleted plane y = 3.882, x1 = 8.77102, x2 = 10, z1 = 7.1006, z2 = 8.77102
+Deleted plane y = 3.882, x1 = 5, x2 = 6.118, z1 = 8.77102, z2 = 10
+Deleted plane y = 4.8, x1 = 5.54, x2 = 6.118, z1 = 8.77102, z2 = 10
+Deleted plane y = 4.8, x1 = 6.118, x2 = 7.1006, z1 = 8.77102, z2 = 10
+Deleted plane y = 4.46, x1 = 6.118, x2 = 7.1006, z1 = 8.77102, z2 = 10
+Deleted plane y = 4.8, x1 = 7.1006, x2 = 8.77102, z1 = 8.77102, z2 = 10
+Deleted plane y = 4.46, x1 = 7.1006, x2 = 8.77102, z1 = 8.77102, z2 = 10
+Deleted plane y = 3.882, x1 = 7.1006, x2 = 8.77102, z1 = 8.77102, z2 = 10
+Deleted plane y = 4.8, x1 = 8.77102, x2 = 10, z1 = 8.77102, z2 = 10
+Deleted plane y = 4.46, x1 = 8.77102, x2 = 10, z1 = 8.77102, z2 = 10
+Deleted plane y = 3.882, x1 = 8.77102, x2 = 10, z1 = 8.77102, z2 = 10
+Cannot delete plane z = 7.1006, x1 = 5, x2 = 6.118, y1 = 2.8994, y2 = 4.46
+Deleted plane z = 6.118, x1 = 5, x2 = 6.118, y1 = 1.22898, y2 = 2.8994
+Deleted plane z = 6.118, x1 = 5, x2 = 6.118, y1 = 0, y2 = 1.22898
+Cannot delete plane z = 5.54, x1 = 5.54, x2 = 6.118, y1 = 4.46, y2 = 5
+Deleted plane z = 5.2, x1 = 5.54, x2 = 6.118, y1 = 3.882, y2 = 4.46
+Deleted plane z = 5.2, x1 = 5.54, x2 = 6.118, y1 = 2.8994, y2 = 3.882
+Deleted plane z = 5.2, x1 = 5.54, x2 = 6.118, y1 = 1.22898, y2 = 2.8994
+Deleted plane z = 5.2, x1 = 5.54, x2 = 6.118, y1 = 0, y2 = 1.22898
+Cannot delete plane z = 6.118, x1 = 6.118, x2 = 7.1006, y1 = 3.882, y2 = 5
+Deleted plane z = 5.2, x1 = 6.118, x2 = 7.1006, y1 = 3.882, y2 = 4.46
+Deleted plane z = 5.2, x1 = 6.118, x2 = 7.1006, y1 = 2.8994, y2 = 3.882
+Deleted plane z = 5.54, x1 = 6.118, x2 = 7.1006, y1 = 2.8994, y2 = 3.882
+Deleted plane z = 5.2, x1 = 6.118, x2 = 7.1006, y1 = 1.22898, y2 = 2.8994
+Deleted plane z = 5.54, x1 = 6.118, x2 = 7.1006, y1 = 1.22898, y2 = 2.8994
+Deleted plane z = 5.2, x1 = 6.118, x2 = 7.1006, y1 = 0, y2 = 1.22898
+Deleted plane z = 5.54, x1 = 6.118, x2 = 7.1006, y1 = 0, y2 = 1.22898
+Deleted plane z = 6.118, x1 = 7.1006, x2 = 8.77102, y1 = 3.882, y2 = 5
+Deleted plane z = 5.2, x1 = 7.1006, x2 = 8.77102, y1 = 3.882, y2 = 4.46
+Deleted plane z = 5.2, x1 = 7.1006, x2 = 8.77102, y1 = 2.8994, y2 = 3.882
+Deleted plane z = 5.54, x1 = 7.1006, x2 = 8.77102, y1 = 2.8994, y2 = 3.882
+Deleted plane z = 5.2, x1 = 7.1006, x2 = 8.77102, y1 = 1.22898, y2 = 2.8994
+Deleted plane z = 5.54, x1 = 7.1006, x2 = 8.77102, y1 = 1.22898, y2 = 2.8994
+Deleted plane z = 6.118, x1 = 7.1006, x2 = 8.77102, y1 = 1.22898, y2 = 2.8994
+Deleted plane z = 5.2, x1 = 7.1006, x2 = 8.77102, y1 = 0, y2 = 1.22898
+Deleted plane z = 5.54, x1 = 7.1006, x2 = 8.77102, y1 = 0, y2 = 1.22898
+Deleted plane z = 6.118, x1 = 7.1006, x2 = 8.77102, y1 = 0, y2 = 1.22898
+Deleted plane z = 6.118, x1 = 8.77102, x2 = 10, y1 = 3.882, y2 = 5
+Deleted plane z = 5.2, x1 = 8.77102, x2 = 10, y1 = 3.882, y2 = 4.46
+Deleted plane z = 5.2, x1 = 8.77102, x2 = 10, y1 = 2.8994, y2 = 3.882
+Deleted plane z = 5.54, x1 = 8.77102, x2 = 10, y1 = 2.8994, y2 = 3.882
+Deleted plane z = 5.2, x1 = 8.77102, x2 = 10, y1 = 1.22898, y2 = 2.8994
+Deleted plane z = 5.54, x1 = 8.77102, x2 = 10, y1 = 1.22898, y2 = 2.8994
+Deleted plane z = 6.118, x1 = 8.77102, x2 = 10, y1 = 1.22898, y2 = 2.8994
+Deleted plane z = 5.2, x1 = 8.77102, x2 = 10, y1 = 0, y2 = 1.22898
+Deleted plane z = 5.54, x1 = 8.77102, x2 = 10, y1 = 0, y2 = 1.22898
+Deleted plane z = 6.118, x1 = 8.77102, x2 = 10, y1 = 0, y2 = 1.22898
+Deleted plane x = 4.8, y1 = 4.46, y2 = 4.8, z1 = 5.2, z2 = 5.54
+Deleted plane x = 4.8, y1 = 3.882, y2 = 4.46, z1 = 5.2, z2 = 5.54
+Deleted plane x = 4.8, y1 = 2.8994, y2 = 3.882, z1 = 5.2, z2 = 5.54
+Deleted plane x = 4.8, y1 = 1.22898, y2 = 2.8994, z1 = 5.2, z2 = 5.54
+Deleted plane x = 4.8, y1 = 0, y2 = 1.22898, z1 = 5.2, z2 = 5.54
+Deleted plane x = 4.8, y1 = 4.46, y2 = 4.8, z1 = 5.54, z2 = 6.118
+Deleted plane x = 4.8, y1 = 3.882, y2 = 4.46, z1 = 5.54, z2 = 6.118
+Deleted plane x = 4.46, y1 = 3.882, y2 = 4.46, z1 = 5.54, z2 = 6.118
+Deleted plane x = 4.8, y1 = 2.8994, y2 = 3.882, z1 = 5.54, z2 = 6.118
+Deleted plane x = 4.46, y1 = 2.8994, y2 = 3.882, z1 = 5.54, z2 = 6.118
+Deleted plane x = 4.8, y1 = 1.22898, y2 = 2.8994, z1 = 5.54, z2 = 6.118
+Deleted plane x = 4.46, y1 = 1.22898, y2 = 2.8994, z1 = 5.54, z2 = 6.118
+Deleted plane x = 4.8, y1 = 0, y2 = 1.22898, z1 = 5.54, z2 = 6.118
+Deleted plane x = 4.46, y1 = 0, y2 = 1.22898, z1 = 5.54, z2 = 6.118
+Deleted plane x = 4.8, y1 = 4.46, y2 = 4.8, z1 = 6.118, z2 = 7.1006
+Deleted plane x = 4.8, y1 = 3.882, y2 = 4.46, z1 = 6.118, z2 = 7.1006
+Deleted plane x = 4.46, y1 = 3.882, y2 = 4.46, z1 = 6.118, z2 = 7.1006
+Deleted plane x = 4.8, y1 = 2.8994, y2 = 3.882, z1 = 6.118, z2 = 7.1006
+Deleted plane x = 4.46, y1 = 2.8994, y2 = 3.882, z1 = 6.118, z2 = 7.1006
+Deleted plane x = 4.8, y1 = 1.22898, y2 = 2.8994, z1 = 6.118, z2 = 7.1006
+Deleted plane x = 4.46, y1 = 1.22898, y2 = 2.8994, z1 = 6.118, z2 = 7.1006
+Deleted plane x = 4.8, y1 = 0, y2 = 1.22898, z1 = 6.118, z2 = 7.1006
+Deleted plane x = 4.46, y1 = 0, y2 = 1.22898, z1 = 6.118, z2 = 7.1006
+Deleted plane x = 4.8, y1 = 4.46, y2 = 4.8, z1 = 7.1006, z2 = 8.77102
+Deleted plane x = 4.8, y1 = 3.882, y2 = 4.46, z1 = 7.1006, z2 = 8.77102
+Deleted plane x = 4.46, y1 = 3.882, y2 = 4.46, z1 = 7.1006, z2 = 8.77102
+Deleted plane x = 4.8, y1 = 2.8994, y2 = 3.882, z1 = 7.1006, z2 = 8.77102
+Deleted plane x = 4.46, y1 = 2.8994, y2 = 3.882, z1 = 7.1006, z2 = 8.77102
+Deleted plane x = 4.8, y1 = 1.22898, y2 = 2.8994, z1 = 7.1006, z2 = 8.77102
+Deleted plane x = 4.46, y1 = 1.22898, y2 = 2.8994, z1 = 7.1006, z2 = 8.77102
+Deleted plane x = 3.882, y1 = 1.22898, y2 = 2.8994, z1 = 7.1006, z2 = 8.77102
+Deleted plane x = 4.8, y1 = 0, y2 = 1.22898, z1 = 7.1006, z2 = 8.77102
+Deleted plane x = 4.46, y1 = 0, y2 = 1.22898, z1 = 7.1006, z2 = 8.77102
+Deleted plane x = 3.882, y1 = 0, y2 = 1.22898, z1 = 7.1006, z2 = 8.77102
+Deleted plane x = 4.8, y1 = 4.46, y2 = 4.8, z1 = 8.77102, z2 = 10
+Deleted plane x = 4.8, y1 = 3.882, y2 = 4.46, z1 = 8.77102, z2 = 10
+Deleted plane x = 4.46, y1 = 3.882, y2 = 4.46, z1 = 8.77102, z2 = 10
+Deleted plane x = 4.8, y1 = 2.8994, y2 = 3.882, z1 = 8.77102, z2 = 10
+Deleted plane x = 4.46, y1 = 2.8994, y2 = 3.882, z1 = 8.77102, z2 = 10
+Deleted plane x = 4.8, y1 = 1.22898, y2 = 2.8994, z1 = 8.77102, z2 = 10
+Deleted plane x = 4.46, y1 = 1.22898, y2 = 2.8994, z1 = 8.77102, z2 = 10
+Deleted plane x = 3.882, y1 = 1.22898, y2 = 2.8994, z1 = 8.77102, z2 = 10
+Deleted plane x = 4.8, y1 = 0, y2 = 1.22898, z1 = 8.77102, z2 = 10
+Deleted plane x = 4.46, y1 = 0, y2 = 1.22898, z1 = 8.77102, z2 = 10
+Deleted plane x = 3.882, y1 = 0, y2 = 1.22898, z1 = 8.77102, z2 = 10
+Deleted plane y = 4.8, x1 = 3.882, x2 = 4.46, z1 = 5.2, z2 = 5.54
+Deleted plane y = 4.8, x1 = 2.8994, x2 = 3.882, z1 = 5.2, z2 = 5.54
+Deleted plane y = 4.8, x1 = 1.22898, x2 = 2.8994, z1 = 5.2, z2 = 5.54
+Deleted plane y = 4.8, x1 = 0, x2 = 1.22898, z1 = 5.2, z2 = 5.54
+Deleted plane y = 4.8, x1 = 3.882, x2 = 4.46, z1 = 5.54, z2 = 6.118
+Deleted plane y = 4.8, x1 = 2.8994, x2 = 3.882, z1 = 5.54, z2 = 6.118
+Deleted plane y = 4.46, x1 = 2.8994, x2 = 3.882, z1 = 5.54, z2 = 6.118
+Deleted plane y = 4.8, x1 = 1.22898, x2 = 2.8994, z1 = 5.54, z2 = 6.118
+Deleted plane y = 4.46, x1 = 1.22898, x2 = 2.8994, z1 = 5.54, z2 = 6.118
+Deleted plane y = 4.8, x1 = 0, x2 = 1.22898, z1 = 5.54, z2 = 6.118
+Deleted plane y = 4.46, x1 = 0, x2 = 1.22898, z1 = 5.54, z2 = 6.118
+Deleted plane y = 3.882, x1 = 3.882, x2 = 5, z1 = 6.118, z2 = 7.1006
+Deleted plane y = 4.8, x1 = 3.882, x2 = 4.46, z1 = 6.118, z2 = 7.1006
+Deleted plane y = 4.8, x1 = 2.8994, x2 = 3.882, z1 = 6.118, z2 = 7.1006
+Deleted plane y = 4.46, x1 = 2.8994, x2 = 3.882, z1 = 6.118, z2 = 7.1006
+Deleted plane y = 4.8, x1 = 1.22898, x2 = 2.8994, z1 = 6.118, z2 = 7.1006
+Deleted plane y = 4.46, x1 = 1.22898, x2 = 2.8994, z1 = 6.118, z2 = 7.1006
+Deleted plane y = 4.8, x1 = 0, x2 = 1.22898, z1 = 6.118, z2 = 7.1006
+Deleted plane y = 4.46, x1 = 0, x2 = 1.22898, z1 = 6.118, z2 = 7.1006
+Deleted plane y = 3.882, x1 = 3.882, x2 = 5, z1 = 7.1006, z2 = 8.77102
+Deleted plane y = 1.22898, x1 = 2.8994, x2 = 5, z1 = 7.1006, z2 = 8.77102
+Deleted plane y = 4.8, x1 = 3.882, x2 = 4.46, z1 = 7.1006, z2 = 8.77102
+Deleted plane y = 4.8, x1 = 2.8994, x2 = 3.882, z1 = 7.1006, z2 = 8.77102
+Deleted plane y = 4.46, x1 = 2.8994, x2 = 3.882, z1 = 7.1006, z2 = 8.77102
+Deleted plane y = 4.8, x1 = 1.22898, x2 = 2.8994, z1 = 7.1006, z2 = 8.77102
+Deleted plane y = 4.46, x1 = 1.22898, x2 = 2.8994, z1 = 7.1006, z2 = 8.77102
+Deleted plane y = 3.882, x1 = 1.22898, x2 = 2.8994, z1 = 7.1006, z2 = 8.77102
+Deleted plane y = 4.8, x1 = 0, x2 = 1.22898, z1 = 7.1006, z2 = 8.77102
+Deleted plane y = 4.46, x1 = 0, x2 = 1.22898, z1 = 7.1006, z2 = 8.77102
+Deleted plane y = 3.882, x1 = 0, x2 = 1.22898, z1 = 7.1006, z2 = 8.77102
+Deleted plane y = 3.882, x1 = 3.882, x2 = 5, z1 = 8.77102, z2 = 10
+Deleted plane y = 4.8, x1 = 3.882, x2 = 4.46, z1 = 8.77102, z2 = 10
+Deleted plane y = 4.8, x1 = 2.8994, x2 = 3.882, z1 = 8.77102, z2 = 10
+Deleted plane y = 4.46, x1 = 2.8994, x2 = 3.882, z1 = 8.77102, z2 = 10
+Deleted plane y = 4.8, x1 = 1.22898, x2 = 2.8994, z1 = 8.77102, z2 = 10
+Deleted plane y = 4.46, x1 = 1.22898, x2 = 2.8994, z1 = 8.77102, z2 = 10
+Deleted plane y = 3.882, x1 = 1.22898, x2 = 2.8994, z1 = 8.77102, z2 = 10
+Deleted plane y = 4.8, x1 = 0, x2 = 1.22898, z1 = 8.77102, z2 = 10
+Deleted plane y = 4.46, x1 = 0, x2 = 1.22898, z1 = 8.77102, z2 = 10
+Deleted plane y = 3.882, x1 = 0, x2 = 1.22898, z1 = 8.77102, z2 = 10
+Cannot delete plane z = 7.1006, x1 = 3.882, x2 = 5, y1 = 2.8994, y2 = 4.46
+Deleted plane z = 6.118, x1 = 3.882, x2 = 5, y1 = 1.22898, y2 = 2.8994
+Deleted plane z = 6.118, x1 = 3.882, x2 = 5, y1 = 0, y2 = 1.22898
+Cannot delete plane z = 5.54, x1 = 3.882, x2 = 4.46, y1 = 4.46, y2 = 5
+Deleted plane z = 5.2, x1 = 3.882, x2 = 4.46, y1 = 3.882, y2 = 4.46
+Deleted plane z = 5.2, x1 = 3.882, x2 = 4.46, y1 = 2.8994, y2 = 3.882
+Deleted plane z = 5.2, x1 = 3.882, x2 = 4.46, y1 = 1.22898, y2 = 2.8994
+Deleted plane z = 5.2, x1 = 3.882, x2 = 4.46, y1 = 0, y2 = 1.22898
+Cannot delete plane z = 6.118, x1 = 2.8994, x2 = 3.882, y1 = 3.882, y2 = 5
+Deleted plane z = 5.2, x1 = 2.8994, x2 = 3.882, y1 = 3.882, y2 = 4.46
+Deleted plane z = 5.2, x1 = 2.8994, x2 = 3.882, y1 = 2.8994, y2 = 3.882
+Deleted plane z = 5.54, x1 = 2.8994, x2 = 3.882, y1 = 2.8994, y2 = 3.882
+Deleted plane z = 5.2, x1 = 2.8994, x2 = 3.882, y1 = 1.22898, y2 = 2.8994
+Deleted plane z = 5.54, x1 = 2.8994, x2 = 3.882, y1 = 1.22898, y2 = 2.8994
+Deleted plane z = 5.2, x1 = 2.8994, x2 = 3.882, y1 = 0, y2 = 1.22898
+Deleted plane z = 5.54, x1 = 2.8994, x2 = 3.882, y1 = 0, y2 = 1.22898
+Deleted plane z = 6.118, x1 = 1.22898, x2 = 2.8994, y1 = 3.882, y2 = 5
+Deleted plane z = 5.2, x1 = 1.22898, x2 = 2.8994, y1 = 3.882, y2 = 4.46
+Deleted plane z = 5.2, x1 = 1.22898, x2 = 2.8994, y1 = 2.8994, y2 = 3.882
+Deleted plane z = 5.54, x1 = 1.22898, x2 = 2.8994, y1 = 2.8994, y2 = 3.882
+Deleted plane z = 5.2, x1 = 1.22898, x2 = 2.8994, y1 = 1.22898, y2 = 2.8994
+Deleted plane z = 5.54, x1 = 1.22898, x2 = 2.8994, y1 = 1.22898, y2 = 2.8994
+Deleted plane z = 6.118, x1 = 1.22898, x2 = 2.8994, y1 = 1.22898, y2 = 2.8994
+Deleted plane z = 5.2, x1 = 1.22898, x2 = 2.8994, y1 = 0, y2 = 1.22898
+Deleted plane z = 5.54, x1 = 1.22898, x2 = 2.8994, y1 = 0, y2 = 1.22898
+Deleted plane z = 6.118, x1 = 1.22898, x2 = 2.8994, y1 = 0, y2 = 1.22898
+Deleted plane z = 6.118, x1 = 0, x2 = 1.22898, y1 = 3.882, y2 = 5
+Deleted plane z = 5.2, x1 = 0, x2 = 1.22898, y1 = 3.882, y2 = 4.46
+Deleted plane z = 5.2, x1 = 0, x2 = 1.22898, y1 = 2.8994, y2 = 3.882
+Deleted plane z = 5.54, x1 = 0, x2 = 1.22898, y1 = 2.8994, y2 = 3.882
+Deleted plane z = 5.2, x1 = 0, x2 = 1.22898, y1 = 1.22898, y2 = 2.8994
+Deleted plane z = 5.54, x1 = 0, x2 = 1.22898, y1 = 1.22898, y2 = 2.8994
+Deleted plane z = 6.118, x1 = 0, x2 = 1.22898, y1 = 1.22898, y2 = 2.8994
+Deleted plane z = 5.2, x1 = 0, x2 = 1.22898, y1 = 0, y2 = 1.22898
+Deleted plane z = 5.54, x1 = 0, x2 = 1.22898, y1 = 0, y2 = 1.22898
+Deleted plane z = 6.118, x1 = 0, x2 = 1.22898, y1 = 0, y2 = 1.22898
+Deleted plane x = 5.2, y1 = 5.2, y2 = 5.54, z1 = 4.46, z2 = 4.8
+Deleted plane x = 5.2, y1 = 5.54, y2 = 6.118, z1 = 4.46, z2 = 4.8
+Deleted plane x = 5.2, y1 = 6.118, y2 = 7.1006, z1 = 4.46, z2 = 4.8
+Deleted plane x = 5.2, y1 = 7.1006, y2 = 8.77102, z1 = 4.46, z2 = 4.8
+Deleted plane x = 5.2, y1 = 8.77102, y2 = 10, z1 = 4.46, z2 = 4.8
+Deleted plane x = 5.2, y1 = 5.2, y2 = 5.54, z1 = 3.882, z2 = 4.46
+Deleted plane x = 5.2, y1 = 5.54, y2 = 6.118, z1 = 3.882, z2 = 4.46
+Deleted plane x = 5.54, y1 = 5.54, y2 = 6.118, z1 = 3.882, z2 = 4.46
+Deleted plane x = 5.2, y1 = 6.118, y2 = 7.1006, z1 = 3.882, z2 = 4.46
+Deleted plane x = 5.54, y1 = 6.118, y2 = 7.1006, z1 = 3.882, z2 = 4.46
+Deleted plane x = 5.2, y1 = 7.1006, y2 = 8.77102, z1 = 3.882, z2 = 4.46
+Deleted plane x = 5.54, y1 = 7.1006, y2 = 8.77102, z1 = 3.882, z2 = 4.46
+Deleted plane x = 5.2, y1 = 8.77102, y2 = 10, z1 = 3.882, z2 = 4.46
+Deleted plane x = 5.54, y1 = 8.77102, y2 = 10, z1 = 3.882, z2 = 4.46
+Deleted plane x = 5.2, y1 = 5.2, y2 = 5.54, z1 = 2.8994, z2 = 3.882
+Deleted plane x = 5.2, y1 = 5.54, y2 = 6.118, z1 = 2.8994, z2 = 3.882
+Deleted plane x = 5.54, y1 = 5.54, y2 = 6.118, z1 = 2.8994, z2 = 3.882
+Deleted plane x = 5.2, y1 = 6.118, y2 = 7.1006, z1 = 2.8994, z2 = 3.882
+Deleted plane x = 5.54, y1 = 6.118, y2 = 7.1006, z1 = 2.8994, z2 = 3.882
+Deleted plane x = 5.2, y1 = 7.1006, y2 = 8.77102, z1 = 2.8994, z2 = 3.882
+Deleted plane x = 5.54, y1 = 7.1006, y2 = 8.77102, z1 = 2.8994, z2 = 3.882
+Deleted plane x = 5.2, y1 = 8.77102, y2 = 10, z1 = 2.8994, z2 = 3.882
+Deleted plane x = 5.54, y1 = 8.77102, y2 = 10, z1 = 2.8994, z2 = 3.882
+Deleted plane x = 5.2, y1 = 5.2, y2 = 5.54, z1 = 1.22898, z2 = 2.8994
+Deleted plane x = 5.2, y1 = 5.54, y2 = 6.118, z1 = 1.22898, z2 = 2.8994
+Deleted plane x = 5.54, y1 = 5.54, y2 = 6.118, z1 = 1.22898, z2 = 2.8994
+Deleted plane x = 5.2, y1 = 6.118, y2 = 7.1006, z1 = 1.22898, z2 = 2.8994
+Deleted plane x = 5.54, y1 = 6.118, y2 = 7.1006, z1 = 1.22898, z2 = 2.8994
+Deleted plane x = 5.2, y1 = 7.1006, y2 = 8.77102, z1 = 1.22898, z2 = 2.8994
+Deleted plane x = 5.54, y1 = 7.1006, y2 = 8.77102, z1 = 1.22898, z2 = 2.8994
+Deleted plane x = 6.118, y1 = 7.1006, y2 = 8.77102, z1 = 1.22898, z2 = 2.8994
+Deleted plane x = 5.2, y1 = 8.77102, y2 = 10, z1 = 1.22898, z2 = 2.8994
+Deleted plane x = 5.54, y1 = 8.77102, y2 = 10, z1 = 1.22898, z2 = 2.8994
+Deleted plane x = 6.118, y1 = 8.77102, y2 = 10, z1 = 1.22898, z2 = 2.8994
+Deleted plane x = 5.2, y1 = 5.2, y2 = 5.54, z1 = 0, z2 = 1.22898
+Deleted plane x = 5.2, y1 = 5.54, y2 = 6.118, z1 = 0, z2 = 1.22898
+Deleted plane x = 5.54, y1 = 5.54, y2 = 6.118, z1 = 0, z2 = 1.22898
+Deleted plane x = 5.2, y1 = 6.118, y2 = 7.1006, z1 = 0, z2 = 1.22898
+Deleted plane x = 5.54, y1 = 6.118, y2 = 7.1006, z1 = 0, z2 = 1.22898
+Deleted plane x = 5.2, y1 = 7.1006, y2 = 8.77102, z1 = 0, z2 = 1.22898
+Deleted plane x = 5.54, y1 = 7.1006, y2 = 8.77102, z1 = 0, z2 = 1.22898
+Deleted plane x = 6.118, y1 = 7.1006, y2 = 8.77102, z1 = 0, z2 = 1.22898
+Deleted plane x = 5.2, y1 = 8.77102, y2 = 10, z1 = 0, z2 = 1.22898
+Deleted plane x = 5.54, y1 = 8.77102, y2 = 10, z1 = 0, z2 = 1.22898
+Deleted plane x = 6.118, y1 = 8.77102, y2 = 10, z1 = 0, z2 = 1.22898
+Deleted plane y = 5.2, x1 = 5.54, x2 = 6.118, z1 = 4.46, z2 = 4.8
+Deleted plane y = 5.2, x1 = 6.118, x2 = 7.1006, z1 = 4.46, z2 = 4.8
+Deleted plane y = 5.2, x1 = 7.1006, x2 = 8.77102, z1 = 4.46, z2 = 4.8
+Deleted plane y = 5.2, x1 = 8.77102, x2 = 10, z1 = 4.46, z2 = 4.8
+Deleted plane y = 5.2, x1 = 5.54, x2 = 6.118, z1 = 3.882, z2 = 4.46
+Deleted plane y = 5.2, x1 = 6.118, x2 = 7.1006, z1 = 3.882, z2 = 4.46
+Deleted plane y = 5.54, x1 = 6.118, x2 = 7.1006, z1 = 3.882, z2 = 4.46
+Deleted plane y = 5.2, x1 = 7.1006, x2 = 8.77102, z1 = 3.882, z2 = 4.46
+Deleted plane y = 5.54, x1 = 7.1006, x2 = 8.77102, z1 = 3.882, z2 = 4.46
+Deleted plane y = 5.2, x1 = 8.77102, x2 = 10, z1 = 3.882, z2 = 4.46
+Deleted plane y = 5.54, x1 = 8.77102, x2 = 10, z1 = 3.882, z2 = 4.46
+Deleted plane y = 6.118, x1 = 5, x2 = 6.118, z1 = 2.8994, z2 = 3.882
+Deleted plane y = 5.2, x1 = 5.54, x2 = 6.118, z1 = 2.8994, z2 = 3.882
+Deleted plane y = 5.2, x1 = 6.118, x2 = 7.1006, z1 = 2.8994, z2 = 3.882
+Deleted plane y = 5.54, x1 = 6.118, x2 = 7.1006, z1 = 2.8994, z2 = 3.882
+Deleted plane y = 5.2, x1 = 7.1006, x2 = 8.77102, z1 = 2.8994, z2 = 3.882
+Deleted plane y = 5.54, x1 = 7.1006, x2 = 8.77102, z1 = 2.8994, z2 = 3.882
+Deleted plane y = 5.2, x1 = 8.77102, x2 = 10, z1 = 2.8994, z2 = 3.882
+Deleted plane y = 5.54, x1 = 8.77102, x2 = 10, z1 = 2.8994, z2 = 3.882
+Deleted plane y = 6.118, x1 = 5, x2 = 6.118, z1 = 1.22898, z2 = 2.8994
+Deleted plane y = 5.2, x1 = 5.54, x2 = 6.118, z1 = 1.22898, z2 = 2.8994
+Deleted plane y = 5.2, x1 = 6.118, x2 = 7.1006, z1 = 1.22898, z2 = 2.8994
+Deleted plane y = 5.54, x1 = 6.118, x2 = 7.1006, z1 = 1.22898, z2 = 2.8994
+Deleted plane y = 5.2, x1 = 7.1006, x2 = 8.77102, z1 = 1.22898, z2 = 2.8994
+Deleted plane y = 5.54, x1 = 7.1006, x2 = 8.77102, z1 = 1.22898, z2 = 2.8994
+Deleted plane y = 6.118, x1 = 7.1006, x2 = 8.77102, z1 = 1.22898, z2 = 2.8994
+Deleted plane y = 5.2, x1 = 8.77102, x2 = 10, z1 = 1.22898, z2 = 2.8994
+Deleted plane y = 5.54, x1 = 8.77102, x2 = 10, z1 = 1.22898, z2 = 2.8994
+Deleted plane y = 6.118, x1 = 8.77102, x2 = 10, z1 = 1.22898, z2 = 2.8994
+Deleted plane y = 6.118, x1 = 5, x2 = 6.118, z1 = 0, z2 = 1.22898
+Deleted plane y = 5.2, x1 = 5.54, x2 = 6.118, z1 = 0, z2 = 1.22898
+Deleted plane y = 5.2, x1 = 6.118, x2 = 7.1006, z1 = 0, z2 = 1.22898
+Deleted plane y = 5.54, x1 = 6.118, x2 = 7.1006, z1 = 0, z2 = 1.22898
+Deleted plane y = 5.2, x1 = 7.1006, x2 = 8.77102, z1 = 0, z2 = 1.22898
+Deleted plane y = 5.54, x1 = 7.1006, x2 = 8.77102, z1 = 0, z2 = 1.22898
+Deleted plane y = 6.118, x1 = 7.1006, x2 = 8.77102, z1 = 0, z2 = 1.22898
+Deleted plane y = 5.2, x1 = 8.77102, x2 = 10, z1 = 0, z2 = 1.22898
+Deleted plane y = 5.54, x1 = 8.77102, x2 = 10, z1 = 0, z2 = 1.22898
+Deleted plane y = 6.118, x1 = 8.77102, x2 = 10, z1 = 0, z2 = 1.22898
+Cannot delete plane z = 2.8994, x1 = 5, x2 = 6.118, y1 = 5.54, y2 = 7.1006
+Deleted plane z = 3.882, x1 = 5, x2 = 6.118, y1 = 7.1006, y2 = 8.77102
+Deleted plane z = 1.22898, x1 = 5, x2 = 7.1006, y1 = 7.1006, y2 = 8.77102
+Deleted plane z = 3.882, x1 = 5, x2 = 6.118, y1 = 8.77102, y2 = 10
+Cannot delete plane z = 4.46, x1 = 5.54, x2 = 6.118, y1 = 5, y2 = 5.54
+Deleted plane z = 4.8, x1 = 5.54, x2 = 6.118, y1 = 5.54, y2 = 6.118
+Deleted plane z = 4.8, x1 = 5.54, x2 = 6.118, y1 = 6.118, y2 = 7.1006
+Deleted plane z = 4.8, x1 = 5.54, x2 = 6.118, y1 = 7.1006, y2 = 8.77102
+Deleted plane z = 4.8, x1 = 5.54, x2 = 6.118, y1 = 8.77102, y2 = 10
+Cannot delete plane z = 3.882, x1 = 6.118, x2 = 7.1006, y1 = 5, y2 = 6.118
+Cannot delete plane z = 2.8994, x1 = 6.118, x2 = 7.1006, y1 = 5, y2 = 6.118
+Deleted plane z = 4.8, x1 = 6.118, x2 = 7.1006, y1 = 5.54, y2 = 6.118
+Deleted plane z = 4.8, x1 = 6.118, x2 = 7.1006, y1 = 6.118, y2 = 7.1006
+Deleted plane z = 4.46, x1 = 6.118, x2 = 7.1006, y1 = 6.118, y2 = 7.1006
+Cannot delete plane z = 2.8994, x1 = 6.118, x2 = 7.1006, y1 = 6.118, y2 = 7.1006
+Deleted plane z = 4.8, x1 = 6.118, x2 = 7.1006, y1 = 7.1006, y2 = 8.77102
+Deleted plane z = 4.46, x1 = 6.118, x2 = 7.1006, y1 = 7.1006, y2 = 8.77102
+Deleted plane z = 4.8, x1 = 6.118, x2 = 7.1006, y1 = 8.77102, y2 = 10
+Deleted plane z = 4.46, x1 = 6.118, x2 = 7.1006, y1 = 8.77102, y2 = 10
+Deleted plane z = 3.882, x1 = 7.1006, x2 = 8.77102, y1 = 5, y2 = 6.118
+Deleted plane z = 1.22898, x1 = 7.1006, x2 = 8.77102, y1 = 5, y2 = 7.1006
+Deleted plane z = 4.8, x1 = 7.1006, x2 = 8.77102, y1 = 5.54, y2 = 6.118
+Deleted plane z = 4.8, x1 = 7.1006, x2 = 8.77102, y1 = 6.118, y2 = 7.1006
+Deleted plane z = 4.46, x1 = 7.1006, x2 = 8.77102, y1 = 6.118, y2 = 7.1006
+Deleted plane z = 4.8, x1 = 7.1006, x2 = 8.77102, y1 = 7.1006, y2 = 8.77102
+Deleted plane z = 4.46, x1 = 7.1006, x2 = 8.77102, y1 = 7.1006, y2 = 8.77102
+Deleted plane z = 3.882, x1 = 7.1006, x2 = 8.77102, y1 = 7.1006, y2 = 8.77102
+Deleted plane z = 1.22898, x1 = 7.1006, x2 = 8.77102, y1 = 7.1006, y2 = 8.77102
+Deleted plane z = 4.8, x1 = 7.1006, x2 = 8.77102, y1 = 8.77102, y2 = 10
+Deleted plane z = 4.46, x1 = 7.1006, x2 = 8.77102, y1 = 8.77102, y2 = 10
+Deleted plane z = 3.882, x1 = 7.1006, x2 = 8.77102, y1 = 8.77102, y2 = 10
+Deleted plane z = 3.882, x1 = 8.77102, x2 = 10, y1 = 5, y2 = 6.118
+Deleted plane z = 4.8, x1 = 8.77102, x2 = 10, y1 = 5.54, y2 = 6.118
+Deleted plane z = 4.8, x1 = 8.77102, x2 = 10, y1 = 6.118, y2 = 7.1006
+Deleted plane z = 4.46, x1 = 8.77102, x2 = 10, y1 = 6.118, y2 = 7.1006
+Deleted plane z = 4.8, x1 = 8.77102, x2 = 10, y1 = 7.1006, y2 = 8.77102
+Deleted plane z = 4.46, x1 = 8.77102, x2 = 10, y1 = 7.1006, y2 = 8.77102
+Deleted plane z = 3.882, x1 = 8.77102, x2 = 10, y1 = 7.1006, y2 = 8.77102
+Deleted plane z = 4.8, x1 = 8.77102, x2 = 10, y1 = 8.77102, y2 = 10
+Deleted plane z = 4.46, x1 = 8.77102, x2 = 10, y1 = 8.77102, y2 = 10
+Deleted plane z = 3.882, x1 = 8.77102, x2 = 10, y1 = 8.77102, y2 = 10
+Deleted plane x = 4.8, y1 = 5.2, y2 = 5.54, z1 = 4.46, z2 = 4.8
+Deleted plane x = 4.8, y1 = 5.54, y2 = 6.118, z1 = 4.46, z2 = 4.8
+Deleted plane x = 4.8, y1 = 6.118, y2 = 7.1006, z1 = 4.46, z2 = 4.8
+Deleted plane x = 4.8, y1 = 7.1006, y2 = 8.77102, z1 = 4.46, z2 = 4.8
+Deleted plane x = 4.8, y1 = 8.77102, y2 = 10, z1 = 4.46, z2 = 4.8
+Deleted plane x = 4.8, y1 = 5.2, y2 = 5.54, z1 = 3.882, z2 = 4.46
+Deleted plane x = 4.8, y1 = 5.54, y2 = 6.118, z1 = 3.882, z2 = 4.46
+Deleted plane x = 4.46, y1 = 5.54, y2 = 6.118, z1 = 3.882, z2 = 4.46
+Deleted plane x = 4.8, y1 = 6.118, y2 = 7.1006, z1 = 3.882, z2 = 4.46
+Deleted plane x = 4.46, y1 = 6.118, y2 = 7.1006, z1 = 3.882, z2 = 4.46
+Deleted plane x = 4.8, y1 = 7.1006, y2 = 8.77102, z1 = 3.882, z2 = 4.46
+Deleted plane x = 4.46, y1 = 7.1006, y2 = 8.77102, z1 = 3.882, z2 = 4.46
+Deleted plane x = 4.8, y1 = 8.77102, y2 = 10, z1 = 3.882, z2 = 4.46
+Deleted plane x = 4.46, y1 = 8.77102, y2 = 10, z1 = 3.882, z2 = 4.46
+Deleted plane x = 4.8, y1 = 5.2, y2 = 5.54, z1 = 2.8994, z2 = 3.882
+Deleted plane x = 4.8, y1 = 5.54, y2 = 6.118, z1 = 2.8994, z2 = 3.882
+Deleted plane x = 4.46, y1 = 5.54, y2 = 6.118, z1 = 2.8994, z2 = 3.882
+Deleted plane x = 4.8, y1 = 6.118, y2 = 7.1006, z1 = 2.8994, z2 = 3.882
+Deleted plane x = 4.46, y1 = 6.118, y2 = 7.1006, z1 = 2.8994, z2 = 3.882
+Deleted plane x = 4.8, y1 = 7.1006, y2 = 8.77102, z1 = 2.8994, z2 = 3.882
+Deleted plane x = 4.46, y1 = 7.1006, y2 = 8.77102, z1 = 2.8994, z2 = 3.882
+Deleted plane x = 4.8, y1 = 8.77102, y2 = 10, z1 = 2.8994, z2 = 3.882
+Deleted plane x = 4.46, y1 = 8.77102, y2 = 10, z1 = 2.8994, z2 = 3.882
+Deleted plane x = 4.8, y1 = 5.2, y2 = 5.54, z1 = 1.22898, z2 = 2.8994
+Deleted plane x = 4.8, y1 = 5.54, y2 = 6.118, z1 = 1.22898, z2 = 2.8994
+Deleted plane x = 4.46, y1 = 5.54, y2 = 6.118, z1 = 1.22898, z2 = 2.8994
+Deleted plane x = 4.8, y1 = 6.118, y2 = 7.1006, z1 = 1.22898, z2 = 2.8994
+Deleted plane x = 4.46, y1 = 6.118, y2 = 7.1006, z1 = 1.22898, z2 = 2.8994
+Deleted plane x = 4.8, y1 = 7.1006, y2 = 8.77102, z1 = 1.22898, z2 = 2.8994
+Deleted plane x = 4.46, y1 = 7.1006, y2 = 8.77102, z1 = 1.22898, z2 = 2.8994
+Deleted plane x = 3.882, y1 = 7.1006, y2 = 8.77102, z1 = 1.22898, z2 = 2.8994
+Deleted plane x = 4.8, y1 = 8.77102, y2 = 10, z1 = 1.22898, z2 = 2.8994
+Deleted plane x = 4.46, y1 = 8.77102, y2 = 10, z1 = 1.22898, z2 = 2.8994
+Deleted plane x = 3.882, y1 = 8.77102, y2 = 10, z1 = 1.22898, z2 = 2.8994
+Deleted plane x = 4.8, y1 = 5.2, y2 = 5.54, z1 = 0, z2 = 1.22898
+Deleted plane x = 4.8, y1 = 5.54, y2 = 6.118, z1 = 0, z2 = 1.22898
+Deleted plane x = 4.46, y1 = 5.54, y2 = 6.118, z1 = 0, z2 = 1.22898
+Deleted plane x = 4.8, y1 = 6.118, y2 = 7.1006, z1 = 0, z2 = 1.22898
+Deleted plane x = 4.46, y1 = 6.118, y2 = 7.1006, z1 = 0, z2 = 1.22898
+Deleted plane x = 4.8, y1 = 7.1006, y2 = 8.77102, z1 = 0, z2 = 1.22898
+Deleted plane x = 4.46, y1 = 7.1006, y2 = 8.77102, z1 = 0, z2 = 1.22898
+Deleted plane x = 3.882, y1 = 7.1006, y2 = 8.77102, z1 = 0, z2 = 1.22898
+Deleted plane x = 4.8, y1 = 8.77102, y2 = 10, z1 = 0, z2 = 1.22898
+Deleted plane x = 4.46, y1 = 8.77102, y2 = 10, z1 = 0, z2 = 1.22898
+Deleted plane x = 3.882, y1 = 8.77102, y2 = 10, z1 = 0, z2 = 1.22898
+Deleted plane y = 5.2, x1 = 3.882, x2 = 4.46, z1 = 4.46, z2 = 4.8
+Deleted plane y = 5.2, x1 = 2.8994, x2 = 3.882, z1 = 4.46, z2 = 4.8
+Deleted plane y = 5.2, x1 = 1.22898, x2 = 2.8994, z1 = 4.46, z2 = 4.8
+Deleted plane y = 5.2, x1 = 0, x2 = 1.22898, z1 = 4.46, z2 = 4.8
+Deleted plane y = 5.2, x1 = 3.882, x2 = 4.46, z1 = 3.882, z2 = 4.46
+Deleted plane y = 5.2, x1 = 2.8994, x2 = 3.882, z1 = 3.882, z2 = 4.46
+Deleted plane y = 5.54, x1 = 2.8994, x2 = 3.882, z1 = 3.882, z2 = 4.46
+Deleted plane y = 5.2, x1 = 1.22898, x2 = 2.8994, z1 = 3.882, z2 = 4.46
+Deleted plane y = 5.54, x1 = 1.22898, x2 = 2.8994, z1 = 3.882, z2 = 4.46
+Deleted plane y = 5.2, x1 = 0, x2 = 1.22898, z1 = 3.882, z2 = 4.46
+Deleted plane y = 5.54, x1 = 0, x2 = 1.22898, z1 = 3.882, z2 = 4.46
+Deleted plane y = 6.118, x1 = 3.882, x2 = 5, z1 = 2.8994, z2 = 3.882
+Deleted plane y = 5.2, x1 = 3.882, x2 = 4.46, z1 = 2.8994, z2 = 3.882
+Deleted plane y = 5.2, x1 = 2.8994, x2 = 3.882, z1 = 2.8994, z2 = 3.882
+Deleted plane y = 5.54, x1 = 2.8994, x2 = 3.882, z1 = 2.8994, z2 = 3.882
+Deleted plane y = 5.2, x1 = 1.22898, x2 = 2.8994, z1 = 2.8994, z2 = 3.882
+Deleted plane y = 5.54, x1 = 1.22898, x2 = 2.8994, z1 = 2.8994, z2 = 3.882
+Deleted plane y = 5.2, x1 = 0, x2 = 1.22898, z1 = 2.8994, z2 = 3.882
+Deleted plane y = 5.54, x1 = 0, x2 = 1.22898, z1 = 2.8994, z2 = 3.882
+Deleted plane y = 6.118, x1 = 3.882, x2 = 5, z1 = 1.22898, z2 = 2.8994
+Deleted plane y = 5.2, x1 = 3.882, x2 = 4.46, z1 = 1.22898, z2 = 2.8994
+Deleted plane y = 5.2, x1 = 2.8994, x2 = 3.882, z1 = 1.22898, z2 = 2.8994
+Deleted plane y = 5.54, x1 = 2.8994, x2 = 3.882, z1 = 1.22898, z2 = 2.8994
+Deleted plane y = 5.2, x1 = 1.22898, x2 = 2.8994, z1 = 1.22898, z2 = 2.8994
+Deleted plane y = 5.54, x1 = 1.22898, x2 = 2.8994, z1 = 1.22898, z2 = 2.8994
+Deleted plane y = 6.118, x1 = 1.22898, x2 = 2.8994, z1 = 1.22898, z2 = 2.8994
+Deleted plane y = 5.2, x1 = 0, x2 = 1.22898, z1 = 1.22898, z2 = 2.8994
+Deleted plane y = 5.54, x1 = 0, x2 = 1.22898, z1 = 1.22898, z2 = 2.8994
+Deleted plane y = 6.118, x1 = 0, x2 = 1.22898, z1 = 1.22898, z2 = 2.8994
+Deleted plane y = 6.118, x1 = 3.882, x2 = 5, z1 = 0, z2 = 1.22898
+Deleted plane y = 5.2, x1 = 3.882, x2 = 4.46, z1 = 0, z2 = 1.22898
+Deleted plane y = 5.2, x1 = 2.8994, x2 = 3.882, z1 = 0, z2 = 1.22898
+Deleted plane y = 5.54, x1 = 2.8994, x2 = 3.882, z1 = 0, z2 = 1.22898
+Deleted plane y = 5.2, x1 = 1.22898, x2 = 2.8994, z1 = 0, z2 = 1.22898
+Deleted plane y = 5.54, x1 = 1.22898, x2 = 2.8994, z1 = 0, z2 = 1.22898
+Deleted plane y = 6.118, x1 = 1.22898, x2 = 2.8994, z1 = 0, z2 = 1.22898
+Deleted plane y = 5.2, x1 = 0, x2 = 1.22898, z1 = 0, z2 = 1.22898
+Deleted plane y = 5.54, x1 = 0, x2 = 1.22898, z1 = 0, z2 = 1.22898
+Deleted plane y = 6.118, x1 = 0, x2 = 1.22898, z1 = 0, z2 = 1.22898
+Cannot delete plane z = 2.8994, x1 = 3.882, x2 = 5, y1 = 5.54, y2 = 7.1006
+Deleted plane z = 3.882, x1 = 3.882, x2 = 5, y1 = 7.1006, y2 = 8.77102
+Deleted plane z = 1.22898, x1 = 2.8994, x2 = 5, y1 = 7.1006, y2 = 8.77102
+Deleted plane z = 3.882, x1 = 3.882, x2 = 5, y1 = 8.77102, y2 = 10
+Cannot delete plane z = 4.46, x1 = 3.882, x2 = 4.46, y1 = 5, y2 = 5.54
+Deleted plane z = 4.8, x1 = 3.882, x2 = 4.46, y1 = 5.54, y2 = 6.118
+Deleted plane z = 4.8, x1 = 3.882, x2 = 4.46, y1 = 6.118, y2 = 7.1006
+Deleted plane z = 4.8, x1 = 3.882, x2 = 4.46, y1 = 7.1006, y2 = 8.77102
+Deleted plane z = 4.8, x1 = 3.882, x2 = 4.46, y1 = 8.77102, y2 = 10
+Cannot delete plane z = 3.882, x1 = 2.8994, x2 = 3.882, y1 = 5, y2 = 6.118
+Deleted plane z = 4.8, x1 = 2.8994, x2 = 3.882, y1 = 5.54, y2 = 6.118
+Deleted plane z = 4.8, x1 = 2.8994, x2 = 3.882, y1 = 6.118, y2 = 7.1006
+Deleted plane z = 4.46, x1 = 2.8994, x2 = 3.882, y1 = 6.118, y2 = 7.1006
+Cannot delete plane z = 2.8994, x1 = 2.8994, x2 = 3.882, y1 = 6.118, y2 = 7.1006
+Deleted plane z = 4.8, x1 = 2.8994, x2 = 3.882, y1 = 7.1006, y2 = 8.77102
+Deleted plane z = 4.46, x1 = 2.8994, x2 = 3.882, y1 = 7.1006, y2 = 8.77102
+Deleted plane z = 4.8, x1 = 2.8994, x2 = 3.882, y1 = 8.77102, y2 = 10
+Deleted plane z = 4.46, x1 = 2.8994, x2 = 3.882, y1 = 8.77102, y2 = 10
+Deleted plane z = 3.882, x1 = 1.22898, x2 = 2.8994, y1 = 5, y2 = 6.118
+Deleted plane z = 4.8, x1 = 1.22898, x2 = 2.8994, y1 = 5.54, y2 = 6.118
+Deleted plane z = 4.8, x1 = 1.22898, x2 = 2.8994, y1 = 6.118, y2 = 7.1006
+Deleted plane z = 4.46, x1 = 1.22898, x2 = 2.8994, y1 = 6.118, y2 = 7.1006
+Deleted plane z = 4.8, x1 = 1.22898, x2 = 2.8994, y1 = 7.1006, y2 = 8.77102
+Deleted plane z = 4.46, x1 = 1.22898, x2 = 2.8994, y1 = 7.1006, y2 = 8.77102
+Deleted plane z = 3.882, x1 = 1.22898, x2 = 2.8994, y1 = 7.1006, y2 = 8.77102
+Deleted plane z = 4.8, x1 = 1.22898, x2 = 2.8994, y1 = 8.77102, y2 = 10
+Deleted plane z = 4.46, x1 = 1.22898, x2 = 2.8994, y1 = 8.77102, y2 = 10
+Deleted plane z = 3.882, x1 = 1.22898, x2 = 2.8994, y1 = 8.77102, y2 = 10
+Deleted plane z = 3.882, x1 = 0, x2 = 1.22898, y1 = 5, y2 = 6.118
+Deleted plane z = 4.8, x1 = 0, x2 = 1.22898, y1 = 5.54, y2 = 6.118
+Deleted plane z = 4.8, x1 = 0, x2 = 1.22898, y1 = 6.118, y2 = 7.1006
+Deleted plane z = 4.46, x1 = 0, x2 = 1.22898, y1 = 6.118, y2 = 7.1006
+Deleted plane z = 4.8, x1 = 0, x2 = 1.22898, y1 = 7.1006, y2 = 8.77102
+Deleted plane z = 4.46, x1 = 0, x2 = 1.22898, y1 = 7.1006, y2 = 8.77102
+Deleted plane z = 3.882, x1 = 0, x2 = 1.22898, y1 = 7.1006, y2 = 8.77102
+Deleted plane z = 4.8, x1 = 0, x2 = 1.22898, y1 = 8.77102, y2 = 10
+Deleted plane z = 4.46, x1 = 0, x2 = 1.22898, y1 = 8.77102, y2 = 10
+Deleted plane z = 3.882, x1 = 0, x2 = 1.22898, y1 = 8.77102, y2 = 10
+Deleted plane x = 5.2, y1 = 4.46, y2 = 4.8, z1 = 4.46, z2 = 4.8
+Deleted plane x = 5.2, y1 = 3.882, y2 = 4.46, z1 = 4.46, z2 = 4.8
+Deleted plane x = 5.2, y1 = 2.8994, y2 = 3.882, z1 = 4.46, z2 = 4.8
+Deleted plane x = 5.2, y1 = 1.22898, y2 = 2.8994, z1 = 4.46, z2 = 4.8
+Deleted plane x = 5.2, y1 = 0, y2 = 1.22898, z1 = 4.46, z2 = 4.8
+Deleted plane x = 5.2, y1 = 4.46, y2 = 4.8, z1 = 3.882, z2 = 4.46
+Deleted plane x = 5.2, y1 = 3.882, y2 = 4.46, z1 = 3.882, z2 = 4.46
+Deleted plane x = 5.54, y1 = 3.882, y2 = 4.46, z1 = 3.882, z2 = 4.46
+Deleted plane x = 5.2, y1 = 2.8994, y2 = 3.882, z1 = 3.882, z2 = 4.46
+Deleted plane x = 5.54, y1 = 2.8994, y2 = 3.882, z1 = 3.882, z2 = 4.46
+Deleted plane x = 5.2, y1 = 1.22898, y2 = 2.8994, z1 = 3.882, z2 = 4.46
+Deleted plane x = 5.54, y1 = 1.22898, y2 = 2.8994, z1 = 3.882, z2 = 4.46
+Deleted plane x = 5.2, y1 = 0, y2 = 1.22898, z1 = 3.882, z2 = 4.46
+Deleted plane x = 5.54, y1 = 0, y2 = 1.22898, z1 = 3.882, z2 = 4.46
+Deleted plane x = 5.2, y1 = 4.46, y2 = 4.8, z1 = 2.8994, z2 = 3.882
+Deleted plane x = 5.2, y1 = 3.882, y2 = 4.46, z1 = 2.8994, z2 = 3.882
+Deleted plane x = 5.54, y1 = 3.882, y2 = 4.46, z1 = 2.8994, z2 = 3.882
+Deleted plane x = 5.2, y1 = 2.8994, y2 = 3.882, z1 = 2.8994, z2 = 3.882
+Deleted plane x = 5.54, y1 = 2.8994, y2 = 3.882, z1 = 2.8994, z2 = 3.882
+Deleted plane x = 5.2, y1 = 1.22898, y2 = 2.8994, z1 = 2.8994, z2 = 3.882
+Deleted plane x = 5.54, y1 = 1.22898, y2 = 2.8994, z1 = 2.8994, z2 = 3.882
+Deleted plane x = 5.2, y1 = 0, y2 = 1.22898, z1 = 2.8994, z2 = 3.882
+Deleted plane x = 5.54, y1 = 0, y2 = 1.22898, z1 = 2.8994, z2 = 3.882
+Deleted plane x = 5.2, y1 = 4.46, y2 = 4.8, z1 = 1.22898, z2 = 2.8994
+Deleted plane x = 5.2, y1 = 3.882, y2 = 4.46, z1 = 1.22898, z2 = 2.8994
+Deleted plane x = 5.54, y1 = 3.882, y2 = 4.46, z1 = 1.22898, z2 = 2.8994
+Deleted plane x = 5.2, y1 = 2.8994, y2 = 3.882, z1 = 1.22898, z2 = 2.8994
+Deleted plane x = 5.54, y1 = 2.8994, y2 = 3.882, z1 = 1.22898, z2 = 2.8994
+Deleted plane x = 5.2, y1 = 1.22898, y2 = 2.8994, z1 = 1.22898, z2 = 2.8994
+Deleted plane x = 5.54, y1 = 1.22898, y2 = 2.8994, z1 = 1.22898, z2 = 2.8994
+Deleted plane x = 6.118, y1 = 1.22898, y2 = 2.8994, z1 = 1.22898, z2 = 2.8994
+Deleted plane x = 5.2, y1 = 0, y2 = 1.22898, z1 = 1.22898, z2 = 2.8994
+Deleted plane x = 5.54, y1 = 0, y2 = 1.22898, z1 = 1.22898, z2 = 2.8994
+Deleted plane x = 6.118, y1 = 0, y2 = 1.22898, z1 = 1.22898, z2 = 2.8994
+Deleted plane x = 5.2, y1 = 4.46, y2 = 4.8, z1 = 0, z2 = 1.22898
+Deleted plane x = 5.2, y1 = 3.882, y2 = 4.46, z1 = 0, z2 = 1.22898
+Deleted plane x = 5.54, y1 = 3.882, y2 = 4.46, z1 = 0, z2 = 1.22898
+Deleted plane x = 5.2, y1 = 2.8994, y2 = 3.882, z1 = 0, z2 = 1.22898
+Deleted plane x = 5.54, y1 = 2.8994, y2 = 3.882, z1 = 0, z2 = 1.22898
+Deleted plane x = 5.2, y1 = 1.22898, y2 = 2.8994, z1 = 0, z2 = 1.22898
+Deleted plane x = 5.54, y1 = 1.22898, y2 = 2.8994, z1 = 0, z2 = 1.22898
+Deleted plane x = 6.118, y1 = 1.22898, y2 = 2.8994, z1 = 0, z2 = 1.22898
+Deleted plane x = 5.2, y1 = 0, y2 = 1.22898, z1 = 0, z2 = 1.22898
+Deleted plane x = 5.54, y1 = 0, y2 = 1.22898, z1 = 0, z2 = 1.22898
+Deleted plane x = 6.118, y1 = 0, y2 = 1.22898, z1 = 0, z2 = 1.22898
+Deleted plane y = 4.8, x1 = 5.54, x2 = 6.118, z1 = 4.46, z2 = 4.8
+Deleted plane y = 4.8, x1 = 6.118, x2 = 7.1006, z1 = 4.46, z2 = 4.8
+Deleted plane y = 4.8, x1 = 7.1006, x2 = 8.77102, z1 = 4.46, z2 = 4.8
+Deleted plane y = 4.8, x1 = 8.77102, x2 = 10, z1 = 4.46, z2 = 4.8
+Deleted plane y = 4.8, x1 = 5.54, x2 = 6.118, z1 = 3.882, z2 = 4.46
+Deleted plane y = 4.8, x1 = 6.118, x2 = 7.1006, z1 = 3.882, z2 = 4.46
+Deleted plane y = 4.46, x1 = 6.118, x2 = 7.1006, z1 = 3.882, z2 = 4.46
+Deleted plane y = 4.8, x1 = 7.1006, x2 = 8.77102, z1 = 3.882, z2 = 4.46
+Deleted plane y = 4.46, x1 = 7.1006, x2 = 8.77102, z1 = 3.882, z2 = 4.46
+Deleted plane y = 4.8, x1 = 8.77102, x2 = 10, z1 = 3.882, z2 = 4.46
+Deleted plane y = 4.46, x1 = 8.77102, x2 = 10, z1 = 3.882, z2 = 4.46
+Deleted plane y = 3.882, x1 = 5, x2 = 6.118, z1 = 2.8994, z2 = 3.882
+Deleted plane y = 4.8, x1 = 5.54, x2 = 6.118, z1 = 2.8994, z2 = 3.882
+Deleted plane y = 4.8, x1 = 6.118, x2 = 7.1006, z1 = 2.8994, z2 = 3.882
+Deleted plane y = 4.46, x1 = 6.118, x2 = 7.1006, z1 = 2.8994, z2 = 3.882
+Deleted plane y = 4.8, x1 = 7.1006, x2 = 8.77102, z1 = 2.8994, z2 = 3.882
+Deleted plane y = 4.46, x1 = 7.1006, x2 = 8.77102, z1 = 2.8994, z2 = 3.882
+Deleted plane y = 4.8, x1 = 8.77102, x2 = 10, z1 = 2.8994, z2 = 3.882
+Deleted plane y = 4.46, x1 = 8.77102, x2 = 10, z1 = 2.8994, z2 = 3.882
+Deleted plane y = 3.882, x1 = 5, x2 = 6.118, z1 = 1.22898, z2 = 2.8994
+Deleted plane y = 4.8, x1 = 5.54, x2 = 6.118, z1 = 1.22898, z2 = 2.8994
+Deleted plane y = 4.8, x1 = 6.118, x2 = 7.1006, z1 = 1.22898, z2 = 2.8994
+Deleted plane y = 4.46, x1 = 6.118, x2 = 7.1006, z1 = 1.22898, z2 = 2.8994
+Deleted plane y = 4.8, x1 = 7.1006, x2 = 8.77102, z1 = 1.22898, z2 = 2.8994
+Deleted plane y = 4.46, x1 = 7.1006, x2 = 8.77102, z1 = 1.22898, z2 = 2.8994
+Deleted plane y = 3.882, x1 = 7.1006, x2 = 8.77102, z1 = 1.22898, z2 = 2.8994
+Deleted plane y = 4.8, x1 = 8.77102, x2 = 10, z1 = 1.22898, z2 = 2.8994
+Deleted plane y = 4.46, x1 = 8.77102, x2 = 10, z1 = 1.22898, z2 = 2.8994
+Deleted plane y = 3.882, x1 = 8.77102, x2 = 10, z1 = 1.22898, z2 = 2.8994
+Deleted plane y = 3.882, x1 = 5, x2 = 6.118, z1 = 0, z2 = 1.22898
+Deleted plane y = 4.8, x1 = 5.54, x2 = 6.118, z1 = 0, z2 = 1.22898
+Deleted plane y = 4.8, x1 = 6.118, x2 = 7.1006, z1 = 0, z2 = 1.22898
+Deleted plane y = 4.46, x1 = 6.118, x2 = 7.1006, z1 = 0, z2 = 1.22898
+Deleted plane y = 4.8, x1 = 7.1006, x2 = 8.77102, z1 = 0, z2 = 1.22898
+Deleted plane y = 4.46, x1 = 7.1006, x2 = 8.77102, z1 = 0, z2 = 1.22898
+Deleted plane y = 3.882, x1 = 7.1006, x2 = 8.77102, z1 = 0, z2 = 1.22898
+Deleted plane y = 4.8, x1 = 8.77102, x2 = 10, z1 = 0, z2 = 1.22898
+Deleted plane y = 4.46, x1 = 8.77102, x2 = 10, z1 = 0, z2 = 1.22898
+Deleted plane y = 3.882, x1 = 8.77102, x2 = 10, z1 = 0, z2 = 1.22898
+Cannot delete plane z = 2.8994, x1 = 5, x2 = 6.118, y1 = 2.8994, y2 = 4.46
+Deleted plane z = 3.882, x1 = 5, x2 = 6.118, y1 = 1.22898, y2 = 2.8994
+Deleted plane z = 3.882, x1 = 5, x2 = 6.118, y1 = 0, y2 = 1.22898
+Cannot delete plane z = 4.46, x1 = 5.54, x2 = 6.118, y1 = 4.46, y2 = 5
+Deleted plane z = 4.8, x1 = 5.54, x2 = 6.118, y1 = 3.882, y2 = 4.46
+Deleted plane z = 4.8, x1 = 5.54, x2 = 6.118, y1 = 2.8994, y2 = 3.882
+Deleted plane z = 4.8, x1 = 5.54, x2 = 6.118, y1 = 1.22898, y2 = 2.8994
+Deleted plane z = 4.8, x1 = 5.54, x2 = 6.118, y1 = 0, y2 = 1.22898
+Cannot delete plane z = 3.882, x1 = 6.118, x2 = 7.1006, y1 = 3.882, y2 = 5
+Cannot delete plane z = 2.8994, x1 = 6.118, x2 = 7.1006, y1 = 3.882, y2 = 5
+Deleted plane z = 4.8, x1 = 6.118, x2 = 7.1006, y1 = 3.882, y2 = 4.46
+Deleted plane z = 4.8, x1 = 6.118, x2 = 7.1006, y1 = 2.8994, y2 = 3.882
+Deleted plane z = 4.46, x1 = 6.118, x2 = 7.1006, y1 = 2.8994, y2 = 3.882
+Deleted plane z = 4.8, x1 = 6.118, x2 = 7.1006, y1 = 1.22898, y2 = 2.8994
+Deleted plane z = 4.46, x1 = 6.118, x2 = 7.1006, y1 = 1.22898, y2 = 2.8994
+Deleted plane z = 4.8, x1 = 6.118, x2 = 7.1006, y1 = 0, y2 = 1.22898
+Deleted plane z = 4.46, x1 = 6.118, x2 = 7.1006, y1 = 0, y2 = 1.22898
+Deleted plane z = 3.882, x1 = 7.1006, x2 = 8.77102, y1 = 3.882, y2 = 5
+Deleted plane z = 1.22898, x1 = 7.1006, x2 = 8.77102, y1 = 2.8994, y2 = 5
+Deleted plane z = 4.8, x1 = 7.1006, x2 = 8.77102, y1 = 3.882, y2 = 4.46
+Deleted plane z = 4.8, x1 = 7.1006, x2 = 8.77102, y1 = 2.8994, y2 = 3.882
+Deleted plane z = 4.46, x1 = 7.1006, x2 = 8.77102, y1 = 2.8994, y2 = 3.882
+Deleted plane z = 4.8, x1 = 7.1006, x2 = 8.77102, y1 = 1.22898, y2 = 2.8994
+Deleted plane z = 4.46, x1 = 7.1006, x2 = 8.77102, y1 = 1.22898, y2 = 2.8994
+Deleted plane z = 3.882, x1 = 7.1006, x2 = 8.77102, y1 = 1.22898, y2 = 2.8994
+Deleted plane z = 4.8, x1 = 7.1006, x2 = 8.77102, y1 = 0, y2 = 1.22898
+Deleted plane z = 4.46, x1 = 7.1006, x2 = 8.77102, y1 = 0, y2 = 1.22898
+Deleted plane z = 3.882, x1 = 7.1006, x2 = 8.77102, y1 = 0, y2 = 1.22898
+Deleted plane z = 3.882, x1 = 8.77102, x2 = 10, y1 = 3.882, y2 = 5
+Deleted plane z = 4.8, x1 = 8.77102, x2 = 10, y1 = 3.882, y2 = 4.46
+Deleted plane z = 4.8, x1 = 8.77102, x2 = 10, y1 = 2.8994, y2 = 3.882
+Deleted plane z = 4.46, x1 = 8.77102, x2 = 10, y1 = 2.8994, y2 = 3.882
+Deleted plane z = 4.8, x1 = 8.77102, x2 = 10, y1 = 1.22898, y2 = 2.8994
+Deleted plane z = 4.46, x1 = 8.77102, x2 = 10, y1 = 1.22898, y2 = 2.8994
+Deleted plane z = 3.882, x1 = 8.77102, x2 = 10, y1 = 1.22898, y2 = 2.8994
+Deleted plane z = 4.8, x1 = 8.77102, x2 = 10, y1 = 0, y2 = 1.22898
+Deleted plane z = 4.46, x1 = 8.77102, x2 = 10, y1 = 0, y2 = 1.22898
+Deleted plane z = 3.882, x1 = 8.77102, x2 = 10, y1 = 0, y2 = 1.22898
+Deleted plane x = 4.8, y1 = 4.46, y2 = 4.8, z1 = 4.46, z2 = 4.8
+Deleted plane x = 4.8, y1 = 3.882, y2 = 4.46, z1 = 4.46, z2 = 4.8
+Deleted plane x = 4.8, y1 = 2.8994, y2 = 3.882, z1 = 4.46, z2 = 4.8
+Deleted plane x = 4.8, y1 = 1.22898, y2 = 2.8994, z1 = 4.46, z2 = 4.8
+Deleted plane x = 4.8, y1 = 0, y2 = 1.22898, z1 = 4.46, z2 = 4.8
+Deleted plane x = 4.8, y1 = 4.46, y2 = 4.8, z1 = 3.882, z2 = 4.46
+Deleted plane x = 4.8, y1 = 3.882, y2 = 4.46, z1 = 3.882, z2 = 4.46
+Deleted plane x = 4.46, y1 = 3.882, y2 = 4.46, z1 = 3.882, z2 = 4.46
+Deleted plane x = 4.8, y1 = 2.8994, y2 = 3.882, z1 = 3.882, z2 = 4.46
+Deleted plane x = 4.46, y1 = 2.8994, y2 = 3.882, z1 = 3.882, z2 = 4.46
+Deleted plane x = 4.8, y1 = 1.22898, y2 = 2.8994, z1 = 3.882, z2 = 4.46
+Deleted plane x = 4.46, y1 = 1.22898, y2 = 2.8994, z1 = 3.882, z2 = 4.46
+Deleted plane x = 4.8, y1 = 0, y2 = 1.22898, z1 = 3.882, z2 = 4.46
+Deleted plane x = 4.46, y1 = 0, y2 = 1.22898, z1 = 3.882, z2 = 4.46
+Deleted plane x = 4.8, y1 = 4.46, y2 = 4.8, z1 = 2.8994, z2 = 3.882
+Deleted plane x = 4.8, y1 = 3.882, y2 = 4.46, z1 = 2.8994, z2 = 3.882
+Deleted plane x = 4.46, y1 = 3.882, y2 = 4.46, z1 = 2.8994, z2 = 3.882
+Deleted plane x = 4.8, y1 = 2.8994, y2 = 3.882, z1 = 2.8994, z2 = 3.882
+Deleted plane x = 4.46, y1 = 2.8994, y2 = 3.882, z1 = 2.8994, z2 = 3.882
+Deleted plane x = 4.8, y1 = 1.22898, y2 = 2.8994, z1 = 2.8994, z2 = 3.882
+Deleted plane x = 4.46, y1 = 1.22898, y2 = 2.8994, z1 = 2.8994, z2 = 3.882
+Deleted plane x = 4.8, y1 = 0, y2 = 1.22898, z1 = 2.8994, z2 = 3.882
+Deleted plane x = 4.46, y1 = 0, y2 = 1.22898, z1 = 2.8994, z2 = 3.882
+Deleted plane x = 4.8, y1 = 4.46, y2 = 4.8, z1 = 1.22898, z2 = 2.8994
+Deleted plane x = 4.8, y1 = 3.882, y2 = 4.46, z1 = 1.22898, z2 = 2.8994
+Deleted plane x = 4.46, y1 = 3.882, y2 = 4.46, z1 = 1.22898, z2 = 2.8994
+Deleted plane x = 4.8, y1 = 2.8994, y2 = 3.882, z1 = 1.22898, z2 = 2.8994
+Deleted plane x = 4.46, y1 = 2.8994, y2 = 3.882, z1 = 1.22898, z2 = 2.8994
+Deleted plane x = 4.8, y1 = 1.22898, y2 = 2.8994, z1 = 1.22898, z2 = 2.8994
+Deleted plane x = 4.46, y1 = 1.22898, y2 = 2.8994, z1 = 1.22898, z2 = 2.8994
+Deleted plane x = 3.882, y1 = 1.22898, y2 = 2.8994, z1 = 1.22898, z2 = 2.8994
+Deleted plane x = 4.8, y1 = 0, y2 = 1.22898, z1 = 1.22898, z2 = 2.8994
+Deleted plane x = 4.46, y1 = 0, y2 = 1.22898, z1 = 1.22898, z2 = 2.8994
+Deleted plane x = 3.882, y1 = 0, y2 = 1.22898, z1 = 1.22898, z2 = 2.8994
+Deleted plane x = 4.8, y1 = 4.46, y2 = 4.8, z1 = 0, z2 = 1.22898
+Deleted plane x = 4.8, y1 = 3.882, y2 = 4.46, z1 = 0, z2 = 1.22898
+Deleted plane x = 4.46, y1 = 3.882, y2 = 4.46, z1 = 0, z2 = 1.22898
+Deleted plane x = 4.8, y1 = 2.8994, y2 = 3.882, z1 = 0, z2 = 1.22898
+Deleted plane x = 4.46, y1 = 2.8994, y2 = 3.882, z1 = 0, z2 = 1.22898
+Deleted plane x = 4.8, y1 = 1.22898, y2 = 2.8994, z1 = 0, z2 = 1.22898
+Deleted plane x = 4.46, y1 = 1.22898, y2 = 2.8994, z1 = 0, z2 = 1.22898
+Deleted plane x = 3.882, y1 = 1.22898, y2 = 2.8994, z1 = 0, z2 = 1.22898
+Deleted plane x = 4.8, y1 = 0, y2 = 1.22898, z1 = 0, z2 = 1.22898
+Deleted plane x = 4.46, y1 = 0, y2 = 1.22898, z1 = 0, z2 = 1.22898
+Deleted plane x = 3.882, y1 = 0, y2 = 1.22898, z1 = 0, z2 = 1.22898
+Deleted plane y = 4.8, x1 = 3.882, x2 = 4.46, z1 = 4.46, z2 = 4.8
+Deleted plane y = 4.8, x1 = 2.8994, x2 = 3.882, z1 = 4.46, z2 = 4.8
+Deleted plane y = 4.8, x1 = 1.22898, x2 = 2.8994, z1 = 4.46, z2 = 4.8
+Deleted plane y = 4.8, x1 = 0, x2 = 1.22898, z1 = 4.46, z2 = 4.8
+Deleted plane y = 4.8, x1 = 3.882, x2 = 4.46, z1 = 3.882, z2 = 4.46
+Deleted plane y = 4.8, x1 = 2.8994, x2 = 3.882, z1 = 3.882, z2 = 4.46
+Deleted plane y = 4.46, x1 = 2.8994, x2 = 3.882, z1 = 3.882, z2 = 4.46
+Deleted plane y = 4.8, x1 = 1.22898, x2 = 2.8994, z1 = 3.882, z2 = 4.46
+Deleted plane y = 4.46, x1 = 1.22898, x2 = 2.8994, z1 = 3.882, z2 = 4.46
+Deleted plane y = 4.8, x1 = 0, x2 = 1.22898, z1 = 3.882, z2 = 4.46
+Deleted plane y = 4.46, x1 = 0, x2 = 1.22898, z1 = 3.882, z2 = 4.46
+Deleted plane y = 3.882, x1 = 3.882, x2 = 5, z1 = 2.8994, z2 = 3.882
+Deleted plane y = 4.8, x1 = 3.882, x2 = 4.46, z1 = 2.8994, z2 = 3.882
+Deleted plane y = 4.8, x1 = 2.8994, x2 = 3.882, z1 = 2.8994, z2 = 3.882
+Deleted plane y = 4.46, x1 = 2.8994, x2 = 3.882, z1 = 2.8994, z2 = 3.882
+Deleted plane y = 4.8, x1 = 1.22898, x2 = 2.8994, z1 = 2.8994, z2 = 3.882
+Deleted plane y = 4.46, x1 = 1.22898, x2 = 2.8994, z1 = 2.8994, z2 = 3.882
+Deleted plane y = 4.8, x1 = 0, x2 = 1.22898, z1 = 2.8994, z2 = 3.882
+Deleted plane y = 4.46, x1 = 0, x2 = 1.22898, z1 = 2.8994, z2 = 3.882
+Deleted plane y = 3.882, x1 = 3.882, x2 = 5, z1 = 1.22898, z2 = 2.8994
+Deleted plane y = 4.8, x1 = 3.882, x2 = 4.46, z1 = 1.22898, z2 = 2.8994
+Deleted plane y = 4.8, x1 = 2.8994, x2 = 3.882, z1 = 1.22898, z2 = 2.8994
+Deleted plane y = 4.46, x1 = 2.8994, x2 = 3.882, z1 = 1.22898, z2 = 2.8994
+Deleted plane y = 4.8, x1 = 1.22898, x2 = 2.8994, z1 = 1.22898, z2 = 2.8994
+Deleted plane y = 4.46, x1 = 1.22898, x2 = 2.8994, z1 = 1.22898, z2 = 2.8994
+Deleted plane y = 3.882, x1 = 1.22898, x2 = 2.8994, z1 = 1.22898, z2 = 2.8994
+Deleted plane y = 4.8, x1 = 0, x2 = 1.22898, z1 = 1.22898, z2 = 2.8994
+Deleted plane y = 4.46, x1 = 0, x2 = 1.22898, z1 = 1.22898, z2 = 2.8994
+Deleted plane y = 3.882, x1 = 0, x2 = 1.22898, z1 = 1.22898, z2 = 2.8994
+Deleted plane y = 3.882, x1 = 3.882, x2 = 5, z1 = 0, z2 = 1.22898
+Deleted plane y = 4.8, x1 = 3.882, x2 = 4.46, z1 = 0, z2 = 1.22898
+Deleted plane y = 4.8, x1 = 2.8994, x2 = 3.882, z1 = 0, z2 = 1.22898
+Deleted plane y = 4.46, x1 = 2.8994, x2 = 3.882, z1 = 0, z2 = 1.22898
+Deleted plane y = 4.8, x1 = 1.22898, x2 = 2.8994, z1 = 0, z2 = 1.22898
+Deleted plane y = 4.46, x1 = 1.22898, x2 = 2.8994, z1 = 0, z2 = 1.22898
+Deleted plane y = 3.882, x1 = 1.22898, x2 = 2.8994, z1 = 0, z2 = 1.22898
+Deleted plane y = 4.8, x1 = 0, x2 = 1.22898, z1 = 0, z2 = 1.22898
+Deleted plane y = 4.46, x1 = 0, x2 = 1.22898, z1 = 0, z2 = 1.22898
+Deleted plane y = 3.882, x1 = 0, x2 = 1.22898, z1 = 0, z2 = 1.22898
+Cannot delete plane z = 2.8994, x1 = 3.882, x2 = 5, y1 = 2.8994, y2 = 4.46
+Deleted plane z = 3.882, x1 = 3.882, x2 = 5, y1 = 1.22898, y2 = 2.8994
+Deleted plane z = 3.882, x1 = 3.882, x2 = 5, y1 = 0, y2 = 1.22898
+Cannot delete plane z = 4.46, x1 = 3.882, x2 = 4.46, y1 = 4.46, y2 = 5
+Deleted plane z = 4.8, x1 = 3.882, x2 = 4.46, y1 = 3.882, y2 = 4.46
+Deleted plane z = 4.8, x1 = 3.882, x2 = 4.46, y1 = 2.8994, y2 = 3.882
+Deleted plane z = 4.8, x1 = 3.882, x2 = 4.46, y1 = 1.22898, y2 = 2.8994
+Deleted plane z = 4.8, x1 = 3.882, x2 = 4.46, y1 = 0, y2 = 1.22898
+Cannot delete plane z = 3.882, x1 = 2.8994, x2 = 3.882, y1 = 3.882, y2 = 5
+Deleted plane z = 4.8, x1 = 2.8994, x2 = 3.882, y1 = 3.882, y2 = 4.46
+Deleted plane z = 4.8, x1 = 2.8994, x2 = 3.882, y1 = 2.8994, y2 = 3.882
+Deleted plane z = 4.46, x1 = 2.8994, x2 = 3.882, y1 = 2.8994, y2 = 3.882
+Deleted plane z = 4.8, x1 = 2.8994, x2 = 3.882, y1 = 1.22898, y2 = 2.8994
+Deleted plane z = 4.46, x1 = 2.8994, x2 = 3.882, y1 = 1.22898, y2 = 2.8994
+Deleted plane z = 4.8, x1 = 2.8994, x2 = 3.882, y1 = 0, y2 = 1.22898
+Deleted plane z = 4.46, x1 = 2.8994, x2 = 3.882, y1 = 0, y2 = 1.22898
+Deleted plane z = 3.882, x1 = 1.22898, x2 = 2.8994, y1 = 3.882, y2 = 5
+Deleted plane z = 4.8, x1 = 1.22898, x2 = 2.8994, y1 = 3.882, y2 = 4.46
+Deleted plane z = 4.8, x1 = 1.22898, x2 = 2.8994, y1 = 2.8994, y2 = 3.882
+Deleted plane z = 4.46, x1 = 1.22898, x2 = 2.8994, y1 = 2.8994, y2 = 3.882
+Deleted plane z = 4.8, x1 = 1.22898, x2 = 2.8994, y1 = 1.22898, y2 = 2.8994
+Deleted plane z = 4.46, x1 = 1.22898, x2 = 2.8994, y1 = 1.22898, y2 = 2.8994
+Deleted plane z = 3.882, x1 = 1.22898, x2 = 2.8994, y1 = 1.22898, y2 = 2.8994
+Deleted plane z = 4.8, x1 = 1.22898, x2 = 2.8994, y1 = 0, y2 = 1.22898
+Deleted plane z = 4.46, x1 = 1.22898, x2 = 2.8994, y1 = 0, y2 = 1.22898
+Deleted plane z = 3.882, x1 = 1.22898, x2 = 2.8994, y1 = 0, y2 = 1.22898
+Deleted plane z = 3.882, x1 = 0, x2 = 1.22898, y1 = 3.882, y2 = 5
+Deleted plane z = 4.8, x1 = 0, x2 = 1.22898, y1 = 3.882, y2 = 4.46
+Deleted plane z = 4.8, x1 = 0, x2 = 1.22898, y1 = 2.8994, y2 = 3.882
+Deleted plane z = 4.46, x1 = 0, x2 = 1.22898, y1 = 2.8994, y2 = 3.882
+Deleted plane z = 4.8, x1 = 0, x2 = 1.22898, y1 = 1.22898, y2 = 2.8994
+Deleted plane z = 4.46, x1 = 0, x2 = 1.22898, y1 = 1.22898, y2 = 2.8994
+Deleted plane z = 3.882, x1 = 0, x2 = 1.22898, y1 = 1.22898, y2 = 2.8994
+Deleted plane z = 4.8, x1 = 0, x2 = 1.22898, y1 = 0, y2 = 1.22898
+Deleted plane z = 4.46, x1 = 0, x2 = 1.22898, y1 = 0, y2 = 1.22898
+Deleted plane z = 3.882, x1 = 0, x2 = 1.22898, y1 = 0, y2 = 1.22898
+Start chaining 621 node
+Start chaining 622 node
+Start chaining 623 node
+Start chaining 624 node
+Start chaining 625 node
+Start chaining 626 node
+Start chaining 627 node
+Start chaining 628 node
+Start chaining 629 node
+Start chaining 630 node
+Start chaining 631 node
+Start chaining 632 node
+Start chaining 633 node
+Start chaining 634 node
+Start chaining 635 node
+Start chaining 636 node
+Start chaining 637 node
+Start chaining 638 node
+Start chaining 639 node
+Start chaining 640 node
+Start chaining 641 node
+Start chaining 642 node
+Start chaining 643 node
+Start chaining 644 node
+Start chaining 645 node
+Start chaining 646 node
+Start chaining 647 node
+Start chaining 648 node
+Start chaining 649 node
+Start chaining 650 node
+Start chaining 651 node
+Start chaining 652 node
+Start chaining 653 node
+Start chaining 654 node
+Start chaining 655 node
+Start chaining 656 node
+Start chaining 657 node
+Start chaining 658 node
+Start chaining 659 node
+Start chaining 660 node
+Start chaining 661 node
+Start chaining 662 node
+Start chaining 663 node
+Start chaining 664 node
+Start chaining 665 node
+Start chaining 666 node
+Start chaining 667 node
+Start chaining 668 node
+Start chaining 669 node
+Start chaining 670 node
+Start chaining 671 node
+Start chaining 672 node
+Start chaining 673 node
+Start chaining 674 node
+Start chaining 675 node
+Start chaining 676 node
+Start chaining 677 node
+Start chaining 678 node
+Start chaining 679 node
+Start chaining 680 node
+Start chaining 681 node
+Start chaining 682 node
+Start chaining 683 node
+Start chaining 684 node
+Start chaining 685 node
+Start chaining 686 node
+Start chaining 687 node
+Start chaining 688 node
+Start chaining 689 node
+Start chaining 690 node
+Start chaining 691 node
+Start chaining 692 node
+Start chaining 693 node
+Start chaining 694 node
+Start chaining 695 node
+Start chaining 696 node
+Start chaining 697 node
+Start chaining 698 node
+Start chaining 699 node
+Start chaining 700 node
+Start chaining 701 node
+Start chaining 702 node
+Start chaining 703 node
+Start chaining 704 node
+Start chaining 705 node
+Start chaining 706 node
+Start chaining 707 node
+Start chaining 708 node
+Start chaining 709 node
+Start chaining 710 node
+Start chaining 711 node
+Start chaining 712 node
+Start chaining 713 node
+Start chaining 714 node
+Start chaining 715 node
+Start chaining 716 node
+Start chaining 717 node
+Start chaining 718 node
+Start chaining 719 node
+Start chaining 720 node
+Start chaining 721 node
+Start chaining 722 node
+Start chaining 723 node
+Start chaining 724 node
+Start chaining 725 node
+Start chaining 726 node
+Start chaining 727 node
+Start chaining 728 node
+Start chaining 729 node
+Start chaining 730 node
+Start chaining 731 node
+Start chaining 732 node
+Start chaining 733 node
+Start chaining 734 node
+Start chaining 735 node
+Start chaining 736 node
+Start chaining 737 node
+Start chaining 738 node
+Start chaining 739 node
+Start chaining 740 node
+Start chaining 741 node
+Start chaining 742 node
+Start chaining 743 node
+Start chaining 744 node
+Start chaining 745 node
+Start chaining 746 node
+Start chaining 747 node
+Start chaining 748 node
+Start chaining 749 node
+Start chaining 750 node
+Start chaining 751 node
+Start chaining 752 node
+Start chaining 753 node
+Start chaining 754 node
+Start chaining 755 node
+Start chaining 756 node
+Start chaining 757 node
+Start chaining 758 node
+Start chaining 759 node
+Start chaining 760 node
+Start chaining 761 node
+Start chaining 762 node
+Start chaining 763 node
+Start chaining 764 node
+Start chaining 765 node
+Start chaining 766 node
+Start chaining 767 node
+Start chaining 768 node
+Start chaining 769 node
+Start chaining 770 node
+Start chaining 771 node
+Start chaining 772 node
+Start chaining 773 node
+Start chaining 774 node
+Start chaining 775 node
+Start chaining 776 node
+Start chaining 777 node
+Start chaining 778 node
+Start chaining 779 node
+Start chaining 780 node
+Start chaining 781 node
+Start chaining 782 node
+Start chaining 783 node
+Start chaining 784 node
+Start chaining 785 node
+Start chaining 786 node
+Start chaining 787 node
+Start chaining 788 node
+Start chaining 789 node
+Start chaining 790 node
+Start chaining 791 node
+Start chaining 792 node
+Start chaining 793 node
+Start chaining 794 node
+Start chaining 795 node
+Start chaining 796 node
+Start chaining 797 node
+Start chaining 798 node
+Start chaining 799 node
+Start chaining 800 node
+Start chaining 801 node
+Start chaining 802 node
+Start chaining 803 node
+Start chaining 804 node
+Start chaining 805 node
+Start chaining 806 node
+Start chaining 807 node
+Start chaining 808 node
+Start chaining 809 node
+Start chaining 810 node
+Start chaining 811 node
+Start chaining 812 node
+Start chaining 813 node
+Start chaining 814 node
+Start chaining 815 node
+Start chaining 816 node
+Start chaining 817 node
+Start chaining 818 node
+Start chaining 819 node
+Start chaining 820 node
+Start chaining 821 node
+Start chaining 822 node
+Start chaining 823 node
+Start chaining 824 node
+Start chaining 825 node
+Start chaining 826 node
+Start chaining 827 node
+Start chaining 828 node
+Start chaining 829 node
+Start chaining 830 node
+Start chaining 831 node
+Start chaining 832 node
+Start chaining 833 node
+Start chaining 834 node
+Start chaining 835 node
+Start chaining 836 node
+Start chaining 837 node
+Start chaining 838 node
+Start chaining 839 node
+Start chaining 840 node
+Start chaining 841 node
+Start chaining 842 node
+Start chaining 843 node
+Start chaining 844 node
+Start chaining 845 node
+Start chaining 846 node
+Start chaining 847 node
+Start chaining 848 node
+Start chaining 849 node
+Start chaining 850 node
+Start chaining 851 node
+Start chaining 852 node
+Start chaining 853 node
+Start chaining 854 node
+Start chaining 855 node
+Start chaining 856 node
+Start chaining 857 node
+Start chaining 858 node
+Start chaining 859 node
+Start chaining 860 node
+Start chaining 861 node
+Start chaining 862 node
+Start chaining 863 node
+Start chaining 864 node
+Start chaining 865 node
+Start chaining 866 node
+Start chaining 867 node
+Start chaining 868 node
+Start chaining 869 node
+Start chaining 870 node
+Start chaining 871 node
+Start chaining 872 node
+Start chaining 873 node
+Start chaining 874 node
+Start chaining 875 node
+Start chaining 876 node
+Start chaining 877 node
+Start chaining 878 node
+Start chaining 879 node
+Start chaining 880 node
+Start chaining 881 node
+Start chaining 882 node
+Start chaining 883 node
+Start chaining 884 node
+Start chaining 885 node
+Start chaining 886 node
+Start chaining 887 node
+Start chaining 888 node
+Start chaining 889 node
+Start chaining 890 node
+Start chaining 891 node
+Start chaining 892 node
+Start chaining 893 node
+Start chaining 894 node
+Start chaining 895 node
+Start chaining 896 node
+Start chaining 897 node
+Start chaining 898 node
+Start chaining 899 node
+Start chaining 900 node
+Start chaining 901 node
+Start chaining 902 node
+Start chaining 903 node
+Start chaining 904 node
+Start chaining 905 node
+Start chaining 906 node
+Start chaining 907 node
+Start chaining 908 node
+Start chaining 909 node
+Start chaining 910 node
+Start chaining 911 node
+Start chaining 912 node
+Start chaining 913 node
+Start chaining 914 node
+Start chaining 915 node
+Start chaining 916 node
+Start chaining 917 node
+Start chaining 918 node
+Start chaining 919 node
+Start chaining 920 node
+Start chaining 921 node
+Start chaining 922 node
+Start chaining 923 node
+Start chaining 924 node
+Start chaining 925 node
+Start chaining 926 node
+Start chaining 927 node
+Start chaining 928 node
+Start chaining 929 node
+Start chaining 930 node
+Start chaining 931 node
+Start chaining 932 node
+Start chaining 933 node
+Start chaining 934 node
+Start chaining 935 node
+Start chaining 936 node
+Start chaining 937 node
+Start chaining 938 node
+Start chaining 939 node
+Start chaining 940 node
+Start chaining 941 node
+Start chaining 942 node
+Start chaining 943 node
+Start chaining 944 node
+Start chaining 945 node
+Start chaining 946 node
+Start chaining 947 node
+Start chaining 948 node
+Start chaining 949 node
+Start chaining 950 node
+Start chaining 951 node
+Start chaining 952 node
+Start chaining 953 node
+Start chaining 954 node
+Start chaining 955 node
+Start chaining 956 node
+Start chaining 957 node
+Start chaining 958 node
+Start chaining 959 node
+Start chaining 960 node
+Start chaining 961 node
+Start chaining 962 node
+Start chaining 963 node
+Start chaining 964 node
+Start chaining 965 node
+Start chaining 966 node
+Start chaining 967 node
+Start chaining 968 node
+Start chaining 969 node
+Start chaining 970 node
+Start chaining 971 node
+Start chaining 972 node
+Start chaining 973 node
+Start chaining 974 node
+Start chaining 975 node
+Start chaining 976 node
+Start chaining 977 node
+Start chaining 978 node
+Start chaining 979 node
+Start chaining 980 node
+Start chaining 981 node
+Start chaining 982 node
+Start chaining 983 node
+Start chaining 984 node
+Start chaining 985 node
+Start chaining 986 node
+Start chaining 987 node
+Start chaining 988 node
+Start chaining 989 node
+Start chaining 990 node
+Start chaining 991 node
+Start chaining 992 node
+Start chaining 993 node
+Start chaining 994 node
+Start chaining 995 node
+Start chaining 996 node
+Start chaining 997 node
+Start chaining 998 node
+Start chaining 999 node
+Start chaining 1000 node
+Start chaining 1001 node
+Start chaining 1002 node
+Start chaining 1003 node
+Start chaining 1004 node
+Start chaining 1005 node
+Start chaining 1006 node
+Start chaining 1007 node
+Start chaining 1008 node
+Start chaining 1009 node
+Start chaining 1010 node
+Start chaining 1011 node
+Start chaining 1012 node
+Start chaining 1013 node
+Start chaining 1014 node
+Start chaining 1015 node
+Start chaining 1016 node
+Start chaining 1017 node
+Start chaining 1018 node
+Start chaining 1019 node
+Start chaining 1020 node
+Start chaining 1021 node
+Start chaining 1022 node
+Start chaining 1023 node
+Start chaining 1024 node
+Start chaining 1025 node
+Start chaining 1026 node
+Start chaining 1027 node
+Start chaining 1028 node
+Start chaining 1029 node
+Start chaining 1030 node
+Start chaining 1031 node
+Start chaining 1032 node
+Start chaining 1033 node
+Start chaining 1034 node
+Start chaining 1035 node
+Start chaining 1036 node
+Start chaining 1037 node
+Start chaining 1038 node
+Start chaining 1039 node
+Start chaining 1040 node
+Start chaining 1041 node
+Start chaining 1042 node
+Start chaining 1043 node
+Start chaining 1044 node
+Start chaining 1045 node
+Start chaining 1046 node
+Start chaining 1047 node
+Start chaining 1048 node
+Start chaining 1049 node
+Start chaining 1050 node
+Start chaining 1051 node
+Start chaining 1052 node
+Start chaining 1053 node
+Start chaining 1054 node
+Start chaining 1055 node
+Start chaining 1056 node
+Start chaining 1057 node
+Start chaining 1058 node
+Start chaining 1059 node
+Start chaining 1060 node
+Start chaining 1061 node
+Start chaining 1062 node
+Start chaining 1063 node
+Start chaining 1064 node
+Start chaining 1065 node
+Start chaining 1066 node
+Start chaining 1067 node
+Start chaining 1068 node
+Start chaining 1069 node
+Start chaining 1070 node
+Start chaining 1071 node
+Start chaining 1072 node
+Start chaining 1073 node
+Start chaining 1074 node
+Start chaining 1075 node
+Start chaining 1076 node
+Start chaining 1077 node
+Start chaining 1078 node
+Start chaining 1079 node
+Start chaining 1080 node
+Start chaining 1081 node
+Start chaining 1082 node
+Start chaining 1083 node
+Start chaining 1084 node
+Start chaining 1085 node
+Start chaining 1086 node
+Start chaining 1087 node
+Start chaining 1088 node
+Start chaining 1089 node
+Start chaining 1090 node
+Start chaining 1091 node
+Start chaining 1092 node
+Start chaining 1093 node
+Start chaining 1094 node
+Start chaining 1095 node
+Start chaining 1096 node
+Start chaining 1097 node
+Start chaining 1098 node
+Start chaining 1099 node
+Start chaining 1100 node
+Start chaining 1101 node
+Start chaining 1102 node
+Start chaining 1103 node
+Start chaining 1104 node
+Start chaining 1105 node
+Start chaining 1106 node
+Start chaining 1107 node
+Start chaining 1108 node
+Start chaining 1109 node
+Start chaining 1110 node
+Start chaining 1111 node
+Start chaining 1112 node
+Start chaining 1113 node
+Start chaining 1114 node
+Start chaining 1115 node
+Start chaining 1116 node
+Start chaining 1117 node
+Start chaining 1118 node
+Start chaining 1119 node
+Start chaining 1120 node
+Start chaining 1121 node
+Start chaining 1122 node
+Start chaining 1123 node
+Start chaining 1124 node
+Start chaining 1125 node
+Start chaining 1126 node
+Start chaining 1127 node
+Start chaining 1128 node
+Start chaining 1129 node
+Start chaining 1130 node
+Start chaining 1131 node
+Start chaining 1132 node
+Start chaining 1133 node
+Start chaining 1134 node
+Start chaining 1135 node
+Start chaining 1136 node
+Start chaining 1137 node
+Start chaining 1138 node
+Start chaining 1139 node
+Start chaining 1140 node
+Start chaining 1141 node
+Start chaining 1142 node
+Start chaining 1143 node
+Start chaining 1144 node
+Start chaining 1145 node
+Start chaining 1146 node
+Start chaining 1147 node
+Start chaining 1148 node
+Start chaining 1149 node
+Start chaining 1150 node
+Start chaining 1151 node
+Start chaining 1152 node
+Start chaining 1153 node
+Start chaining 1154 node
+Start chaining 1155 node
+Start chaining 1156 node
+Start chaining 1157 node
+Start chaining 1158 node
+Start chaining 1159 node
+Start chaining 1160 node
+Start chaining 1161 node
+Start chaining 1162 node
+Start chaining 1163 node
+Start chaining 1164 node
+Start chaining 1165 node
+Start chaining 1166 node
+Start chaining 1167 node
+Start chaining 1168 node
+Start chaining 1169 node
+Start chaining 1170 node
+Start chaining 1171 node
+Start chaining 1172 node
+Start chaining 1173 node
+Start chaining 1174 node
+Start chaining 1175 node
+Start chaining 1176 node
+Start chaining 1177 node
+Start chaining 1178 node
+Start chaining 1179 node
+Start chaining 1180 node
+Start chaining 1181 node
+Start chaining 1182 node
+Start chaining 1183 node
+Start chaining 1184 node
+Start chaining 1185 node
+Start chaining 1186 node
+Start chaining 1187 node
+Start chaining 1188 node
+Start chaining 1189 node
+Start chaining 1190 node
+Start chaining 1191 node
+Start chaining 1192 node
+Start chaining 1193 node
+Start chaining 1194 node
+Start chaining 1195 node
+Start chaining 1196 node
+Start chaining 1197 node
+Start chaining 1198 node
+Start chaining 1199 node
+Start chaining 1200 node
+Start chaining 1201 node
+Start chaining 1202 node
+Start chaining 1203 node
+Start chaining 1204 node
+Start chaining 1205 node
+Start chaining 1206 node
+Start chaining 1207 node
+Start chaining 1208 node
+Start chaining 1209 node
+Start chaining 1210 node
+Start chaining 1211 node
+Start chaining 1212 node
+Start chaining 1213 node
+Start chaining 1214 node
+Start chaining 1215 node
+Start chaining 1216 node
+Start chaining 1217 node
+Start chaining 1218 node
+Start chaining 1219 node
+Start chaining 1220 node
+Start chaining 1221 node
+Start chaining 1222 node
+Start chaining 1223 node
+Start chaining 1224 node
+Start chaining 1225 node
+Start chaining 1226 node
+Start chaining 1227 node
+Start chaining 1228 node
+Start chaining 1229 node
+Start chaining 1230 node
+Start chaining 1231 node
+Start chaining 1232 node
+Start chaining 1233 node
+Start chaining 1234 node
+Start chaining 1235 node
+Start chaining 1236 node
+Start chaining 1237 node
+Start chaining 1238 node
+Start chaining 1239 node
+Start chaining 1240 node
+Start chaining 1241 node
+Start chaining 1242 node
+Start chaining 1243 node
+Start chaining 1244 node
+Start chaining 1245 node
+Start chaining 1246 node
+Start chaining 1247 node
+Start chaining 1248 node
+Start chaining 1249 node
+Start chaining 1250 node
+Start chaining 1251 node
+Start chaining 1252 node
+Start chaining 1253 node
+Start chaining 1254 node
+Start chaining 1255 node
+Start chaining 1256 node
+Start chaining 1257 node
+Start chaining 1258 node
+Start chaining 1259 node
+Start chaining 1260 node
+Start chaining 1261 node
+Start chaining 1262 node
+Start chaining 1263 node
+Start chaining 1264 node
+Start chaining 1265 node
+Start chaining 1266 node
+Start chaining 1267 node
+Start chaining 1268 node
+Start chaining 1269 node
+Start chaining 1270 node
+Start chaining 1271 node
+Start chaining 1272 node
+Start chaining 1273 node
+Start chaining 1274 node
+Start chaining 1275 node
+Start chaining 1276 node
+Start chaining 1277 node
+Start chaining 1278 node
+Start chaining 1279 node
+Start chaining 1280 node
+Start chaining 1281 node
+Start chaining 1282 node
+Start chaining 1283 node
+Start chaining 1284 node
+Start chaining 1285 node
+Start chaining 1286 node
+Start chaining 1287 node
+Start chaining 1288 node
+elem 0:
+elem 1:
+elem 2:
+elem 3:
+elem 4:
+elem 5:
+elem 6:
+elem 7:
+elem 8:
+elem 9:
+elem 10:
+elem 11:
+elem 12:
+elem 13:
+elem 14:
+elem 15:
+elem 16:
+elem 17:
+elem 18:
+elem 19:
+elem 20:
+elem 21:
+elem 22:
+elem 23:
+elem 24:
+elem 25:
+elem 26:
+elem 27:
+elem 28:
+elem 29:
+elem 30:
+elem 31:
+elem 32:
+elem 33:
+elem 34:
+elem 35:
+elem 36:
+elem 37:
+elem 38:
+elem 39:
+elem 40:
+elem 41:
+elem 42:
+elem 43:
+elem 44:
+elem 45:
+elem 46:
+elem 47:
+elem 48:
+elem 49:
+elem 50:
+elem 51:
+elem 52:
+elem 53:
+elem 54:
+elem 55:
+elem 56:
+elem 57:
+elem 58:
+elem 59:
+elem 60:
+elem 61:
+elem 62:
+elem 63:
+elem 64:
+elem 65:
+elem 66:
+elem 67:
+elem 68:
+elem 69:
+elem 70:
+elem 71:
+elem 72:
+elem 73:
+elem 74:
+elem 75:
+elem 76:
+elem 77:
+elem 78:
+elem 79:
+elem 80:
+elem 81:
+elem 82:
+elem 83:
+elem 84:
+elem 85:
+elem 86:
+elem 87:
+elem 88:
+elem 89:
+elem 90:
+elem 91:
+elem 92:
+elem 93:
+elem 94:
+elem 95:
+elem 96:
+elem 97:
+elem 98:
+elem 99:
+elem 100:
+elem 101:
+elem 102:
+elem 103:
+elem 104:
+elem 105:
+elem 106:
+elem 107:
+elem 108:
+elem 109:
+elem 110:
+elem 111:
+elem 112:
+elem 113:
+elem 114:
+elem 115:
+elem 116:
+elem 117:
+elem 118:
+elem 119:
+elem 120:
+elem 121:
+elem 122:
+elem 123:
+elem 124:
+elem 125:
+elem 126:
+elem 127:
+elem 128:
+elem 129:
+elem 130:
+elem 131:
+elem 132:
+elem 133:
+elem 134:
+elem 135:
+elem 136:
+elem 137:
+elem 138:
+elem 139:
+elem 140:
+elem 141:
+elem 142:
+elem 143:
+elem 144:
+elem 145:
+elem 146:
+elem 147:
+elem 148:
+elem 149:
+elem 150:
+elem 151:
+elem 152:
+elem 153:
+elem 154:
+elem 155:
+elem 156:
+elem 157:
+elem 158:
+elem 159:
+elem 160:
+elem 161:
+elem 162:
+elem 163:
+elem 164:
+elem 165:
+elem 166:
+elem 167:
+elem 168:
+elem 169:
+elem 170:
+elem 171:
+elem 172:
+elem 173:
+elem 174:
+elem 175:
+elem 176:
+elem 177:
+elem 178:
+elem 179:
+elem 180:
+elem 181:
+elem 182:
+elem 183:
+elem 184:
+elem 185:
+elem 186:
+elem 187:
+elem 188:
+elem 189:
+elem 190:
+elem 191:
+elem 192:
+elem 193:
+elem 194:
+elem 195:
+elem 196:
+elem 197:
+elem 198:
+elem 199:
+elem 200:
+elem 201:
+elem 202:
+elem 203:
+elem 204:
+elem 205:
+elem 206:
+elem 207:
+elem 208:
+elem 209:
+elem 210:
+elem 211:
+elem 212:
+elem 213:
+elem 214:
+elem 215:
+elem 216:
+elem 217:
+elem 218:
+elem 219:
+elem 220:
+elem 221:
+elem 222:
+elem 223:
+elem 224:
+elem 225:
+elem 226:
+elem 227:
+elem 228:
+elem 229:
+elem 230:
+elem 231:
+elem 232:
+elem 233:
+elem 234:
+elem 235:
+elem 236:
+elem 237:
+elem 238:
+elem 239:
+elem 240:
+elem 241:
+elem 242:
+elem 243:
+elem 244:
+elem 245:
+elem 246:
+elem 247:
+elem 248:
+elem 249:
+elem 250:
+elem 251:
+elem 252:
+elem 253:
+elem 254:
+elem 255:
+elem 256:
+elem 257:
+elem 258:
+elem 259:
+elem 260:
+elem 261:
+elem 262:
+elem 263:
+elem 264:
+elem 265:
+elem 266:
+elem 267:
+elem 268:
+elem 269:
+elem 270:
+elem 271:
+elem 272:
+elem 273:
+elem 274:
+elem 275:
+elem 276:
+elem 277:
+elem 278:
+elem 279:
+elem 280:
+elem 281:
+elem 282:
+elem 283:
+elem 284:
+elem 285:
+elem 286:
+elem 287:
+elem 288:
+elem 289:
+elem 290:
+elem 291:
+elem 292:
+elem 293:
+elem 294:
+elem 295:
+elem 296:
+elem 297:
+elem 298:
+elem 299:
+elem 300:
+elem 301:
+elem 302:
+elem 303:
+elem 304:
+elem 305:
+elem 306:
+elem 307:
+elem 308:
+elem 309:
+elem 310:
+elem 311:
+elem 312:
+elem 313:
+elem 314:
+elem 315:
+elem 316:
+elem 317:
+elem 318:
+elem 319:
+elem 320:
+elem 321:
+elem 322:
+elem 323:
+elem 324:
+elem 325:
+elem 326:
+elem 327:
+elem 328:
+elem 329:
+elem 330:
+elem 331:
+elem 332:
+elem 333:
+elem 334:
+elem 335:
+elem 336:
+elem 337:
+elem 338:
+elem 339:
+elem 340:
+elem 341:
+elem 342:
+elem 343:
+elem 344:
+elem 345:
+elem 346:
+elem 347:
+elem 348:
+elem 349:
+elem 350:
+elem 351:
+elem 352:
+elem 353:
+elem 354:
+elem 355:
+elem 356:
+elem 357:
+elem 358:
+elem 359:
+elem 360:
+elem 361:
+elem 362:
+elem 363:
+elem 364:
+elem 365:
+elem 366:
+elem 367:
+elem 368:
+elem 369:
+elem 370:
+elem 371:
+elem 372:
+elem 373:
+elem 374:
+elem 375:
+elem 376:
+elem 377:
+elem 378:
+elem 379:
+elem 380:
+elem 381:
+elem 382:
+elem 383:
+elem 384:
+elem 385:
+elem 386:
+elem 387:
+elem 388:
+elem 389:
+elem 390:
+elem 391:
+elem 392:
+elem 393:
+elem 394:
+elem 395:
+elem 396:
+elem 397:
+elem 398:
+elem 399:
+elem 400:
+elem 401:
+elem 402:
+elem 403:
+elem 404:
+elem 405:
+elem 406:
+elem 407:
+elem 408:
+elem 409:
+elem 410:
+elem 411:
+elem 412:
+elem 413:
+elem 414:
+elem 415:
+elem 416:
+elem 417:
+elem 418:
+elem 419:
+elem 420:
+elem 421:
+elem 422:
+elem 423:
+elem 424:
+elem 425:
+elem 426:
+elem 427:
+elem 428:
+elem 429:
+elem 430:
+elem 431:
+elem 432:
+elem 433:
+elem 434:
+elem 435:
+elem 436:
+elem 437:
+elem 438:
+elem 439:
+elem 440:
+elem 441:
+elem 442:
+elem 443:
+elem 444:
+elem 445:
+elem 446:
+elem 447:
+elem 448:
+elem 449:
+elem 450:
+elem 451:
+elem 452:
+elem 453:
+elem 454:
+elem 455:
+elem 456:
+elem 457:
+elem 458:
+elem 459:
+elem 460:
+elem 461:
+elem 462:
+elem 463:
+elem 464:
+elem 465:
+elem 466:
+elem 467:
+elem 468:
+elem 469:
+elem 470:
+elem 471:
+elem 472:
+elem 473:
+elem 474:
+elem 475:
+elem 476:
+elem 477:
+elem 478:
+elem 479:
+elem 480:
+elem 481:
+elem 482:
+elem 483:
+elem 484:
+elem 485:
+elem 486:
+elem 487:
+elem 488:
+elem 489:
+elem 490:
+elem 491:
+elem 492:
+elem 493:
+elem 494:
+elem 495:
+elem 496:
+elem 497:
+elem 498:
+elem 499:
+elem 500:
+elem 501:
+elem 502:
+elem 503:
+elem 504:
+elem 505:
+elem 506:
+elem 507:
+elem 508:
+elem 509:
+elem 510:
+elem 511:
+elem 512:
+elem 513:
+elem 514:
+elem 515:
+elem 516:
+elem 517:
+elem 518:
+elem 519:
+elem 520:
+elem 521:
+elem 522:
+elem 523:
+elem 524:
+elem 525:
+elem 526:
+elem 527:
+elem 528:
+elem 529:
+elem 530:
+elem 531:
+elem 532:
+elem 533:
+elem 534:
+elem 535:
+elem 536:
+elem 537:
+elem 538:
+elem 539:
+elem 540:
+elem 541:
+elem 542:
+elem 543:
+elem 544:
+elem 545:
+elem 546:
+elem 547:
+elem 548:
+elem 549:
+elem 550:
+elem 551:
+elem 552:
+elem 553:
+elem 554:
+elem 555:
+elem 556:
+elem 557:
+elem 558:
+elem 559:
+elem 560:
+elem 561:
+elem 562:
+elem 563:
+elem 564:
+elem 565:
+elem 566:
+elem 567:
+elem 568:
+elem 569:
+elem 570:
+elem 571:
+elem 572:
+elem 573:
+elem 574:
+elem 575:
+elem 576:
+elem 577:
+elem 578:
+elem 579:
+elem 580:
+elem 581:
+elem 582:
+elem 583:
+elem 584:
+elem 585:
+elem 586:
+elem 587:
+elem 588:
+elem 589:
+elem 590:
+elem 591:
+elem 592:
+elem 593:
+elem 594:
+elem 595:
+elem 596:
+elem 597:
+elem 598:
+elem 599:
+elem 600:
+elem 601:
+elem 602:
+elem 603:
+elem 604:
+elem 605:
+elem 606:
+elem 607:
+elem 608:
+elem 609:
+elem 610:
+elem 611:
+elem 612:
+elem 613:
+elem 614:
+elem 615:
+elem 616:
+elem 617:
+elem 618:
+elem 619:
+elem 620:
+elem 621:
+elem 622:
+elem 623:
+elem 624:
+elem 625:
+elem 626:
+elem 627:
+elem 628:
+elem 629:
+elem 630:
+elem 631:
+elem 632:
+elem 633:
+elem 634:
+elem 635:
+elem 636:
+elem 637:
+elem 638:
+elem 639:
+elem 640:
+elem 641:
+elem 642:
+elem 643:
+elem 644:
+elem 645:
+elem 646:
+elem 647:
+elem 648:
+elem 649:
+elem 650:
+elem 651:
+elem 652:
+elem 653:
+elem 654:
+elem 655:
+elem 656:
+elem 657:
+elem 658:
+elem 659:
+elem 660:
+elem 661:
+elem 662:
+elem 663:
+elem 664:
+elem 665:
+elem 666:
+elem 667:
+elem 668:
+elem 669:
+elem 670:
+elem 671:
+elem 672:
+elem 673:
+elem 674:
+elem 675:
+elem 676:
+elem 677:
+elem 678:
+elem 679:
+elem 680:
+elem 681:
+elem 682:
+elem 683:
+elem 684:
+elem 685:
+elem 686:
+elem 687:
+elem 688:
+elem 689:
+elem 690:
+elem 691:
+elem 692:
+elem 693:
+elem 694:
+elem 695:
+elem 696:
+elem 697:
+elem 698:
+elem 699:
+elem 700:
+elem 701:
+elem 702:
+elem 703:
+elem 704:
+elem 705:
+elem 706:
+elem 707:
+elem 708:
+elem 709:
+elem 710:
+elem 711:
+elem 712:
+elem 713:
+elem 714:
+elem 715:
+elem 716:
+elem 717:
+elem 718:
+elem 719:
+elem 720:
+elem 721:
+elem 722:
+elem 723:
+elem 724:
+elem 725:
+elem 726:
+elem 727:
+elem 728:
+elem 729:
+elem 730:
+elem 731:
+elem 732:
+elem 733:
+elem 734:
+elem 735:
+elem 736:
+elem 737:
+elem 738:
+elem 739:
+elem 740:
+elem 741:
+elem 742:
+elem 743:
+elem 744:
+elem 745:
+elem 746:
+elem 747:
+elem 748:
+elem 749:
+elem 750:
+elem 751:
+elem 752:
+elem 753:
+elem 754:
+elem 755:
+elem 756:
+elem 757:
+elem 758:
+elem 759:
+elem 760:
+elem 761:
+elem 762:
+elem 763:
+elem 764:
+elem 765:
+elem 766:
+elem 767:
+elem 768:
+elem 769:
+elem 770:
+elem 771:
+elem 772:
+elem 773:
+elem 774:
+elem 775:
+elem 776:
+elem 777:
+elem 778:
+elem 779:
+elem 780:
+elem 781:
+elem 782:

@@ -242,7 +242,7 @@ void DrawParallelepiped(float x0, float x1, float y0, float y1, float z0, float 
 	glEnd();
 
 	// Правая грань
-	// Та же левая, только, X = 0.5
+	// Та же левая, только, R = 0.5
 	glBegin(GL_POLYGON);
 	glVertex3f(x1, y0, z0); // Перед-низ
 	glVertex3f(x1, y1, z0); // Перед-верх
@@ -343,7 +343,7 @@ void GLRenderScene()
 
 	//glPushMatrix();
 	//char*text = new char[5];
-	//sprintf(text, "%c", 'X');
+	//sprintf(text, "%c", 'R');
 	//drawText(text, strlen(text), 3, 0);
 	//glPopMatrix();
 

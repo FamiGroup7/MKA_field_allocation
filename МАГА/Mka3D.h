@@ -9,8 +9,10 @@ using namespace std;
 
 class Mka3D {
 public:
-	Mka3D();
+	Mka3D(bool netOptimization, bool debugMod, bool optOnlyOnOneDirection, bool maxOptimization,
+		bool optX, bool optY, bool optZ);
 	~Mka3D();
+	void solve();
 
 	struct nvtr
 	{
@@ -82,10 +84,19 @@ public:
 	} *tmpSigm;
 
 private:
+	string filePrefix = "resources3D/";
+
 	ofstream output;
 	ofstream logger;
-	const bool DEBUG = true;
+	ofstream profiler;
+	bool DEBUG = true;
 	bool GRID_UNION = false;
+	bool MAX_OPTIMIZATION = true;
+
+	bool X = true;
+	bool Y = true;
+	bool Z = true;
+	bool optOnlyOnOneDirection;
 
 	static const size_t BIT_SIZE = 13;
 	const size_t LEFT_UP = 0;
@@ -118,7 +129,7 @@ private:
 	int nX, nY, nZ;
 	char*** matrixNode;
 	bitset<Mka3D::BIT_SIZE>*** newNodes;
-	int nColT, kolvoRegularNode;
+	int nColT, countRegularNodes;
 	const int AXIS_SIZE = 6;
 	enum Axis { LEFT, RIGHT, DOWN, UP, BACK, FORE };
 	vector<sigmStruct3D> sigmNewT;
@@ -160,16 +171,19 @@ private:
 	int findNextX(int directionX, int directionY, int directionZ, int from_x, int to_x, int u_j, int u_t);
 	int findNextY(int directionX, int directionY, int directionZ, int from_y, int to_y, int posI, int posT);
 	int findNextZ(int directionX, int directionY, int directionZ, int from_z, int to_z, int posI, int posJ);
-	void deletePlaneX(int xPlane, int x1, int x2, int y1, int y2, int z1, int z2);
-	void deletePlaneY(int yPlane, int x1, int x2, int y1, int y2, int z1, int z2);
+	bool testThatPointHasOptimizedOnAnotherDirection(int iX, int iY, int iZ, byte currentDirection);
+	bool deletePlaneX(int xPlane, int x1, int x2, int y1, int y2, int z1, int z2);
+	bool deletePlaneY(int yPlane, int x1, int x2, int y1, int y2, int z1, int z2);
+	bool deletePlaneZ(int zPlane, int x1, int x2, int y1, int y2, int z1, int z2);
 	Qube* getQube(int directionX, int directionY, int directionZ, int from_x, int from_y, int from_z, int to_x, int to_y, int to_z);
 	void OptimizationQuarterX(int directionX, int directionY, int directionZ, int startX, int startY, int startZ, int endX, int endY, int endZ);
 	void OptimizationQuarterY(int directionX, int directionY, int directionZ, int startX, int startY, int startZ, int endX, int endY, int endZ);
+	void OptimizationQuarterZ(int directionX, int directionY, int directionZ, int startX, int startY, int startZ, int endX, int endY, int endZ);
 	void initNet(double * xNet, int nX, double * yNet, int nY, double * zNet, int nZ);
 	void DivideArea(double * xNet, int nX, double * yNet, int nY, double * zNet, int nZ);
 	void PrintLocalMatrix();
 	void PrintPlotMatrix(bool flag_simmeric);
-	void inputNet();
+	void inputNet(string sredaInput, string sourceLocate);
 	void generatePortraitNesoglas();
 	double analiticSolution(Point goal);
 	double analiticSolution(double x, double y, double z);
@@ -194,15 +208,13 @@ private:
 	void MultMatrixOnVector(double * in, double * out);
 	void calcPogreshnost(ofstream & output);
 	void runLOS();
-	void outputWithoutOptimisation();
 	locateOfPoint FindLocate(Point sample);
 	void sigmTChain(int nTermNode, int startOfChain, double mnojT, set<int>& visitedNodes);
 	set<byte> getValues(pair<map<Point, byte>::iterator, map<Point, byte>::iterator>& range);
 	void genT3D();
 	bool belongToInterval(double val, double l1, double l2);
-	bool containsPointOnVergeOfKe(int termNode, int iKe);
+	bool containsPointOnVergeOfKe(int termNode, int iKe, vector<pair<Point, Point>>* vectorPairs);
 	void constructXyzAndNvtr();
-	void checkNet();
+	void prepareNetForSolve();
 
-	//int LosLU(double* ggl, double* ggu, double* diag, int N, int* ig, int* jg, double* f, double* q);
 };
