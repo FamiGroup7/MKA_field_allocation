@@ -1655,7 +1655,6 @@ void Mka3D::Edge3_not_sim(bool up, bool down, bool left, bool right, bool fore, 
 void Mka3D::generateGlobalMatrix()
 {
 	auto start = std::chrono::system_clock::now();
-
 	int ielem, i;
 	//int countRegularNodes = xyz_points.size();
 	for (ielem = 0; ielem < KE.size(); ielem++)
@@ -1664,8 +1663,10 @@ void Mka3D::generateGlobalMatrix()
 		Addition(ielem);
 		PrintLocalMatrix();
 	}
-	//PrintPlotMatrix(false);
+	profiler << setw(40) << std::left << "Generate global matrix " <<
+		MkaUtils::formattingTime(std::chrono::system_clock::time_point(std::chrono::system_clock::now() - start)) << endl;
 
+	start = std::chrono::system_clock::now();
 	Edge2_not_sim(1, 1, 1, 1, 1, 1);
 	//Edge3_not_sim(1, 1, 1, 1, 1, 1);
 	for (i = 0; i < ig[countRegularNodes]; i++)
@@ -1675,7 +1676,7 @@ void Mka3D::generateGlobalMatrix()
 	//Edge1_not_sim(1, 1, 0, 0, 0, 0);
 	//Edge1_not_sim(1, 1, 1, 1, 1, 1);
 
-	profiler << setw(40) << std::left << "Generate global matrix " <<
+	profiler << setw(40) << std::left << "Apply boundaries" <<
 		MkaUtils::formattingTime(std::chrono::system_clock::time_point(std::chrono::system_clock::now() - start)) << endl;
 }
 

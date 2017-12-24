@@ -524,6 +524,45 @@ void Mka2D_cylindrical::Edge1_sim()
 	}
 }
 
+void Mka2D_cylindrical::Edge1_sim_old()
+{
+	 ofstream ku1(filePrefix + "ku1.txt");
+	 vector<int> masEdge1;
+	 for (int i = 0; i < R.size(); i++)
+	 {
+		 if (ku1_down) masEdge1.push_back(indexRZ(R[i], Z[0]));
+		 if (ku1_up) masEdge1.push_back(indexRZ(R[i], Z[Z.size() - 1]));
+	 }
+	 for (int j = 0; j < Z.size(); j++)
+	 {
+		 if (ku1_right) masEdge1.push_back(indexRZ(R[R.size() - 1], Z[j]));
+		 if (ku1_left) masEdge1.push_back(indexRZ(R[0], Z[j]));
+	 }
+	 for (int iMas = 0; iMas < 2 * (R.size() + Z.size()); iMas++)
+	 {
+		 int k = masEdge1[iMas];
+		 di[k] = 1;
+		 for (int m = ig[k]; m < ig[k + 1]; m++)
+		 {
+			 b[jg[m]] -= ggl[m] * analiticSolution(rz[k]);
+			 ggl[m] = 0;
+		 }
+		 b[k] = analiticSolution(rz[k]);
+		 for (int l = 0; l < nPoints; l++)
+		 {
+			 for (int m = ig[l]; m < ig[l + 1]; m++)
+			 {
+				 if (k == jg[m])
+				 {
+					 b[l] -= b[k] * ggl[m];
+					 ggl[m] = 0;
+				 }
+			 }
+		 }
+		 ku1 << k << '\t' << b[k] << endl;
+	 }
+ }
+
 void Mka2D_cylindrical::Edge2()
 {
 	ofstream ku2(filePrefix + "ku2.txt");
@@ -574,7 +613,7 @@ void Mka2D_cylindrical::GenerateMatrix(double f_power)
 	}
 	//		PrintPlotMatrix(true);
 	//Edge2();
-	Edge1_sim();
+	Edge1_sim_old();
 	//int sourceIndex = indexRZ(R[0], Z[Z.size() - 1]);
 	//b[sourceIndex] = f_power;
 	for (size_t i = 0; i < ig[nPoints]; i++)
@@ -756,7 +795,9 @@ int Mka2D_cylindrical::findKE(Point_cylindrical point)
 			return i;
 		}
 	}
-	throw new exception("Not found Ke2D");
+	stringstream ss;
+	ss << "Not found Ke2D for point r=" << point.r << ", z=" << point.z;
+	throw new exception(ss.str().c_str());
 }
 
 double Mka2D_cylindrical::solutionInPoint(int iKe, Point_cylindrical target) {

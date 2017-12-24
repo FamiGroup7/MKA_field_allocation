@@ -33,6 +33,7 @@ public:
 	int indexRZ(Point_cylindrical source);
 	int indexRZ(double r, double z);
 	void Edge1_sim();
+	void Edge1_sim_old();
 	void Edge2();
 	void GenerateMatrix(double f_power);
 	void genNet1d(double startValue, double endValue, double startH, double koefRazriadki, vector<double>& vect);

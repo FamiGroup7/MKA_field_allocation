@@ -1,10 +1,11 @@
-Net init and optimization               00:00:00M405
-Construct xyz and nvtr                  00:02:00M309
-Generate T matrix                       00:00:00M799
-Generate portrait                       00:00:00M781
-Generate global matrix                  00:02:00M017
-Solve slau                              00:00:00M010
-Total program duration                  00:06:00M361
+Net optimization                        00:00:00M410
+Construct xyz and nvtr                  00:02:00M367
+Generate T matrix                       00:00:00M805
+Generate portrait                       00:00:00M769
+Generate global matrix                  00:00:00M160
+Apply boundaries                        00:01:00M890
+Solve slau                              00:00:00M011
+Total program duration                  00:06:00M460
 
 KE number = 783
 dim(A) = 621
