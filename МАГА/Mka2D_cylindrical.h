@@ -16,6 +16,7 @@ class Mka2D_cylindrical
 {
 public:
 	Mka2D_cylindrical();
+	Mka2D_cylindrical(string filePrefix, bool ku1_left, bool ku1_right, bool ku1_up, bool ku1_down);
 	~Mka2D_cylindrical();
 
 	int FindAreaNumber(int nodes[]);
@@ -43,6 +44,8 @@ public:
 	void directSolveStraightTask();
 	int findKE(Point point);
 	int findKE(Point_cylindrical point);
+
+	double solutionInPoint(int iKe, Point_cylindrical target);
 
 	struct field
 	{
@@ -88,9 +91,9 @@ public:
 	vector<Point_cylindrical> rz;
 	vector<nvtr> KE;
 private:
-	string filePrefix = "resources2D/";
+	string filePrefix;
 	ofstream testFile;
-	int nKE, nPoints, nEdge1;
+	int nKE, nPoints;
 	int *ig, *jg;
 	double *ggl, *ggu, *di, *b;
 
@@ -104,6 +107,7 @@ private:
 	double helpM[4][4] = { { 4, 2, 2, 1 },{ 2, 4, 1, 2 },{ 2, 1, 4, 2 },{ 1, 2, 2, 4 } };
 
 	double power = 10;
-	double r0, r1, z0, z1;
+	double r0, r1, z0, z1; 
+	bool ku1_left, ku1_right, ku1_up, ku1_down;
 };
 

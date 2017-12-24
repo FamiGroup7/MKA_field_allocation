@@ -11,8 +11,18 @@ class Mka3D {
 public:
 	Mka3D(bool netOptimization, bool debugMod, bool optOnlyOnOneDirection, bool maxOptimization,
 		bool optX, bool optY, bool optZ);
+	Mka3D(string filePrefix, bool netOptimization, bool debugMod, bool optOnlyOnOneDirection, bool maxOptimization,
+		bool optX, bool optY, bool optZ);
 	~Mka3D();
-	void solve();
+
+	void buildNet(string sredaFile, string sourceFile);
+	void netOptimization();
+	void build_xyz_nvtr_portratin_Abqx();
+	void generateGlobalMatrix();
+	void startFullProcess();
+	double *di, *b, *q, *ggl, *ggu;
+	vector<Point> xyz_points;
+	int nColT, countRegularNodes;
 
 	struct nvtr
 	{
@@ -49,6 +59,8 @@ public:
 		{
 		}
 	};
+	vector<nvtr> KE;
+	vector<field> sreda;
 
 	struct locateOfPoint
 	{
@@ -84,7 +96,7 @@ public:
 	} *tmpSigm;
 
 private:
-	string filePrefix = "resources3D/";
+	string filePrefix;
 
 	ofstream output;
 	ofstream logger;
@@ -119,9 +131,6 @@ private:
 
 	int *igT, *jgT;
 	double* ggT;
-	vector<Point> xyz_points;
-	vector<nvtr> KE;
-	vector<field> sreda;
 	multimap<Point, byte> termNodeOnEdge;
 	double leftX, rightX, leftY, rightY, leftZ, rightZ;
 	double koordSourceX, koordSourceY, koordSourceZ;
@@ -129,13 +138,11 @@ private:
 	int nX, nY, nZ;
 	char*** matrixNode;
 	bitset<Mka3D::BIT_SIZE>*** newNodes;
-	int nColT, countRegularNodes;
 	const int AXIS_SIZE = 6;
 	enum Axis { LEFT, RIGHT, DOWN, UP, BACK, FORE };
 	vector<sigmStruct3D> sigmNewT;
 
 	int *ig, *jg;
-	double *di, *b, *q, *ggl, *ggu;
 	double localB[8], localMatrix[8][8];
 	double G1[2][2] = { { 1,-1 },{ -1,1 } };
 	double M1[2][2] = { { 1 / 3.,1 / 6. },{ 1 / 6.,1 / 3. } };
@@ -180,7 +187,6 @@ private:
 	void OptimizationQuarterY(int directionX, int directionY, int directionZ, int startX, int startY, int startZ, int endX, int endY, int endZ);
 	void OptimizationQuarterZ(int directionX, int directionY, int directionZ, int startX, int startY, int startZ, int endX, int endY, int endZ);
 	void initNet(double * xNet, int nX, double * yNet, int nY, double * zNet, int nZ);
-	void DivideArea(double * xNet, int nX, double * yNet, int nY, double * zNet, int nZ);
 	void PrintLocalMatrix();
 	void PrintPlotMatrix(bool flag_simmeric);
 	void inputNet(string sredaInput, string sourceLocate);
@@ -202,7 +208,6 @@ private:
 	void Edge2_not_sim(bool up, bool down, bool left, bool right, bool fore, bool behind);
 	void doEdge3(ofstream & outEdge3File, int intXorYorZ, int normalDirect, int kolvoRegularNode, double * varNet1, int nVarNet1, double * varNet2, int nVarNet2, int unknownIndex);
 	void Edge3_not_sim(bool up, bool down, bool left, bool right, bool fore, bool behind);
-	void GenerateMatrix();
 	void mult(double * res, double * v);
 	double ScalarMult(double * v1, double * v2);
 	void MultMatrixOnVector(double * in, double * out);

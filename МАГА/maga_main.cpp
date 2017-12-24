@@ -4,10 +4,23 @@
 int main(int argc, char* argv[])
 {
 	setlocale(LC_ALL, "rus");
-	Mka3D task(true, false, true, true,
-		true, true, true);
-	task.solve();
 
-	//Mka2D_cylindrical task;
-	//Mka3D task(true, "sreda.txt");
+	Mka2D_cylindrical task2D("resources_field_allocation/2D/", true, true, true, true);
+
+	//Mka3D task("resources_field_allocation/3D/", false, false, true, true,
+	//	true, true, true);
+	//task.buildNet("sreda.txt", "sourceLocate.txt");
+	//task.build_xyz_nvtr_portratin_Abqx();
+	//double * q0 = new double[task.countRegularNodes];
+	//ofstream log("resources_field_allocation/log.txt");
+	//for (int i = 0; i < task.countRegularNodes; i++)
+	//{
+	//	Point target = task.xyz_points[i];
+	//	Point_cylindrical target2D(sqrt(target.x*target.x + target.y*target.y), target.z);
+	//	int iKe2D = task2D.findKE(target2D);
+	//	double solution = task2D.solutionInPoint(iKe2D, target2D);
+	//	log << solution << endl;
+	//	q0[i] = solution;
+	//}
+	//task.generateGlobalMatrix();
 }

@@ -1,6 +1,11 @@
 #include "Mka2D_cylindrical.h"
 
-Mka2D_cylindrical::Mka2D_cylindrical()
+Mka2D_cylindrical::Mka2D_cylindrical() :Mka2D_cylindrical("resources2D/", false, true, false, false)
+{
+}
+
+Mka2D_cylindrical::Mka2D_cylindrical(string filePrefix, bool ku1_left, bool ku1_right, bool ku1_up, bool ku1_down) :
+	filePrefix(filePrefix), ku1_left(ku1_left), ku1_right(ku1_right), ku1_up(ku1_up), ku1_down(ku1_down)
 {
 	testFile.open(filePrefix + "log.txt");
 	GenerateNet();
@@ -94,7 +99,7 @@ void Mka2D_cylindrical::GenerateNet()
 	field tempField;
 	set<double> xTemp, yTemp;
 	set<double>::const_iterator it;
-	ifstream inpSreda(filePrefix + "sreda.txt");
+	ifstream inpSreda(filePrefix + "sreda2D.txt");
 	inpSreda >> numberFields;
 	double areaOfSreda = 0;
 	for (i = 0; i < numberFields; i++)
@@ -486,38 +491,32 @@ int Mka2D_cylindrical::indexRZ(double r, double z)
 void Mka2D_cylindrical::Edge1_sim()
 {
 	ofstream ku1(filePrefix + "ku1.txt");
-	int* masEdge1 = new int[2*(R.size() + Z.size())];
-	int iMas = 0;
-	for (int i = 0; i < R.size(); i++, iMas++)
+	vector<int> masEdge1;
+	for (int i = 0; i < R.size(); i++)
 	{
-		masEdge1[iMas] = indexRZ(R[i], Z[0]);
-		iMas++;
-		masEdge1[iMas] = indexRZ(R[i], Z[Z.size() - 1]);
+		if (ku1_down) masEdge1.push_back(indexRZ(R[i], Z[0]));
+		if (ku1_up) masEdge1.push_back(indexRZ(R[i], Z[Z.size() - 1]));
 	}
-	for (int j = 0; j < Z.size(); j++, iMas++)
+	for (int j = 0; j < Z.size(); j++)
 	{
-		masEdge1[iMas] = indexRZ(R[R.size() - 1], Z[j]);
-		iMas++;
-		masEdge1[iMas] = indexRZ(R[0], Z[j]);
+		if (ku1_right) masEdge1.push_back(indexRZ(R[R.size() - 1], Z[j]));
+		if (ku1_left) masEdge1.push_back(indexRZ(R[0], Z[j]));
 	}
-	for (iMas = 0; iMas < 2*(R.size() + Z.size()); iMas++)
+	for (int k = 0; k < masEdge1.size(); k++)
 	{
-		int k = masEdge1[iMas];
 		di[k] = 1;
+		b[k] = analiticSolution(rz[k]);
 		for (int m = ig[k]; m < ig[k + 1]; m++)
 		{
-			b[jg[m]] -= ggl[m] * analiticSolution(rz[k]);
 			ggl[m] = 0;
 		}
-		b[k] = analiticSolution(rz[k]);
 		for (int l = 0; l < nPoints; l++)
 		{
 			for (int m = ig[l]; m < ig[l + 1]; m++)
 			{
 				if (k == jg[m])
 				{
-					b[l] -= b[k] * ggl[m];
-					ggl[m] = 0;
+					ggu[m] = 0;
 				}
 			}
 		}
@@ -717,6 +716,7 @@ void Mka2D_cylindrical::LOS()
 		double sumPogr = 0;
 		double sumU = 0;
 		double correctSolution;
+		testFile << setw(10) << "r" << setw(10) << "z" << setw(18) << "correctSolution" << setw(18) << "q" << setw(18) << "diff" << endl;
 		for (size_t i = 0; i < nPoints; i++)
 		{
 			correctSolution = analiticSolution(rz[i]);
@@ -727,7 +727,6 @@ void Mka2D_cylindrical::LOS()
 		}
 		correctSolution = sqrt(sumPogr / sumU);
 		testFile << setw(16) <<  "Отн. погрешность: " << correctSolution << endl;
-
 }
 
 void Mka2D_cylindrical::directSolveStraightTask(double f_power)
@@ -757,4 +756,15 @@ int Mka2D_cylindrical::findKE(Point_cylindrical point)
 			return i;
 		}
 	}
+	throw new exception("Not found Ke2D");
+}
+
+double Mka2D_cylindrical::solutionInPoint(int iKe, Point_cylindrical target) {
+	double result = 0;
+	for (int j = 0; j < 4; j++)
+	{
+		result += q[KE[iKe].uzel[j]] * (1 - fabs(rz[KE[iKe].uzel[j]].r - target.r) / (rz[KE[iKe].uzel[1]].r - rz[KE[iKe].uzel[0]].r))
+			* (1 - fabs(rz[KE[iKe].uzel[j]].z - target.z) / (rz[KE[iKe].uzel[2]].z - rz[KE[iKe].uzel[0]].z));
+	}
+	return result;
 }

@@ -2,9 +2,15 @@
 
 int LosLU(double* ggl, double* ggu, double* diag, int N, int* ig, int* jg, double* f, double* q);
 
-Mka3D::Mka3D(bool netOptimization, bool debugMod, bool optOnlyOnOneDirection, bool maxOptimization,
+Mka3D::Mka3D(bool netOptimization, bool debugMod, bool optOnlyOnOneDirection, bool maxOptimization, bool optX, bool optY, bool optZ) :
+	Mka3D("resources3D/", netOptimization, debugMod, optOnlyOnOneDirection, maxOptimization, optX, optY, optZ)
+{
+}
+
+Mka3D::Mka3D(string filePrefix, bool netOptimization, bool debugMod, bool optOnlyOnOneDirection, bool maxOptimization,
 	bool optX, bool optY, bool optZ)
 {
+	this->filePrefix = filePrefix;
 	this->GRID_UNION = netOptimization;
 	this->DEBUG = debugMod;
 	this->X = optX;
@@ -16,28 +22,41 @@ Mka3D::Mka3D(bool netOptimization, bool debugMod, bool optOnlyOnOneDirection, bo
 	logger.open(filePrefix + "mka3Dlog.txt");
 	profiler.open(filePrefix + "profiling.txt");
 	inputConfig();
-	inputNet(filePrefix + "sreda.txt",filePrefix+ "sourceLocate.txt");
 }
 
-void Mka3D::solve() {
+void Mka3D::startFullProcess() {
 	auto startProgramTime = std::chrono::system_clock::now();
 
-	auto start = std::chrono::system_clock::now();
-	initNet(xNet, nX, yNet, nY, zNet, nZ);
-	DivideArea(xNet, nX, yNet, nY, zNet, nZ);
-	profiler << setw(40) << std::left << "Net init and optimization " << 
-		MkaUtils::formattingTime(std::chrono::system_clock::time_point(std::chrono::system_clock::now() - start)) << endl;
+	buildNet("sreda.txt", "sourceLocate.txt");
 
-	//deletePlaneX(1, 0, 2, 1, 2, 1, 2);
-	//deletePlaneY(1, 0, 2, 0, 1, 0, 1);
-	//deletePlaneY(1, 0, 2, 0, 2, 0, 1);
-	
-	//deletePlaneX(1, 0, 2, 1, 2, 0, 1);
-	//deletePlaneX(2, 1, 3, 0, 1, 0, 1);
-	//deletePlaneX(2, 1, 3, 1, 2, 0, 1);
+	netOptimization();
+
 	prepareNetForSolve();
 
-	start = std::chrono::system_clock::now();
+	build_xyz_nvtr_portratin_Abqx();
+	generateGlobalMatrix();
+
+	//LosLU(ggl, ggu, di, countRegularNodes, ig, jg, b, q);
+	runLOS();
+	calcPogreshnost(output);
+
+
+	profiler << setw(40) << std::left << "Total program duration " <<
+		MkaUtils::formattingTime(std::chrono::system_clock::time_point(std::chrono::system_clock::now() - startProgramTime)) << endl;
+
+	profiler << endl;
+	profiler << "KE number = " << KE.size() << endl;
+	profiler << "dim(A) = " << countRegularNodes << endl;
+	profiler << "Terminal nodes = " << nColT << endl;
+}
+
+void Mka3D::buildNet(string sredaFile, string sourceFile) {
+	inputNet(filePrefix + sredaFile, filePrefix + sourceFile);
+	initNet(xNet, nX, yNet, nY, zNet, nZ);
+}
+
+void Mka3D::build_xyz_nvtr_portratin_Abqx() {
+	auto start = std::chrono::system_clock::now();
 	constructXyzAndNvtr();
 	profiler << setw(40) << std::left << "Construct xyz and nvtr " <<
 		MkaUtils::formattingTime(std::chrono::system_clock::time_point(std::chrono::system_clock::now() - start)) << endl;
@@ -51,27 +70,6 @@ void Mka3D::solve() {
 	generatePortraitNesoglas();
 	profiler << setw(40) << std::left << "Generate portrait " <<
 		MkaUtils::formattingTime(std::chrono::system_clock::time_point(std::chrono::system_clock::now() - start)) << endl;
-
-	start = std::chrono::system_clock::now();
-	GenerateMatrix();
-	profiler << setw(40) << std::left << "Generate global matrix " <<
-		MkaUtils::formattingTime(std::chrono::system_clock::time_point(std::chrono::system_clock::now() - start)) << endl;
-
-	start = std::chrono::system_clock::now();
-	//LosLU(ggl, ggu, di, countRegularNodes, ig, jg, b, q);
-	runLOS();
-	profiler << setw(40) << std::left << "Solve slau " <<
-		MkaUtils::formattingTime(std::chrono::system_clock::time_point(std::chrono::system_clock::now() - start)) << endl;
-	calcPogreshnost(output);
-
-
-	profiler << setw(40) << std::left << "Total program duration " <<
-		MkaUtils::formattingTime(std::chrono::system_clock::time_point(std::chrono::system_clock::now() - startProgramTime)) << endl;
-
-	profiler << endl;
-	profiler << "KE number = " << KE.size() << endl;
-	profiler << "dim(A) = " << countRegularNodes << endl;
-	profiler << "Terminal nodes = " << nColT << endl;
 }
 
 Mka3D::~Mka3D()
@@ -787,7 +785,7 @@ void Mka3D::initNet(double* xNet, int nX, double* yNet, int nY, double* zNet, in
 	}
 }
 
-void Mka3D::DivideArea(double* xNet, int nX, double* yNet, int nY, double* zNet, int nZ)
+void Mka3D::netOptimization()
 {
 	double height_1, height_2, width_1, width_2;
 	int locateSourceX, locateSourceY, locateSourceZ;
@@ -795,6 +793,8 @@ void Mka3D::DivideArea(double* xNet, int nX, double* yNet, int nY, double* zNet,
 		logger << "Grid optimization disabled" << endl;
 		return;
 	}
+
+	auto start = std::chrono::system_clock::now();
 	for (int indSreda = 0; indSreda < sreda.size(); indSreda++)
 	{
 		int locateX1 = FindLocate(xNet, nX, sreda[indSreda].x1);
@@ -861,6 +861,9 @@ void Mka3D::DivideArea(double* xNet, int nX, double* yNet, int nY, double* zNet,
 		if (Z) OptimizationQuarterZ(-1, -1, -1, locateSourceX, locateSourceY, locateSourceZ, locateX1, locateY1, locateZ1);
 	}
 	//duplicatingOfXY();
+
+	profiler << setw(40) << std::left << "Net optimization " <<
+		MkaUtils::formattingTime(std::chrono::system_clock::time_point(std::chrono::system_clock::now() - start)) << endl;
 }
 
 void Mka3D::PrintLocalMatrix()
@@ -986,10 +989,13 @@ void Mka3D::inputNet(string sredaInput, string sourceLocate)
 	}
 
 	nX = xTemp.size();
+	delete xNet;
 	xNet = new double[nX];
 	nY = yTemp.size();
+	delete yNet;
 	yNet = new double[nY];
 	nZ = zTemp.size();
+	delete zNet;
 	zNet = new double[nZ];
 	i = 0;
 	for (it = xTemp.begin(); it != xTemp.end(); ++it, i++)
@@ -1646,15 +1652,16 @@ void Mka3D::Edge3_not_sim(bool up, bool down, bool left, bool right, bool fore, 
 		doEdge3(ku3, 1, 1, countRegularNodes, xNet, nX - 1, zNet, nZ - 1, nY - 1);
 }
 
-void Mka3D::GenerateMatrix()
+void Mka3D::generateGlobalMatrix()
 {
+	auto start = std::chrono::system_clock::now();
+
 	int ielem, i;
 	//int countRegularNodes = xyz_points.size();
 	for (ielem = 0; ielem < KE.size(); ielem++)
 	{
 		CreateLocalMatrixs(ielem);
 		Addition(ielem);
-		logger << "elem " << ielem << ":\n";
 		PrintLocalMatrix();
 	}
 	//PrintPlotMatrix(false);
@@ -1667,6 +1674,9 @@ void Mka3D::GenerateMatrix()
 	}
 	//Edge1_not_sim(1, 1, 0, 0, 0, 0);
 	//Edge1_not_sim(1, 1, 1, 1, 1, 1);
+
+	profiler << setw(40) << std::left << "Generate global matrix " <<
+		MkaUtils::formattingTime(std::chrono::system_clock::time_point(std::chrono::system_clock::now() - start)) << endl;
 }
 
 void Mka3D::mult(double* res, double* v)
@@ -1737,6 +1747,8 @@ void Mka3D::calcPogreshnost(ofstream& output)
 
 void Mka3D::runLOS()
 {
+	auto start = std::chrono::system_clock::now();
+
 	int maxiter = 10000, i;
 	double alfa, alfachisl, alfaznam, beta, betachisl, betaznam, checkE, epsMSG = 1e-16;
 
@@ -1781,6 +1793,8 @@ void Mka3D::runLOS()
 		}
 		checkE = sqrt(ScalarMult(r, r) / ScalarMult(b, b));
 	}
+	profiler << setw(40) << std::left << "Solve slau " <<
+		MkaUtils::formattingTime(std::chrono::system_clock::time_point(std::chrono::system_clock::now() - start)) << endl;
 }
 
 Mka3D::locateOfPoint Mka3D::FindLocate(Point sample)
@@ -1957,7 +1971,6 @@ void Mka3D::genT3D() {
 		set<int> visitedNodes;
 		visitedNodes.insert(tmpSigm[i].terminalNode);
 		sigmNewT[i].terminalNode = tmpSigm[i].terminalNode;
-		logger << "Start chaining " << tmpSigm[i].terminalNode << " node" << endl;
 		for each (neighbor var in tmpSigm[i].neighbors)
 		{
 			visitedNodes.insert(var.index);
