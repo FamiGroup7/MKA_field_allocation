@@ -125,6 +125,7 @@
     <Text Include="..\МАГА\Tmatrix.txt" />
     <Text Include="..\МАГА\viewNet.txt" />
     <Text Include="..\МАГА\xyz.txt" />
+    <Text Include="config.txt" />
     <Text Include="возможные проблемы.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

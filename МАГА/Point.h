@@ -9,8 +9,10 @@ class Point
 public:
 	Point();
 	Point(double x, double y, double z);
+	Point(double x, double y, double z, int i);
 	~Point();
 	double x, y, z;
+	int ind;
 	friend bool operator<(const Point & p_lhs, const Point & p_rhs);
 	friend ostream& operator<<(ostream& os, const Point& point);
 	friend bool operator==(const Point& lhs, const Point& rhs);

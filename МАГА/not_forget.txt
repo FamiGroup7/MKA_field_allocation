@@ -1,0 +1,2 @@
+delete b[iSource] += power;
+Lambda change

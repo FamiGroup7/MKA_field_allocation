@@ -4,7 +4,11 @@ Point::Point()
 {
 }
 
-Point::Point(double x, double y, double z) :x(x), y(y), z(z)
+Point::Point(double x, double y, double z) : Point(x, y, z, -1)
+{
+}
+
+Point::Point(double x, double y, double z, int i) : x(x), y(y), z(z), ind(i)
 {
 }
 

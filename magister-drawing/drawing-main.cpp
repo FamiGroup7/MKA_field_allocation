@@ -34,8 +34,6 @@ void glEnter2D(void);
 void glLeave2D(void);
 void glWrite(float x, float y, int *font, char text[256], int kls);
 
-string location = "../МАГА/";
-
 void draw_string_stroke(void *font, const char* string)
 {
 	while (*string)
@@ -105,12 +103,17 @@ double xMin, xMax, yMin, yMax, zMin, zMax;
 double glxMin, glxMax, glyMin, glyMax, glzMin, glzMax;
 double diag;
 double zoom = 1, dZoom = 0.1;
+int dx, dz;
+int d_arrow = 0.5;
 
 void Input()
 {
 	int i, j, t, k;
-	ifstream fileXY(location + "xyz.txt");
-	ifstream fileNvtr(location + "nvtr.txt");
+	string file_xyz, file_nvtr;
+	ifstream conf("config.txt");
+	conf >> file_xyz >> file_nvtr;
+	ifstream fileXY(file_xyz);
+	ifstream fileNvtr(file_nvtr);
 
 	//формируем файл nvtr.txt
 	int n = 0;
@@ -300,7 +303,8 @@ void GLRenderScene()
 	glLoadIdentity();
 	gluLookAt(-1, -0.5, 0.75, 0, 0, 0, 0, 0, 1);
 	//gluPerspective(50, 20, 1, 50);
-	glTranslatef(-xMin, -yMin, -zMin);
+	//glTranslatef(-xMin, -yMin, -zMin);
+	//glTranslatef(dx, 0, dz);
 	glScaled(zoom, zoom, zoom);
 	//glOrtho(-3, 3, -3, 3, -3, 3);
 	//glTranslatef(-1, 0, 0);
@@ -319,7 +323,7 @@ void GLRenderScene()
 	glEnter2D();
 	glColor3f(0, 0, 0);
 	//glRotatef(0.3, 1, 1, 1);
-	output(100, 100, "Hello world!");
+	//output(100, 100, "Hello world!");
 	//draw_string_stroke(GLUT_STROKE_ROMAN, "hello world!");
 	//glWrite(200, 200, (int*)GLUT_BITMAP_8_BY_13, (char*)"qwerty", 6);
 	glLeave2D();
@@ -384,6 +388,14 @@ void GLKeyDown(unsigned char key, int x, int y)
 		zoom += dZoom;
 	if (key == '-')
 		zoom -= dZoom;
+	if (key == 'i' || key == 'I')
+		dz += d_arrow;
+	if (key == 'k' || key == 'K')
+		dz -= d_arrow;
+	if (key == 'j' || key == 'J')
+		dx -= d_arrow;
+	if (key == 'l' || key == 'L')
+		dx += d_arrow;
 
 	glutPostRedisplay(); // Перерисовываем окно
 }

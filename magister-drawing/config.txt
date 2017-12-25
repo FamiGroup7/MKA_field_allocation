@@ -1,0 +1,2 @@
+../ְְֳּ/resources3D/xyz.txt
+../ְְֳּ/resources3D/nvtr.txt

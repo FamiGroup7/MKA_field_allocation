@@ -40,5 +40,8 @@
     <Text Include="..\МАГА\viewNet.txt">
       <Filter>Файлы ресурсов</Filter>
     </Text>
+    <Text Include="config.txt">
+      <Filter>Файлы ресурсов</Filter>
+    </Text>
   </ItemGroup>
 </Project>

@@ -8,6 +8,9 @@ Mka2D_cylindrical::Mka2D_cylindrical(string filePrefix, bool ku1_left, bool ku1_
 	filePrefix(filePrefix), ku1_left(ku1_left), ku1_right(ku1_right), ku1_up(ku1_up), ku1_down(ku1_down)
 {
 	testFile.open(filePrefix + "log.txt");
+}
+
+void Mka2D_cylindrical::startFull2dProcess() {
 	GenerateNet();
 	directSolveStraightTask();
 }
@@ -87,8 +90,7 @@ int Mka2D_cylindrical::FindAreaNumber(int nodes[])
 			return i;
 	}
 	cout << "Ошибка в FindAreaNumber: не найдена подобласть." << endl;
-	system("pause");
-	exit(1);
+	throw new exception("Ошибка в FindAreaNumber: не найдена подобласть.");
 	return -1;
 }
 
@@ -290,7 +292,8 @@ void Mka2D_cylindrical::GeneratePortrait()
 
 double Mka2D_cylindrical::analiticSolution(Point_cylindrical source)
 {
-	return source.z;
+	return 0;
+	//return source.z;
 }
 
 double Mka2D_cylindrical::Func(int ielem, int i)
@@ -538,7 +541,7 @@ void Mka2D_cylindrical::Edge1_sim_old()
 		 if (ku1_right) masEdge1.push_back(indexRZ(R[R.size() - 1], Z[j]));
 		 if (ku1_left) masEdge1.push_back(indexRZ(R[0], Z[j]));
 	 }
-	 for (int iMas = 0; iMas < 2 * (R.size() + Z.size()); iMas++)
+	 for (int iMas = 0; iMas < masEdge1.size(); iMas++)
 	 {
 		 int k = masEdge1[iMas];
 		 di[k] = 1;
@@ -603,7 +606,7 @@ void Mka2D_cylindrical::Edge2()
 	}
 }
 
-void Mka2D_cylindrical::GenerateMatrix(double f_power)
+void Mka2D_cylindrical::GenerateMatrix()
 {
 	int ielem, i, j;
 	for (ielem = 0; ielem < nKE; ielem++)
@@ -613,9 +616,9 @@ void Mka2D_cylindrical::GenerateMatrix(double f_power)
 	}
 	//		PrintPlotMatrix(true);
 	//Edge2();
+	int sourceIndex = indexRZ(R[0], Z[Z.size() - 1]);
+	b[sourceIndex] = power;
 	Edge1_sim_old();
-	//int sourceIndex = indexRZ(R[0], Z[Z.size() - 1]);
-	//b[sourceIndex] = f_power;
 	for (size_t i = 0; i < ig[nPoints]; i++)
 	{
 		ggu[i] = ggl[i];
@@ -768,16 +771,11 @@ void Mka2D_cylindrical::LOS()
 		testFile << setw(16) <<  "Отн. погрешность: " << correctSolution << endl;
 }
 
-void Mka2D_cylindrical::directSolveStraightTask(double f_power)
-{
-	GeneratePortrait();
-	GenerateMatrix(f_power);
-	LOS();
-}
-
 void Mka2D_cylindrical::directSolveStraightTask()
 {
-	directSolveStraightTask(power);
+	GeneratePortrait();
+	GenerateMatrix();
+	LOS();
 }
 
 int Mka2D_cylindrical::findKE(Point point)
@@ -795,9 +793,10 @@ int Mka2D_cylindrical::findKE(Point_cylindrical point)
 			return i;
 		}
 	}
-	stringstream ss;
-	ss << "Not found Ke2D for point r=" << point.r << ", z=" << point.z;
-	throw new exception(ss.str().c_str());
+	return -1;
+	//stringstream ss;
+	//ss << "Not found Ke2D for point r=" << point.r << ", z=" << point.z;
+	//throw new exception(ss.str().c_str());
 }
 
 double Mka2D_cylindrical::solutionInPoint(int iKe, Point_cylindrical target) {

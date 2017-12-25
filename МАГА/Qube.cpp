@@ -40,3 +40,12 @@ double Qube::getDepth(double*yNet) {
 double Qube::getHeight(double*zNet) {
 	return fabs(zNet[i_nextZ] - zNet[i_startZ]);
 }
+
+Point Qube::getCenter(double*xNet, double*yNet, double*zNet)
+{
+	double xCenter, yCenter, zCenter;
+	xCenter = xNet[i_startX] + xNet[i_nextX];
+	yCenter = yNet[i_startY] + yNet[i_nextY];
+	zCenter = zNet[i_startZ] + zNet[i_nextZ];
+	return Point(xCenter / 2, yCenter / 2, zCenter / 2);
+}

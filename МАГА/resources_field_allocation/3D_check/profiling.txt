@@ -1,0 +1,15 @@
+Construct xyz                           00:01:00M514
+Construct nvtr                          00:04:00M991
+Generate T matrix                       00:00:00M001
+Generate portrait                       00:08:00M293
+Generate global matrix                  00:17:00M221
+Apply boundaries 2                      00:00:00M000
+Apply boundaries 3                      00:00:00M000
+Apply boundaries 1                      00:04:00M385
+Solve slau                              00:15:00M693
+Total program duration                  00:55:00M776
+
+KE number = 23936
+dim(A) = 26730
+Nodes = 26730
+Terminal nodes = 0

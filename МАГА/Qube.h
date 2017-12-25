@@ -1,5 +1,6 @@
 #pragma once
 #include "MkaUtils.h"
+#include "Point.h"
 
 class Qube
 {
@@ -13,5 +14,5 @@ public:
 	double getWidth(double*xNet);
 	double getDepth(double*yNet);
 	double getHeight(double*zNet);
-
+	Point getCenter(double*xNet, double*yNet, double*zNet);
 };

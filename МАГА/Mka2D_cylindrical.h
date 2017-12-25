@@ -17,6 +17,7 @@ class Mka2D_cylindrical
 public:
 	Mka2D_cylindrical();
 	Mka2D_cylindrical(string filePrefix, bool ku1_left, bool ku1_right, bool ku1_up, bool ku1_down);
+	void startFull2dProcess();
 	~Mka2D_cylindrical();
 
 	int FindAreaNumber(int nodes[]);
@@ -35,16 +36,17 @@ public:
 	void Edge1_sim();
 	void Edge1_sim_old();
 	void Edge2();
-	void GenerateMatrix(double f_power);
+	void GenerateMatrix();
 	void genNet1d(double startValue, double endValue, double startH, double koefRazriadki, vector<double>& vect);
 	void insertInVector(double value, vector<double>& vect);
 	void MultMatrixOnVector(double * in, double * out);
 	double ScalarMult(double * v1, double * v2);
 	void LOS();
-	void directSolveStraightTask(double f_power);
 	void directSolveStraightTask();
 	int findKE(Point point);
 	int findKE(Point_cylindrical point);
+
+	double power = 0;
 
 	double solutionInPoint(int iKe, Point_cylindrical target);
 
@@ -107,7 +109,6 @@ private:
 	double helpGOseSim[4][4] = { { 1, 1, -1, -1 },{ 1, 3, -1, -3 },{ -1, -1, 1, 1 },{ -1, -3, 1, 3 } };
 	double helpM[4][4] = { { 4, 2, 2, 1 },{ 2, 4, 1, 2 },{ 2, 1, 4, 2 },{ 1, 2, 2, 4 } };
 
-	double power = 10;
 	double r0, r1, z0, z1; 
 	bool ku1_left, ku1_right, ku1_up, ku1_down;
 };
