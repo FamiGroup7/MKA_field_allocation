@@ -1,8 +1,8 @@
-Construct xyz                           00:00:00M218
-Construct nvtr                          00:00:00M601
-Generate T matrix                       00:00:00M001
-Generate portrait                       00:01:00M179
-Generate global matrix                  00:02:00M068
-Apply boundaries 2                      00:00:00M000
-Apply boundaries 3                      00:00:00M000
-Apply boundaries 1                      00:00:00M302
+Construct xyz                           00:00M858
+Construct nvtr                          00:01M790
+Generate T matrix                       00:00M004
+Generate portrait                       00:05M585
+Generate global matrix                  00:01M222
+Apply boundaries 2                      00:00M000
+Apply boundaries 3                      00:00M000
+Apply boundaries 1                      00:01M612

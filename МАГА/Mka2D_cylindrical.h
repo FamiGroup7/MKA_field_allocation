@@ -40,10 +40,11 @@ public:
 	void genNet1d(double startValue, double endValue, double startH, double koefRazriadki, vector<double>& vect);
 	void insertInVector(double value, vector<double>& vect);
 	void MultMatrixOnVector(double * in, double * out);
+	void MultMatrixOnVector(double * in, double * out, double * diMas, double * gglMas, double * gguMas);
 	double ScalarMult(double * v1, double * v2);
+	void runLOS(double * ggl, double * ggu, double * diag, int N, int * ig, int * jg, double * b, double * q);
 	void LOS();
 	void directSolveStraightTask();
-	int findKE(Point point);
 	int findKE(Point_cylindrical point);
 
 	double power = 0;
@@ -111,5 +112,6 @@ private:
 
 	double r0, r1, z0, z1; 
 	bool ku1_left, ku1_right, ku1_up, ku1_down;
+	double koordSourceR, koordSourceZ;
 };
 

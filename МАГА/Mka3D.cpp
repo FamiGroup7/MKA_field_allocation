@@ -1,7 +1,5 @@
 #include "Mka3D.h"
 
-int LosLU(double* ggl, double* ggu, double* diag, int N, int* ig, int* jg, double* f, double* q);
-
 Mka3D::Mka3D(bool netOptimization, bool debugMod, bool optOnlyOnOneDirection, bool maxOptimization, bool optX, bool optY, bool optZ) :
 	Mka3D("resources3D/", netOptimization, debugMod, optOnlyOnOneDirection, maxOptimization, optX, optY, optZ)
 {
@@ -38,7 +36,7 @@ void Mka3D::startFullProcess() {
 	generateGlobalMatrix();
 
 	//LosLU(ggl, ggu, di, countRegularNodes, ig, jg, b, q);
-	runLOS();
+	runLOS(ggl, ggu, di, countRegularNodes, ig, jg, b, q);
 	calcPogreshnost(output);
 
 
@@ -151,17 +149,18 @@ void Mka3D::GenerateNetLikeTelma(set<double>& mas, ifstream& fileNet)
 		}
 		lastPosition = startPosition;
 		position = startPosition + napravlenie[i] * sizeOfSteps[i];
-		while (position * napravlenie[i] < endPosition * napravlenie[i])
+		while (position * napravlenie[i] < endPosition * napravlenie[i]
+			&& fabs((position - endPosition) / (position - lastPosition)) > 0.2)
 		{
 			mas.insert(position);
 			stepReal = fabs(lastPosition - position) * mnojiteli[i];
 			lastPosition = position;
 			position += napravlenie[i] * stepReal;
 		}
-		/*if (fabs(lastPosition - endPosition) < sizeOfSteps[i]*0.9 && lastPosition != startPosition)
-		{
-		mas.erase(mas.find(lastPosition));
-		}*/
+		//if (fabs(lastPosition - endPosition) < sizeOfSteps[i] * 0.9 && lastPosition != startPosition)
+		//{
+		//	mas.erase(mas.find(lastPosition));
+		//}
 	}
 }
 
@@ -957,6 +956,7 @@ void Mka3D::netOptimization()
 
 void Mka3D::PrintLocalMatrix()
 {
+	return;
 	int i, j;
 	for (i = 0; i < 8; i++)
 	{
@@ -1020,6 +1020,22 @@ void Mka3D::PrintPlotMatrix(bool flag_simmeric)
 	logger << endl;	logger << endl;
 }
 
+void checkAxisCoordinates(set<double> mas, double source) {
+	auto it = mas.begin();
+	auto end = mas.end();
+	double pred = *it;
+	it++;
+	while (it != end) {
+		if (MkaUtils::equals(*it, pred)) {
+			if (!MkaUtils::equals(*it, source)) {
+				mas.erase(*it);
+			}
+		}
+		pred = *it;
+		it++;
+	}
+}
+
 void Mka3D::inputNet(string sredaInput, string sourceLocate)
 {
 	int i, numberFields;
@@ -1072,10 +1088,11 @@ void Mka3D::inputNet(string sredaInput, string sourceLocate)
 	if (fabs(areaOfSreda - (rightX - leftX) * (rightY - leftY) * (rightZ - leftZ)) > 1e-15)
 	{
 		cout << "Ошибка. Не правильно заданы подобласти. Общая площадь не равна сумме площадей подобластей." << endl;
-		system("pause");
-		exit(1);
+		logger << "Ошибка. Не правильно заданы подобласти. Общая площадь не равна сумме площадей подобластей." << endl;
+		//system("pause");
+		//exit(1);
 	}
-
+	
 	nX = xTemp.size();
 	delete xNet;
 	xNet = new double[nX];
@@ -1086,19 +1103,25 @@ void Mka3D::inputNet(string sredaInput, string sourceLocate)
 	delete zNet;
 	zNet = new double[nZ];
 	i = 0;
+	logger << "xNet" << endl;
 	for (it = xTemp.begin(); it != xTemp.end(); ++it, i++)
 	{
 		xNet[i] = *it;
+		logger << xNet[i] << endl;
 	}
 	i = 0;
+	logger << "yNet" << endl;
 	for (it = yTemp.begin(); it != yTemp.end(); ++it, i++)
 	{
 		yNet[i] = *it;
+		logger << yNet[i] << endl;
 	}
 	i = 0;
+	logger << "zNet" << endl;
 	for (it = zTemp.begin(); it != zTemp.end(); ++it, i++)
 	{
 		zNet[i] = *it;
+		logger << zNet[i] << endl;
 	}
 }
 
@@ -1877,7 +1900,7 @@ void Mka3D::calcPogreshnost(ofstream& output)
 	output << endl << "Относительная погрешность  = " << sqrt(sumCh / sumZn);
 }
 
-void Mka3D::runLOS()
+void Mka3D::runLOS(double* ggl, double* ggu, double* diag, int N, int* ig, int* jg, double* b, double* q)
 {
 	auto start = std::chrono::system_clock::now();
 
@@ -1885,23 +1908,23 @@ void Mka3D::runLOS()
 	double alfa, alfachisl, alfaznam, beta, betachisl, betaznam, checkE, epsMSG = 1e-16;
 
 	//int countRegularNodes = xyz_points.size();
-	double* r = new double[countRegularNodes];
-	double* s = new double[countRegularNodes];
-	double* z = new double[countRegularNodes];
-	double* p = new double[countRegularNodes];
-	double* rout = new double[countRegularNodes];
+	double* r = new double[N];
+	double* s = new double[N];
+	double* z = new double[N];
+	double* p = new double[N];
+	double* rout = new double[N];
 
-	for (i = 0; i < countRegularNodes; i++)
+	for (i = 0; i < N; i++)
 	{
 		s[i] = rout[i] = r[i] = q[i] = z[i] = p[i] = 0;
 	}
-	MultMatrixOnVector(q, r);
-	for (i = 0; i < countRegularNodes; i++)
+	MultMatrixOnVector(q, r, di, ggl, ggu);
+	for (i = 0; i < N; i++)
 	{
 		r[i] = b[i] - r[i];
 		z[i] = r[i];
 	}
-	MultMatrixOnVector(z, p);
+	MultMatrixOnVector(z, p, di, ggl, ggu);
 	checkE = sqrt(ScalarMult(r, r) / ScalarMult(b, b));
 	//startNeviazka = checkE = ScalarMult(r, r);
 	for (int iter = 0; iter < maxiter && checkE >= epsMSG; iter++)
@@ -1909,16 +1932,16 @@ void Mka3D::runLOS()
 		alfachisl = ScalarMult(p, r);
 		alfaznam = ScalarMult(p, p);
 		alfa = alfachisl / alfaznam;
-		for (i = 0; i < countRegularNodes; i++)
+		for (i = 0; i < N; i++)
 		{
 			q[i] = q[i] + alfa * z[i];
 			r[i] = r[i] - alfa * p[i];
 		}
-		MultMatrixOnVector(r, rout);
+		MultMatrixOnVector(r, rout, di, ggl, ggu);
 		betachisl = ScalarMult(p, rout);
 		betaznam = ScalarMult(p, p);
 		beta = -betachisl / betaznam;
-		for (i = 0; i < countRegularNodes; i++)
+		for (i = 0; i < N; i++)
 		{
 			z[i] = r[i] + beta * z[i];
 			p[i] = rout[i] + beta * p[i];
@@ -1967,22 +1990,12 @@ void Mka3D::sigmTChain(int nTermNode, int startOfChain, double mnojT, set<int> &
 	int i, j;
 	for each (neighbor var in tmpSigm[startOfChain].neighbors)
 	{
-		//if (!WithoutPerehlest)
-		//for (i = 0; i < sigmT[nTermNode].neighbors.size(); i++)
-		//{
-		//	if (sigmT[nTermNode].neighbors[i] == sigmT[startOfChain].neighbors[j])
-		//	{
-		//		cout << "Обнаружена цепочка терминальных узлов в " << nTermNode << endl;
-		//		//system("pause");
-		//		//exit(1);
-		//	}
-		//}
-		bool already_contains = repeated;
+		bool already_contains = false;
 		auto found = visitedNodes.find(var.index);
 		if (found != visitedNodes.end()) {
 			logger << "found circle " << var.index << " in " << startOfChain << endl;
-			already_contains = true;
-			//continue;
+			//already_contains = true;
+			continue;
 		}
 		visitedNodes.insert(var.index);
 		if (var.index >= countRegularNodes)
@@ -2044,17 +2057,17 @@ void Mka3D::genT3D() {
 			int neibLeft;
 			for (neibLeft = term.i - 1; neibLeft >= 0; neibLeft--)
 			{
-				if (newNodes[neibLeft][term.j][term.k].test(IS_REGULAR) ||
-					(!newNodes[neibLeft][term.j][term.k].none() && !hasLeft(newNodes[neibLeft][term.j][term.k]) ||
-						getValues(termNodeOnEdge.equal_range(Point(xNet[neibLeft], yNet[term.j], zNet[term.k]))).count(X_EDGE_DELETED) == 0)) 
+				if (newNodes[neibLeft][term.j][term.k].test(IS_REGULAR)
+					|| !newNodes[neibLeft][term.j][term.k].none() && !hasLeft(newNodes[neibLeft][term.j][term.k])
+					|| getValues(termNodeOnEdge.equal_range(Point(xNet[neibLeft], yNet[term.j], zNet[term.k]))).count(X_EDGE_DELETED) == 0)
 					break;
 			}
 			int neibRight;
 			for (neibRight = term.i + 1; neibRight < nX; neibRight++)
 			{
-				if (newNodes[neibRight][term.j][term.k].test(IS_REGULAR) ||
-					(!newNodes[neibRight][term.j][term.k].none() && !hasRight(newNodes[neibRight][term.j][term.k]) ||
-						getValues(termNodeOnEdge.equal_range(Point(xNet[neibRight], yNet[term.j], zNet[term.k]))).count(X_EDGE_DELETED) == 0))
+				if (newNodes[neibRight][term.j][term.k].test(IS_REGULAR) 
+					|| !newNodes[neibRight][term.j][term.k].none() && !hasRight(newNodes[neibRight][term.j][term.k]) 
+					|| getValues(termNodeOnEdge.equal_range(Point(xNet[neibRight], yNet[term.j], zNet[term.k]))).count(X_EDGE_DELETED) == 0)
 					break;
 			}
 			double length = xNet[neibRight] - xNet[neibLeft];
@@ -2068,17 +2081,17 @@ void Mka3D::genT3D() {
 			int neibBack;
 			for (neibBack = term.j + 1; neibBack < nY; neibBack++)
 			{
-				if (newNodes[term.i][neibBack][term.k].test(IS_REGULAR) ||
-					(!newNodes[term.i][neibBack][term.k].none() && !hasBack(newNodes[term.i][neibBack][term.k]) ||
-						getValues(termNodeOnEdge.equal_range(Point(xNet[term.i], yNet[neibBack], zNet[term.k]))).count(Y_EDGE_DELETED) == 0))
+				if (newNodes[term.i][neibBack][term.k].test(IS_REGULAR) 
+					|| !newNodes[term.i][neibBack][term.k].none() && !hasBack(newNodes[term.i][neibBack][term.k]) 
+					|| getValues(termNodeOnEdge.equal_range(Point(xNet[term.i], yNet[neibBack], zNet[term.k]))).count(Y_EDGE_DELETED) == 0)
 					break;
 			}
 			int neibFore;
 			for (neibFore = term.j - 1; neibFore >= 0; neibFore--)
 			{
-				if (newNodes[term.i][neibFore][term.k].test(IS_REGULAR) ||
-					(!newNodes[term.i][neibFore][term.k].none() && !hasFore(newNodes[term.i][neibFore][term.k]) ||
-						getValues(termNodeOnEdge.equal_range(Point(xNet[term.i], yNet[neibFore], zNet[term.k]))).count(Y_EDGE_DELETED) == 0)) 
+				if (newNodes[term.i][neibFore][term.k].test(IS_REGULAR) 
+					|| !newNodes[term.i][neibFore][term.k].none() && !hasFore(newNodes[term.i][neibFore][term.k]) 
+					|| getValues(termNodeOnEdge.equal_range(Point(xNet[term.i], yNet[neibFore], zNet[term.k]))).count(Y_EDGE_DELETED) == 0) 
 					break;
 			}
 			double length = yNet[neibBack] - yNet[neibFore];
@@ -2092,17 +2105,17 @@ void Mka3D::genT3D() {
 			int neibUp;
 			for (neibUp = term.k + 1; neibUp < nZ; neibUp++)
 			{
-				if (newNodes[term.i][term.j][neibUp].test(IS_REGULAR) ||
-					(!newNodes[term.i][term.j][neibUp].none() && !hasUp(newNodes[term.i][term.j][neibUp]) ||
-						getValues(termNodeOnEdge.equal_range(Point(xNet[term.i], yNet[term.j], zNet[neibUp]))).count(Z_EDGE_DELETED) == 0)) 
+				if (newNodes[term.i][term.j][neibUp].test(IS_REGULAR) 
+					|| !newNodes[term.i][term.j][neibUp].none() && !hasUp(newNodes[term.i][term.j][neibUp])
+					|| getValues(termNodeOnEdge.equal_range(Point(xNet[term.i], yNet[term.j], zNet[neibUp]))).count(Z_EDGE_DELETED) == 0) 
 					break;
 			}
 			int neibDown;
 			for (neibDown = term.k - 1; neibDown >= 0; neibDown--)
 			{
-				if (newNodes[term.i][term.j][neibDown].test(IS_REGULAR) ||
-					(!newNodes[term.i][term.j][neibDown].none() && !hasDown(newNodes[term.i][term.j][neibDown]) ||
-						getValues(termNodeOnEdge.equal_range(Point(xNet[term.i], yNet[term.j], zNet[neibDown]))).count(Z_EDGE_DELETED) == 0)) 
+				if (newNodes[term.i][term.j][neibDown].test(IS_REGULAR)
+					|| !newNodes[term.i][term.j][neibDown].none() && !hasDown(newNodes[term.i][term.j][neibDown])
+					|| getValues(termNodeOnEdge.equal_range(Point(xNet[term.i], yNet[term.j], zNet[neibDown]))).count(Z_EDGE_DELETED) == 0)
 					break;
 			}
 			double length = zNet[neibUp] - zNet[neibDown];
@@ -2449,17 +2462,19 @@ void Mka3D::constructXyzAndNvtr()
 					}
 
 					keBiTree->addKe(countKe);
-					int found = keBiTree->getKe(centerOfKe(countKe));
-					if (found < 0) {
-						found = keBiTree->getKe(centerOfKe(countKe));
-						throw new exception("you fail");
+					if (DEBUG) {
+						int found = keBiTree->getKe(centerOfKe(countKe));
+						if (found < 0) {
+							found = keBiTree->getKe(centerOfKe(countKe));
+							throw new exception("you fail");
+						}
 					}
 					countKe++;
 				}
 			}
 		}
 	}
-	int found = keBiTree->getKe(Point(-99, -100, -50));
+
 	profiler << setw(40) << std::left << "Construct nvtr " <<
 		MkaUtils::formattingTime(std::chrono::system_clock::time_point(std::chrono::system_clock::now() - start)) << endl;
 

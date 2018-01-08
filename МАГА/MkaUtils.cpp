@@ -30,6 +30,6 @@ std::string MkaUtils::formattingTime(std::chrono::system_clock::time_point times
 	auto milliseconds = std::chrono::duration_cast<std::chrono::milliseconds>(timestamp - seconds);
 
 	char buff[100];
-	snprintf(buff, sizeof(buff), "%02d:%02d:%02dM%03d", frminutes.count(), frsec.count(), milliseconds.count());
+	snprintf(buff, sizeof(buff), "%02d:%02lluM%03llu", frminutes.count(), frsec.count(), milliseconds.count());
 	return std::string(buff);
 }

@@ -366,7 +366,7 @@ private:
 	void mult(double * res, double * v);
 	double ScalarMult(double * v1, double * v2);
 	void MultMatrixOnVector(double * in, double * out);
-	void runLOS();
+	void runLOS(double* ggl, double* ggu, double* diag, int N, int* ig, int* jg, double* f, double* q);
 	locateOfPoint FindLocate(Point sample);
 	void sigmTChain(int nTermNode, int startOfChain, double mnojT, set<int>& visitedNodes, bool repeated);
 	set<byte> getValues(pair<map<Point, byte>::iterator, map<Point, byte>::iterator>& range);

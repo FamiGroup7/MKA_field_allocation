@@ -1,2 +1,3 @@
 delete b[iSource] += power;
 Lambda change
+uncomment check areas square
