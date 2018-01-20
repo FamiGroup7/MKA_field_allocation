@@ -1,3 +1,4 @@
 delete b[iSource] += power;
 Lambda change
 uncomment check areas square
+fix findKE when small part of KE contains in another tree-area

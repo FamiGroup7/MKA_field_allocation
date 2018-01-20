@@ -33,3 +33,23 @@ std::string MkaUtils::formattingTime(std::chrono::system_clock::time_point times
 	snprintf(buff, sizeof(buff), "%02d:%02lluM%03llu", frminutes.count(), frsec.count(), milliseconds.count());
 	return std::string(buff);
 }
+
+// функци€ с алгоритмом двоичного поиска 
+int MkaUtils::Search_Binary(double arr[], int left, int right, double key)
+{
+	int midd = 0;
+	while (1)
+	{
+		midd = (left + right) / 2;
+
+		if (key < arr[midd])       // если искомое меньше значени€ в €чейке
+			right = midd - 1;      // смещаем правую границу поиска
+		else if (key > arr[midd])  // если искомое больше значени€ в €чейке
+			left = midd + 1;	   // смещаем левую границу поиска
+		else                       // иначе (значени€ равны)
+			return midd;           // функци€ возвращает индекс €чейки
+
+		if (left > right)          // если границы сомкнулись 
+			return -1;
+	}
+}

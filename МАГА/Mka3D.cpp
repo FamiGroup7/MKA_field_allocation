@@ -1,5 +1,7 @@
 #include "Mka3D.h"
 
+int LosLU(double* ggl, double* ggu, double* diag, int N, int* ig, int* jg, double* f, double* q);
+
 Mka3D::Mka3D(bool netOptimization, bool debugMod, bool optOnlyOnOneDirection, bool maxOptimization, bool optX, bool optY, bool optZ) :
 	Mka3D("resources3D/", netOptimization, debugMod, optOnlyOnOneDirection, maxOptimization, optX, optY, optZ)
 {
@@ -36,7 +38,8 @@ void Mka3D::startFullProcess() {
 	generateGlobalMatrix();
 
 	//LosLU(ggl, ggu, di, countRegularNodes, ig, jg, b, q);
-	runLOS(ggl, ggu, di, countRegularNodes, ig, jg, b, q);
+	//runLOS(ggl, ggu, di, countRegularNodes, ig, jg, b, q);
+	LosLU(ggl, ggu, di, countRegularNodes, ig, jg, b, q);
 	calcPogreshnost(output);
 
 
@@ -113,9 +116,11 @@ void Mka3D::GenerateNetLikeTelma(set<double>& mas, ifstream& fileNet)
 	double* mnojiteli = new double[numberOfInterval];
 	int* napravlenie = new int[numberOfInterval];
 	intervals[0] = firstElement;
+	mas.insert(firstElement);
 	for (i = 1; i < numberOfInterval + 1; i++)
 	{
 		fileNet >> intervals[i];
+		mas.insert(intervals[i]);
 	}
 	for (i = 0; i < numberOfInterval; i++)
 	{
@@ -214,13 +219,7 @@ double Mka3D::LikeACube(double x, double y, double z) {
 //TODO search in sorted array
 int Mka3D::FindLocate(double* massiv, int razm, double x)
 {
-	int i;
-	for (i = 0; i < razm; i++)
-	{
-		if (massiv[i] == x)
-			return i;
-	}
-	return -1;
+	return MkaUtils::Search_Binary(massiv, 0, razm, x);
 }
 
 int Mka3D::FindAreaNumber(int nodes[])
@@ -228,9 +227,9 @@ int Mka3D::FindAreaNumber(int nodes[])
 	int i;
 	for (i = 0; i < sreda.size(); i++)
 	{
-		if (xyz_points[nodes[0]].x >= sreda[i].x1 && xyz_points[nodes[1]].x <= sreda[i].x2
-			&& xyz_points[nodes[0]].y >= sreda[i].y1 && xyz_points[nodes[2]].y <= sreda[i].y2
-			&& xyz_points[nodes[0]].z >= sreda[i].z1 && xyz_points[nodes[4]].z <= sreda[i].z2)
+		if (xyz_points[nodes[0]].x >= sreda[i].x1 && xyz_points[nodes[7]].x <= sreda[i].x2
+			&& xyz_points[nodes[0]].y >= sreda[i].y1 && xyz_points[nodes[7]].y <= sreda[i].y2
+			&& xyz_points[nodes[0]].z >= sreda[i].z1 && xyz_points[nodes[7]].z <= sreda[i].z2)
 			return i;
 	}
 	logError("ќшибка в FindAreaNumber: не найдена подобласть.");
@@ -250,6 +249,20 @@ int Mka3D::findKE(Point p)
 {
 	return keBiTree->getKe(p);
 }
+
+//int Mka3D::findKE(Point p)
+//{
+//	for (int i = 0; i < KE.size(); i++)
+//	{
+//		if (p.x >= xyz_points[KE[i].uzel[0]].x && p.x <= xyz_points[KE[i].uzel[7]].x &&
+//			p.y >= xyz_points[KE[i].uzel[0]].y && p.y <= xyz_points[KE[i].uzel[7]].y &&
+//			p.z >= xyz_points[KE[i].uzel[0]].z && p.z <= xyz_points[KE[i].uzel[7]].z)
+//		{
+//			return i;
+//		}
+//	}
+//	return -1;
+//}
 
 int Mka3D::findArea(Point point)
 {
@@ -1048,6 +1061,21 @@ void Mka3D::inputNet(string sredaInput, string sourceLocate)
 	for (i = 0; i < numberFields; i++)
 	{
 		inpSreda >> tempField.x1 >> tempField.x2 >> tempField.y1 >> tempField.y2 >> tempField.z1 >> tempField.z2 >> tempField.lambda >> tempField.gamma;
+		if (tempField.x2 < tempField.x1) {
+			double var = tempField.x2;
+			tempField.x2 = tempField.x1;
+			tempField.x1 = var;
+		}
+		if (tempField.y2 < tempField.y1) {
+			double var = tempField.y2;
+			tempField.y2 = tempField.y1;
+			tempField.y1 = var;
+		}
+		if (tempField.z2 < tempField.z1) {
+			double var = tempField.z2;
+			tempField.z2 = tempField.z1;
+			tempField.z1 = var;
+		}
 		sreda.push_back(tempField);
 		xTemp.insert(tempField.x1);
 		xTemp.insert(tempField.x2);
@@ -1077,13 +1105,21 @@ void Mka3D::inputNet(string sredaInput, string sourceLocate)
 	rightZ = *rit;
 
 	ifstream sourceFile(sourceLocate);
-	sourceFile >> koordSourceX >> koordSourceY >> koordSourceZ;
-	if (koordSourceX > leftX && koordSourceX < rightX)
-		xTemp.insert(koordSourceX);
-	if (koordSourceY > leftY && koordSourceY < rightY)
-		yTemp.insert(koordSourceY);
-	if (koordSourceZ > leftZ && koordSourceZ < rightZ)
-		zTemp.insert(koordSourceZ);
+	if (!sourceFile.is_open()) {
+		logger << "No sources configured" << endl;
+	}
+	else {
+		sourceFile >> sourceType >> power;
+		if (sourceType == 1) {
+			sourceFile >> koordSourceX >> koordSourceY >> koordSourceZ;
+			if (koordSourceX > leftX && koordSourceX < rightX)
+				xTemp.insert(koordSourceX);
+			if (koordSourceY > leftY && koordSourceY < rightY)
+				yTemp.insert(koordSourceY);
+			if (koordSourceZ > leftZ && koordSourceZ < rightZ)
+				zTemp.insert(koordSourceZ);
+		}
+	}
 
 	if (fabs(areaOfSreda - (rightX - leftX) * (rightY - leftY) * (rightZ - leftZ)) > 1e-15)
 	{
@@ -1261,6 +1297,7 @@ void Mka3D::generatePortraitNesoglas()
 double Mka3D::analiticSolution(Point goal)
 {
 	return 0;
+	//return goal.z;
 	//return 1 + goal.x + goal.y + goal.z;
 	//return goal.x*goal.x + goal.y*goal.y + goal.z*goal.z;
 	//return exp(goal.x + goal.y + goal.z);
@@ -1273,6 +1310,9 @@ double Mka3D::analiticSolution(double x, double y, double z)
 
 double Mka3D::Lambda(int ielem)
 {
+	if (ielem < 0) {
+		throw new exception();
+	}
 	return sreda[KE[ielem].numberField].lambda;
 }
 
@@ -1284,14 +1324,13 @@ double Mka3D::Gamma(int ielem)
 double Mka3D::Func(int ielem, int node)
 {
 	return 0;
+	//return xyz_points[KE[ielem].uzel[node]].z;
 	//return 1 + xyz_points[KE[ielem].uzel[node]].x + xyz_points[KE[ielem].uzel[node]].y + xyz_points[KE[ielem].uzel[node]].z;
 	//return xyz_points[KE[ielem].uzel[node]].x*xyz_points[KE[ielem].uzel[node]].x + xyz_points[KE[ielem].uzel[node]].y*xyz_points[KE[ielem].uzel[node]].y +
 	//	xyz_points[KE[ielem].uzel[node]].z*xyz_points[KE[ielem].uzel[node]].z - 6;
 	//return analiticSolution(xyz_points[KE[ielem].uzel[node]].x, xyz_points[KE[ielem].uzel[node]].y, xyz_points[KE[ielem].uzel[node]].z) - 6;
 	//return -2*analiticSolution(xyz_points[KE[ielem].uzel[node]].x, xyz_points[KE[ielem].uzel[node]].y, xyz_points[KE[ielem].uzel[node]].z);
 }
-
-//double getG
 
 void Mka3D::CreateLocalMatrixs(int ielem, double lambda)
 {
@@ -1440,15 +1479,11 @@ void Mka3D::doEdge1(ofstream& outEdge1File, const int intXorYorZ, const int kolv
 			}
 			int k = indexXYZ(*goal);
 			//if (DEBUG) {
-				info = nodeInfo(*condition);
+			info = nodeInfo(*condition);
 			//}
-			if (k < kolvoRegularNode) {
-				di[k] = 1;
-				b[k] = analiticSolution(*goal);
-			}
-			else {
-				continue;
-			}
+			if (k >= kolvoRegularNode) continue;
+			di[k] = 1;
+			b[k] = analiticSolution(*goal);
 			for (int m = ig[k]; m < ig[k + 1]; m++)
 			{
 				ggl[m] = 0;
@@ -1464,7 +1499,7 @@ void Mka3D::doEdge1(ofstream& outEdge1File, const int intXorYorZ, const int kolv
 				}
 			}
 			//if (DEBUG) {
-				delete info;
+			delete info;
 			//}
 			outEdge1File << k << '\t' << b[k] << endl;
 		}
@@ -1527,6 +1562,116 @@ int Mka3D::findKE(int ind_nodes[4])
 	//}
 
 	logError("ќшибка findKE. Ќе найден  Ё.");
+}
+
+//intXorYorZ can be 0,1 or 2
+void Mka3D::doEdge2_source(ofstream& outEdge2File, const int intXorYorZ, const int normalDirect, const int kolvoRegularNode,
+	double* varNet1, const int nVarNet1, double* varNet2, const int nVarNet2, const int unknownIndex, double powerS)
+{
+	double dUdn[4], h = 0.02, dh1, dh2;
+	int indNodes[4];
+	for (int iVar1 = 0; iVar1 < nVarNet1; iVar1++)
+	{
+		for (int iVar2 = 0; iVar2 < nVarNet2; iVar2++)
+		{
+			int nextVar1, nextVar2;
+			Point *dPoint, *gran;
+			gran = new Point[4];
+			bitset<BIT_SIZE> *condition;
+			if (intXorYorZ == 0)
+			{
+				condition = &newNodes[unknownIndex][iVar1][iVar2];
+				if (condition->none() || !canOptimize(-1 * normalDirect, 1, 1, *condition)) {
+					continue;
+				}
+				nextVar1 = findNextY(-1 * normalDirect, 1, 1, iVar1, nVarNet1, unknownIndex, iVar2);
+				nextVar2 = findNextZ(-1 * normalDirect, 1, 1, iVar2, nVarNet2, unknownIndex, iVar1);
+				if (DEBUG) {
+					if (nextVar1 == -1 || nextVar2 == -1
+						|| findNextY(-1 * normalDirect, 1, -1, iVar1, nVarNet1, unknownIndex, nextVar2) != nextVar1
+						|| findNextZ(-1 * normalDirect, -1, 1, iVar2, nVarNet2, unknownIndex, nextVar1) != nextVar2) {
+						logError("Error, no square");
+					}
+				}
+				dPoint = new Point(h, 0, 0);
+				gran[0] = Point(xNet[unknownIndex], varNet1[iVar1], varNet2[iVar2]);
+				gran[1] = Point(xNet[unknownIndex], varNet1[iVar1], varNet2[nextVar2]);
+				gran[2] = Point(xNet[unknownIndex], varNet1[nextVar1], varNet2[iVar2]);
+				gran[3] = Point(xNet[unknownIndex], varNet1[nextVar1], varNet2[nextVar2]);
+			}
+			else if (intXorYorZ == 1) {
+				condition = &newNodes[iVar1][unknownIndex][iVar2];
+				if (condition->none() || !canOptimize(1, -1 * normalDirect, 1, *condition)) {
+					continue;
+				}
+				nextVar1 = findNextX(1, -1 * normalDirect, 1, iVar1, nVarNet1, unknownIndex, iVar2);
+				nextVar2 = findNextZ(1, -1 * normalDirect, 1, iVar2, nVarNet2, iVar1, unknownIndex);
+				if (DEBUG) {
+					if (nextVar1 == -1 || nextVar2 == -1
+						|| findNextX(1, -1 * normalDirect, -1, iVar1, nVarNet1, unknownIndex, nextVar2) != nextVar1
+						|| findNextZ(-1, -1 * normalDirect, 1, iVar2, nVarNet2, nextVar1, unknownIndex) != nextVar2) {
+						logError("Error, no square");
+					}
+				}
+				dPoint = new Point(0, h, 0);
+				gran[0] = Point(varNet1[iVar1], yNet[unknownIndex], varNet2[iVar2]);
+				gran[1] = Point(varNet1[iVar1], yNet[unknownIndex], varNet2[nextVar2]);
+				gran[2] = Point(varNet1[nextVar1], yNet[unknownIndex], varNet2[iVar2]);
+				gran[3] = Point(varNet1[nextVar1], yNet[unknownIndex], varNet2[nextVar2]);
+			}
+			else
+			{
+				condition = &newNodes[iVar1][iVar2][unknownIndex];
+				if (condition->none() || !canOptimize(1, 1, -1 * normalDirect, *condition)) {
+					continue;
+				}
+				nextVar1 = findNextX(1, 1, -1 * normalDirect, iVar1, nVarNet1, iVar2, unknownIndex);
+				nextVar2 = findNextY(1, 1, -1 * normalDirect, iVar2, nVarNet2, iVar1, unknownIndex);
+				if (DEBUG) {
+					if (nextVar1 == -1 || nextVar2 == -1
+						|| findNextX(1, -1, -1 * normalDirect, iVar1, nVarNet1, nextVar2, unknownIndex) != nextVar1
+						|| findNextY(-1, 1, -1 * normalDirect, iVar2, nVarNet2, nextVar1, unknownIndex) != nextVar2) {
+						logError("Error, no square");
+					}
+				}
+				dPoint = new Point(0, 0, h);
+				gran[0] = Point(varNet1[iVar1], varNet2[iVar2], zNet[unknownIndex]);
+				gran[1] = Point(varNet1[iVar1], varNet2[nextVar2], zNet[unknownIndex]);
+				gran[2] = Point(varNet1[nextVar1], varNet2[iVar2], zNet[unknownIndex]);
+				gran[3] = Point(varNet1[nextVar1], varNet2[nextVar2], zNet[unknownIndex]);
+			}
+
+			//dUdn[0] = normalDirect * (analiticSolution(gran[0] + *dPoint) - analiticSolution(gran[0] - *dPoint)) / (2.0 * h);
+			//dUdn[1] = normalDirect * (analiticSolution(gran[1] + *dPoint) - analiticSolution(gran[1] - *dPoint)) / (2.0 * h);
+			//dUdn[2] = normalDirect * (analiticSolution(gran[2] + *dPoint) - analiticSolution(gran[2] - *dPoint)) / (2.0 * h);
+			//dUdn[3] = normalDirect * (analiticSolution(gran[3] + *dPoint) - analiticSolution(gran[3] - *dPoint)) / (2.0 * h);
+			dUdn[0] = powerS;
+			dUdn[1] = powerS;
+			dUdn[2] = powerS;
+			dUdn[3] = powerS;
+			indNodes[0] = indexXYZ(gran[0]);
+			indNodes[1] = indexXYZ(gran[1]);
+			indNodes[2] = indexXYZ(gran[2]);
+			indNodes[3] = indexXYZ(gran[3]);
+
+			int indKE = findKE(indNodes);
+			dh1 = varNet1[nextVar1] - varNet1[iVar1];
+			dh2 = varNet2[nextVar2] - varNet2[iVar2];
+			if (dh1*dh2 == 0) throw new exception("incorrect dh");
+
+			for (size_t linux = 0; linux < 4; linux++)
+			{
+				double value = 0;
+				for (size_t linux2 = 0; linux2 < 4; linux2++)
+				{
+					value += dUdn[linux2] * M2[linux][linux2] * dh1 * dh2 / 36.0 * Lambda(indKE);
+				}
+				AddToB(indNodes[linux], value);
+				outEdge2File << setw(10) << indNodes[linux] << setw(15) << value << endl;
+			}
+			delete dPoint;
+		}
+	}
 }
 
 //intXorYorZ can be 0,1 or 2
@@ -1796,18 +1941,26 @@ void Mka3D::generateGlobalMatrix(double lambda)
 	{
 		CreateLocalMatrixs(ielem, lambda < 0 ? Lambda(ielem) : lambda);
 		Addition(ielem, di, ggl);
-		PrintLocalMatrix();
+		//PrintLocalMatrix();
 	}
 	profiler << setw(40) << std::left << "Generate global matrix " <<
 		MkaUtils::formattingTime(std::chrono::system_clock::time_point(std::chrono::system_clock::now() - start)) << endl;
-	
-	int iSource = indexXYZ(koordSourceX, koordSourceY, koordSourceZ);
-	if (iSource < 0) {
-		logger << "Cannot add source fluence" << endl;
+
+	if (sourceType == 1) {
+		int iSource = indexXYZ(koordSourceX, koordSourceY, koordSourceZ);
+		if (iSource >= 0) {
+			logger << "SourceType=1, point(" << xyz_points[iSource] << ",i=" << iSource << ", power=" << power << endl;
+			b[iSource] += power;
+		}
+		else {
+			logger << "Cannot add source point fluence" << endl;
+		}
 	}
-	else {
-		b[iSource] += power;
-	}
+	else
+		if (sourceType == 2) {
+			logger << "SourceType=" << sourceType << ", power=" << power << endl;
+			doEdge2_source(logger, 2, 1, countRegularNodes, xNet, nX - 1, yNet, nY - 1, nZ - 1, power);
+		}
 
 	start = std::chrono::system_clock::now();
 	Edge2_not_sim(upKU, downKU, leftKU, rightKU, foreKU, behindKU);
@@ -1826,8 +1979,6 @@ void Mka3D::generateGlobalMatrix(double lambda)
 	Edge1_not_sim(upKU, downKU, leftKU, rightKU, foreKU, behindKU);
 	profiler << setw(40) << std::left << "Apply boundaries 1" <<
 		MkaUtils::formattingTime(std::chrono::system_clock::time_point(std::chrono::system_clock::now() - start)) << endl;
-	//Edge1_not_sim(1, 1, 1, 1, 1, 1);
-
 }
 
 void Mka3D::mult(double* res, double* v)
@@ -1900,7 +2051,7 @@ void Mka3D::calcPogreshnost(ofstream& output)
 	output << endl << "ќтносительна€ погрешность  = " << sqrt(sumCh / sumZn);
 }
 
-void Mka3D::runLOS(double* ggl, double* ggu, double* diag, int N, int* ig, int* jg, double* b, double* q)
+void Mka3D::runLOS(double* ggl, double* ggu, double* di, int N, int* ig, int* jg, double* b, double* q)
 {
 	auto start = std::chrono::system_clock::now();
 
@@ -1952,32 +2103,12 @@ void Mka3D::runLOS(double* ggl, double* ggu, double* diag, int N, int* ig, int* 
 		MkaUtils::formattingTime(std::chrono::system_clock::time_point(std::chrono::system_clock::now() - start)) << endl;
 }
 
-// функци€ с алгоритмом двоичного поиска 
-int Search_Binary(double arr[], int left, int right, double key)
-{
-	int midd = 0;
-	while (1)
-	{
-		midd = (left + right) / 2;
-
-		if (key < arr[midd])       // если искомое меньше значени€ в €чейке
-			right = midd - 1;      // смещаем правую границу поиска
-		else if (key > arr[midd])  // если искомое больше значени€ в €чейке
-			left = midd + 1;	   // смещаем левую границу поиска
-		else                       // иначе (значени€ равны)
-			return midd;           // функци€ возвращает индекс €чейки
-
-		if (left > right)          // если границы сомкнулись 
-			return -1;
-	}
-}
-
 Mka3D::locateOfPoint Mka3D::FindLocate(Point sample)
 {
 	locateOfPoint a;
-	a.i = Search_Binary(xNet, 0, nX, sample.x);
-	a.j = Search_Binary(yNet, 0, nY, sample.y);
-	a.k = Search_Binary(zNet, 0, nZ, sample.z);
+	a.i = MkaUtils::Search_Binary(xNet, 0, nX, sample.x);
+	a.j = MkaUtils::Search_Binary(yNet, 0, nY, sample.y);
+	a.k = MkaUtils::Search_Binary(zNet, 0, nZ, sample.z);
 	if (a.i == -1 || a.j == -1 || a.k == -1)
 	{
 		throw new exception("ќшибка FindLocate: не найдена точка");
@@ -2465,7 +2596,6 @@ void Mka3D::constructXyzAndNvtr()
 					if (DEBUG) {
 						int found = keBiTree->getKe(centerOfKe(countKe));
 						if (found < 0) {
-							found = keBiTree->getKe(centerOfKe(countKe));
 							throw new exception("you fail");
 						}
 					}
@@ -2474,6 +2604,41 @@ void Mka3D::constructXyzAndNvtr()
 			}
 		}
 	}
+
+	//double max_coord[3] = { DBL_MIN, DBL_MIN, DBL_MIN };
+	//double min_coord[3] = { DBL_MAX, DBL_MAX, DBL_MAX };
+	//
+	//for (int i = 0; i < sreda.size(); i++)
+	//{
+	//	if (sreda[i].x1 < min_coord[0])
+	//		min_coord[0] = sreda[i].x1;
+	//	if (sreda[i].y1 < min_coord[1])
+	//		min_coord[1] = sreda[i].y1;
+	//	if (sreda[i].z1 < min_coord[2])
+	//		min_coord[2] = sreda[i].z1;
+
+	//	if (sreda[i].x2 > max_coord[0])
+	//		max_coord[0] = sreda[i].x2;
+	//	if (sreda[i].y2 > max_coord[1])
+	//		max_coord[1] = sreda[i].y2;
+	//	if (sreda[i].z2 > max_coord[2])
+	//		max_coord[2] = sreda[i].z2;
+	//}
+
+	//double diff_coord[3] =
+	//{
+	//	max_coord[0] - min_coord[0],
+	//	max_coord[1] - min_coord[1],
+	//	max_coord[2] - min_coord[2]
+	//};
+	//for (size_t i = 0; i < 3; i++)
+	//{
+	//	diff_coord[i] *= 1e-8;
+	//	max_coord[i] += diff_coord[i];
+	//	min_coord[i] -= diff_coord[i];
+	//}
+	//tree.make(min_coord[0], max_coord[0], min_coord[1], max_coord[1],
+	//	min_coord[2], max_coord[2], KE.data(), KE.size());
 
 	profiler << setw(40) << std::left << "Construct nvtr " <<
 		MkaUtils::formattingTime(std::chrono::system_clock::time_point(std::chrono::system_clock::now() - start)) << endl;
@@ -2496,14 +2661,19 @@ void Mka3D::constructXyzAndNvtr()
 void Mka3D::prepareNetForSolve() {
 
 }
+
 double Mka3D::solutionInPoint(int iKe, Point target) {
+	return solutionInPoint(iKe, target, q);
+}
+
+double Mka3D::solutionInPoint(int iKe, Point target, double*q0) {
 	double result = 0;
 	for (int j = 0; j < 8; j++)
 	{
-		result += q[KE[iKe].uzel[j]] 
-			* (1 - fabs(xyz_points[KE[iKe].uzel[j]].x - target.x) / (xyz_points[KE[iKe].uzel[1]].x - xyz_points[KE[iKe].uzel[0]].x))
-			* (1 - fabs(xyz_points[KE[iKe].uzel[j]].y - target.y) / (xyz_points[KE[iKe].uzel[2]].y - xyz_points[KE[iKe].uzel[0]].y))
-			* (1 - fabs(xyz_points[KE[iKe].uzel[j]].z - target.z) / (xyz_points[KE[iKe].uzel[4]].z - xyz_points[KE[iKe].uzel[0]].z));
+		result += q0[KE[iKe].uzel[j]]
+			* (1 - fabs(xyz_points[KE[iKe].uzel[j]].x - target.x) / (xyz_points[KE[iKe].uzel[7]].x - xyz_points[KE[iKe].uzel[0]].x))
+			* (1 - fabs(xyz_points[KE[iKe].uzel[j]].y - target.y) / (xyz_points[KE[iKe].uzel[7]].y - xyz_points[KE[iKe].uzel[0]].y))
+			* (1 - fabs(xyz_points[KE[iKe].uzel[j]].z - target.z) / (xyz_points[KE[iKe].uzel[7]].z - xyz_points[KE[iKe].uzel[0]].z));
 	}
 	return result;
 }

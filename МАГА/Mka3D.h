@@ -31,17 +31,20 @@ public:
 	Point centerOfKe(int iKe);
 	int findKE(Point p);
 	double solutionInPoint(int iKe, Point target);
+	double solutionInPoint(int iKe, Point target, double * q);
 	void calcPogreshnost(ofstream & output);
 	void PrintLocalMatrix();
 	void PrintPlotMatrix(bool flag_simmeric);
+	void runLOS(double* ggl, double* ggu, double* diag, int N, int* ig, int* jg, double* f, double* q);
 
-	
+
 	double *di, *b, *q, *ggl, *ggu;
 	int *ig, *jg;
 	vector<Point> xyz_points;
 	set<Point> sortedPoints;
 	int nColT, countRegularNodes;
 	int upKU, downKU, leftKU, rightKU, foreKU, behindKU;
+	int sourceType;
 	double power = 0;
 
 	struct nvtr
@@ -86,19 +89,23 @@ public:
 
 	struct helpSearchKE {
 		int delim;
+		double leftOuter, rightOuter, upOuter, downOuter, foreOuter, backOuter;
 		vector<int> elements;
 		helpSearchKE*child1 = NULL, *child2 = NULL;
 		field info;
 		vector<Point>* points;
 		vector<nvtr>* kes;
 
-		helpSearchKE(){}
+		helpSearchKE() {}
 
 		void init(double x1, double x2, double y1, double y2, double z1, double z2, vector<Point>*points, vector<nvtr>* kes) {
 			this->delim = 0;
 			this->points = points;
 			this->kes = kes;
 			this->info = field(x1, x2, y1, y2, z1, z2, -1, -1);
+			leftOuter = x1; rightOuter = x2;
+			foreOuter = y1; backOuter = y2;
+			downOuter = z1; upOuter = z2;
 		}
 
 		void init(int parentDelim, helpSearchKE &parent, bool first) {
@@ -112,8 +119,8 @@ public:
 			this->kes = parent.kes;
 			switch (parentDelim)
 			{
-			case 0: delim = 1; 
-				first ? this->info.x2=(parent.info.x1+ parent.info.x2)/2.0:
+			case 0: delim = 1;
+				first ? this->info.x2 = (parent.info.x1 + parent.info.x2) / 2.0 :
 					this->info.x1 = (parent.info.x1 + parent.info.x2) / 2.0;
 				break;
 			case 1: delim = 2;
@@ -127,6 +134,9 @@ public:
 			default:
 				throw new exception("error construct help struct for ke");
 			}
+			leftOuter = info.x1; rightOuter = info.x2;
+			foreOuter = info.y1; backOuter = info.y2;
+			downOuter = info.z1; upOuter = info.z2;
 		}
 
 		Point center(int iKe) {
@@ -138,7 +148,7 @@ public:
 		}
 
 		bool contains(Point point) {
-			return 
+			return
 				/*MkaUtils::compare(point.x, points->at(kes->at(var).uzel[0]).x) <= 0 && MkaUtils::compare(point.x, points->at(kes->at(var).uzel[7]).x) >= 0 &&
 				MkaUtils::compare(point.y, points->at(kes->at(var).uzel[0]).y) <= 0 && MkaUtils::compare(point.y, points->at(kes->at(var).uzel[7]).y) >= 0 &&
 				MkaUtils::compare(point.z, points->at(kes->at(var).uzel[0]).z) <= 0 && MkaUtils::compare(point.z, points->at(kes->at(var).uzel[7]).z) >= 0*/
@@ -147,8 +157,24 @@ public:
 				point.z >= info.z1 && point.z <= info.z2;
 		}
 
+		bool containsInOuter(Point point) {
+			return
+				/*MkaUtils::compare(point.x, points->at(kes->at(var).uzel[0]).x) <= 0 && MkaUtils::compare(point.x, points->at(kes->at(var).uzel[7]).x) >= 0 &&
+				MkaUtils::compare(point.y, points->at(kes->at(var).uzel[0]).y) <= 0 && MkaUtils::compare(point.y, points->at(kes->at(var).uzel[7]).y) >= 0 &&
+				MkaUtils::compare(point.z, points->at(kes->at(var).uzel[0]).z) <= 0 && MkaUtils::compare(point.z, points->at(kes->at(var).uzel[7]).z) >= 0*/
+				point.x >= leftOuter && point.x <= rightOuter &&
+				point.y >= foreOuter && point.y <= backOuter &&
+				point.z >= downOuter && point.z <= upOuter;
+		}
+
 		void addKe(int iKe) {
 			addKe(iKe, center(iKe));
+		}
+
+		void expandOuter(double probablyNewOuter, double&outer, int comparison) {
+			if (probablyNewOuter*comparison < outer*comparison) {
+				outer = probablyNewOuter;
+			}
 		}
 
 		void addKe(int iKe, Point point) {
@@ -157,6 +183,12 @@ public:
 					throw new exception("dsadf");
 				}
 				elements.push_back(iKe);
+				expandOuter(points->at(kes->at(iKe).uzel[0]).x, leftOuter, 1);
+				expandOuter(points->at(kes->at(iKe).uzel[0]).y, foreOuter, 1);
+				expandOuter(points->at(kes->at(iKe).uzel[0]).z, downOuter, 1);
+				expandOuter(points->at(kes->at(iKe).uzel[7]).x, rightOuter, -1);
+				expandOuter(points->at(kes->at(iKe).uzel[7]).y, backOuter, -1);
+				expandOuter(points->at(kes->at(iKe).uzel[7]).z, upOuter, -1);
 				if (elements.size() >= HELP_STRUCT_KE_MAX_SIZE) {
 					child1 = new helpSearchKE();
 					child2 = new helpSearchKE();
@@ -181,28 +213,39 @@ public:
 		}
 
 		int getKe(Point point) {
-			if (contains(point)) {
+			if (containsInOuter(point)) {
 				if (child1 == NULL && child2 == NULL) {
 					for each (int var in elements)
 					{
 						Point leftDown = points->at(kes->at(var).uzel[0]);
 						Point rightUp = points->at(kes->at(var).uzel[7]);
 						if (
-							MkaUtils::compare(point.x, leftDown.x) >= 0 && MkaUtils::compare(point.x, rightUp.x) <= 0 &&
-							MkaUtils::compare(point.y, leftDown.y) >= 0 && MkaUtils::compare(point.y, rightUp.y) <= 0 &&
-							MkaUtils::compare(point.z, leftDown.z) >= 0 && MkaUtils::compare(point.z, rightUp.z) <= 0) {
+							point.x >= leftDown.x  && point.x <= rightUp.x &&
+							point.y >= leftDown.y && point.y <= rightUp.y &&
+							point.z >= leftDown.z && point.z <= rightUp.z) {
 							return var;
 						}
 					}
 					return -1;
 				}
-				if (child1->contains(point)) {
-					return child1->getKe(point);
+				int result = -1;
+				if (child1->containsInOuter(point)) {
+					result = child1->getKe(point);
+					if (result == -1) {
+						result = child2->getKe(point);
+					}
+					return result;
 				}
-				else if (child2->contains(point)) {
-					return child2->getKe(point);
+				else if (child2->containsInOuter(point)) {
+					result = child2->getKe(point);
+					if (result == -1) {
+						result = child1->getKe(point);
+					}
+					return result;
 				}
-				throw new exception("IT IS IMPOSIBLE!");
+				//else
+				//	throw new exception("IT IS IMPOSIBLE!");
+				return result;
 			}
 			return -1;
 		}
@@ -313,7 +356,7 @@ private:
 		{ 1,2,2,4 }
 	};
 
-	void inputConfig(); 
+	void inputConfig();
 	void logError(char* message);
 	void GenerateNetLikeTelma(set<double>& mas, ifstream & fileNet);
 	int indexXYZ(Point goal);
@@ -359,6 +402,7 @@ private:
 	void doEdge1(ofstream & outEdge1File, const int intXorYorZ, const int kolvoRegularNode, double * varNet1, const int nVarNet1, double * varNet2, const int nVarNet2, const int unknownIndex);
 	void Edge1_not_sim(int up, int down, int left, int right, int fore, int behind);
 	int findKE(int ind_nodes[4]);
+	void doEdge2_source(ofstream & outEdge2File, const int intXorYorZ, const int normalDirect, const int kolvoRegularNode, double * varNet1, const int nVarNet1, double * varNet2, const int nVarNet2, const int unknownIndex, double powerS);
 	void doEdge2(ofstream & outEdge2File, const int intXorYorZ, const int normalDirect, const int kolvoRegularNode, double * varNet1, const int nVarNet1, double * varNet2, const int nVarNet2, const int unknownIndex);
 	void Edge2_not_sim(int up, int down, int left, int right, int fore, int behind);
 	void doEdge3(ofstream & outEdge3File, int intXorYorZ, int normalDirect, int kolvoRegularNode, double * varNet1, int nVarNet1, double * varNet2, int nVarNet2, int unknownIndex);
@@ -366,7 +410,6 @@ private:
 	void mult(double * res, double * v);
 	double ScalarMult(double * v1, double * v2);
 	void MultMatrixOnVector(double * in, double * out);
-	void runLOS(double* ggl, double* ggu, double* diag, int N, int* ig, int* jg, double* f, double* q);
 	locateOfPoint FindLocate(Point sample);
 	void sigmTChain(int nTermNode, int startOfChain, double mnojT, set<int>& visitedNodes, bool repeated);
 	set<byte> getValues(pair<map<Point, byte>::iterator, map<Point, byte>::iterator>& range);

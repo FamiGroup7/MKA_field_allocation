@@ -29,6 +29,7 @@ public:
 	double BasicFunc2d(int i, double ksi, double eta);
 	double difBasicFunc1d(int num, double ksi);
 	void CreateLocalMatrixs(int ielem);
+	void AddToMatrix(int posI, int posJ, double el);
 	void Addition(int ielem);
 	void PrintPlotMatrix(bool flag_simmeric);
 	int indexRZ(Point_cylindrical source);
@@ -43,10 +44,11 @@ public:
 	void MultMatrixOnVector(double * in, double * out, double * diMas, double * gglMas, double * gguMas);
 	double ScalarMult(double * v1, double * v2);
 	void runLOS(double * ggl, double * ggu, double * diag, int N, int * ig, int * jg, double * b, double * q);
-	void LOS();
+	//void LOS();
 	void directSolveStraightTask();
 	int findKE(Point_cylindrical point);
 
+	int sourceType;
 	double power = 0;
 
 	double solutionInPoint(int iKe, Point_cylindrical target);
@@ -107,6 +109,8 @@ private:
 	double localB[4], localMatrix[4][4];
 	double helpG1[4][4] = { { 2, -2, 1, -1 },{ -2, 2, -1, 1 },{ 1, -1, 2, -2 },{ -1, 1, -2, 2 } };
 	double helpG2[4][4] = { { 2, 1, -2, -1 },{ 1, 2, -1, -2 },{ -2, -1, 2, 1 },{ -1, -2, 1, 2 } };
+	//double helpG1[4][4] = { { 2, -2, 1, -1 },{ -2, 2, -1, 1 },{ 1, -1, 2, -2 },{ -1, 1, -2, 2 } };
+	//double helpG2[4][4] = { { 2, 1, -2, -1 },{ 1, 2, -1, -2 },{ -2, -1, 2, 1 },{ -1, -2, 1, 2 } };
 	double helpGOseSim[4][4] = { { 1, 1, -1, -1 },{ 1, 3, -1, -3 },{ -1, -1, 1, 1 },{ -1, -3, 1, 3 } };
 	double helpM[4][4] = { { 4, 2, 2, 1 },{ 2, 4, 1, 2 },{ 2, 1, 4, 2 },{ 1, 2, 2, 4 } };
 

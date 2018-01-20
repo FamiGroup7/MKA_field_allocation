@@ -39,6 +39,14 @@ Point Point::operator+(Point & right)
 	return Point(right.x + this->x, right.y + this->y, right.z + this->z);
 }
 
+double & Point::operator[](size_t i)
+{
+	if (i == 0) return this->x;
+	if (i == 1) return this->y;
+	if (i == 2) return this->z;
+	throw new exception("Unavailable index of point");
+}
+
 ostream & operator<<(ostream & os, const Point & point)
 {
 	os << "{ x = " << point.x << "; y = " << point.y << "; z = " << point.z << "}";
@@ -55,4 +63,9 @@ bool operator==(const Point& lhs, const Point& rhs)
 bool operator!=(const Point& lhs, const Point& rhs)
 {
 	return !(lhs == rhs);
+}
+
+bool Point::inside(double x0, double x1, double y0, double y1, double z0, double z1) const
+{
+	return x >= x0 && x <= x1 && y >= y0 && y <= y1 && z >= z0 && z <= z1;
 }

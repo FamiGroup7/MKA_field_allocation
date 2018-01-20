@@ -19,5 +19,7 @@ public:
 	friend bool operator!=(const Point& lhs, const Point& rhs);
 	Point operator- (Point& left);
 	Point operator+ (Point& left);
+	double & operator [] (size_t i);
+	bool inside(double x0, double x1, double y0, double y1, double z0, double z1) const;
 private:
 };

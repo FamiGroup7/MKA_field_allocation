@@ -1,6 +1,12 @@
 #include "Mka2D_cylindrical.h"
 
-Mka2D_cylindrical::Mka2D_cylindrical() :Mka2D_cylindrical("resources2D/", false, true, false, false)
+int LosLU(double* ggl, double* ggu, double* diag, int N, int* ig, int* jg, double* f, double* q);
+
+int LOS(int n, int *ig, int *jg,
+	double *ggl, double *ggu, double *di, double *f,
+	double *x, double eps, int maxiter);
+
+Mka2D_cylindrical::Mka2D_cylindrical() :Mka2D_cylindrical("resources2D/", false, true, false, true)
 {
 }
 
@@ -64,6 +70,8 @@ void GenerateNetLikeTelma(set<double> &mas, ifstream &fileNet)
 			startPosition = intervals[i];
 			endPosition = intervals[i + 1];
 		}
+		mas.insert(startPosition);
+		mas.insert(endPosition);
 		stepReal = 0;
 		lastPosition = startPosition;
 		position = startPosition + napravlenie[i] * sizeOfSteps[i];
@@ -107,6 +115,16 @@ void Mka2D_cylindrical::GenerateNet()
 	for (i = 0; i < numberFields; i++)
 	{
 		inpSreda >> tempField.r1 >> tempField.r2 >> tempField.z1 >> tempField.z2 >> tempField.sigma >> tempField.gamma;
+		if (tempField.r2 < tempField.r1) {
+			double var = tempField.r2;
+			tempField.r2 = tempField.r1;
+			tempField.r1 = var;
+		}
+		if (tempField.z2 < tempField.z1) {
+			double var = tempField.z2;
+			tempField.z2 = tempField.z1;
+			tempField.z1 = var;
+		}
 		sreda.push_back(tempField);
 		xTemp.insert(tempField.r1);
 		xTemp.insert(tempField.r2);
@@ -129,11 +147,19 @@ void Mka2D_cylindrical::GenerateNet()
 	z1 = *rit;
 
 	ifstream sourceFile(filePrefix + "sourceLocate.txt");
-	sourceFile >> koordSourceR >> koordSourceZ;
-	if (koordSourceR > r0 && koordSourceR < r1)
-		xTemp.insert(koordSourceR);
-	if (koordSourceZ > z0 && koordSourceZ < z1)
-		zTemp.insert(koordSourceZ);
+	if (!sourceFile.is_open()) {
+		testFile << "No sources configured" << endl;
+	}
+	else {
+		sourceFile >> sourceType >> power;
+		if (sourceType == 1) {
+			sourceFile >> koordSourceR >> koordSourceZ;
+			if (koordSourceR > r0 && koordSourceR < r1)
+				xTemp.insert(koordSourceR);
+			if (koordSourceZ > z0 && koordSourceZ < z1)
+				zTemp.insert(koordSourceZ);
+		}
+	}
 
 	for (set<double>::const_iterator it = xTemp.begin(); it != xTemp.end(); it++, i++)
 	{
@@ -145,10 +171,10 @@ void Mka2D_cylindrical::GenerateNet()
 		Z.push_back(*it);
 	}
 
-	int iKE = 0, iPoint = 0;
+	int iKE = 0;
 	for (size_t iY = 0; iY < Z.size(); iY++)
 	{
-		for (size_t iX = 0; iX < R.size(); iX++, iPoint++)
+		for (size_t iX = 0; iX < R.size(); iX++)
 		{
 			rz.push_back(Point_cylindrical(R[iX], Z[iY]));
 		}
@@ -268,11 +294,12 @@ void Mka2D_cylindrical::GeneratePortrait()
 	{
 		di[i] = 0;
 		b[i] = 0;
+		q[i] = 0;
 		ig[i + 1] = ig[i];
 		iaddr = listbeg[i];
 		while (iaddr != -1)
 		{
-			ig[i + 1] = ig[i + 1] + 1;
+			ig[i + 1]++;
 			jgTemp.push_back(list[0][iaddr]);
 			iaddr = list[1][iaddr];
 		}
@@ -301,8 +328,9 @@ void Mka2D_cylindrical::GeneratePortrait()
 
 double Mka2D_cylindrical::analiticSolution(Point_cylindrical source)
 {
-	//return 0;
-	return source.z;
+	return 0;
+	//return source.z;
+	//return 1;
 }
 
 double Mka2D_cylindrical::Func(int ielem, int i)
@@ -341,89 +369,191 @@ double Mka2D_cylindrical::difBasicFunc1d(int num, double ksi)
 	}
 }
 
-void Mka2D_cylindrical::CreateLocalMatrixs(int ielem)
-{
-	double hRlocal, hZlocal;
-	int i, j;
-	double tKoef = sqrt(3. / 5.);
-	double integrPoints[3] = {
-		0.5,
-		(1 + tKoef) / 2,
-		(1 - tKoef) / 2
-	};
-	double tauKoefs[3] = {
-		8. / 9.,
-		5. / 9.,
-		5. / 9.
-	};
-	hRlocal = rz[KE[ielem].uzel[1]].r - rz[KE[ielem].uzel[0]].r;
-	hZlocal = rz[KE[ielem].uzel[2]].z - rz[KE[ielem].uzel[0]].z;
-	for (i = 0; i < 4; i++)
-	{
-		localB[i] = 0;
-		for (j = 0; j < 4; j++)
+//void Mka2D_cylindrical::CreateLocalMatrixs(int ielem)
+//{
+//	double hRlocal, hZlocal;
+//	int i, j;
+//	double tKoef = sqrt(3. / 5.);
+//	double integrPoints[3] = {
+//		0.5,
+//		(1 + tKoef) / 2,
+//		(1 - tKoef) / 2
+//	};
+//	double tauKoefs[3] = {
+//		8. / 9.,
+//		5. / 9.,
+//		5. / 9.
+//	};
+//	hRlocal = rz[KE[ielem].uzel[1]].r - rz[KE[ielem].uzel[0]].r;
+//	hZlocal = rz[KE[ielem].uzel[2]].z - rz[KE[ielem].uzel[0]].z;
+//	for (i = 0; i < 4; i++)
+//	{
+//		localB[i] = 0;
+//		for (j = 0; j < 4; j++)
+//		{
+//			//localMatrix[i][j] = sreda[KE[ielem].numberField].sigma * (helpG1[i][j] * hZlocal * (1.0 + 2.0 * rz[KE[ielem].uzel[0]].r / hRlocal) +
+//			//	helpGOseSim[i][j] * hRlocal * hRlocal / hZlocal +
+//			//	helpG2[i][j] * 2.0 * rz[KE[ielem].uzel[0]].r * hRlocal / hZlocal) / 12.0;
+//
+//			localMatrix[i][j] = sreda[KE[ielem].numberField].sigma / 6.0*(hZlocal*helpG1[i][j] / hRlocal + hRlocal*helpG2[i][j] / hZlocal);
+//			
+//			//double g = 0, m = 0;
+//			//for (size_t k = 0; k < 3; k++)
+//			//{
+//			//	for (size_t l = 0; l < 3; l++)
+//			//	{
+//			//		double d_ksi_i_dr = difBasicFunc1d(i % 2, integrPoints[k])*BasicFunc1d(i / 2, integrPoints[l]);
+//			//		double d_ksi_i_dz = BasicFunc1d(i % 2, integrPoints[k])*difBasicFunc1d(i / 2, integrPoints[l]);
+//			//		double d_ksi_j_dr = difBasicFunc1d(j % 2, integrPoints[k])*BasicFunc1d(j / 2, integrPoints[l]);
+//			//		double d_ksi_j_dz = BasicFunc1d(j % 2, integrPoints[k])*difBasicFunc1d(j / 2, integrPoints[l]);
+//
+//			//		g += sreda[KE[ielem].numberField].sigma * tauKoefs[k] * tauKoefs[l] * (rz[KE[ielem].uzel[0]].r + integrPoints[k] * hRlocal)*
+//			//			(d_ksi_i_dr*d_ksi_j_dr + d_ksi_i_dz*d_ksi_j_dz);
+//
+//			//		//m+=
+//			//	}
+//			//}
+//			//g *= hRlocal*hZlocal* 1 / 4.;
+//			//localMatrix[i][j] = g;
+//
+//			//right part
+//			//double resultRightPart = 0;
+//			//for (size_t k = 0; k < 3; k++)
+//			//{
+//			//	for (size_t l = 0; l < 3; l++)
+//			//	{
+//			//		resultRightPart += BasicFunc1d(i % 3, integrPoints[k]) * BasicFunc1d(i / 3, integrPoints[l]) *
+//			//			Func(Point(
+//			//				xy[KE[ielem].uzel[0]].x + beta[1] * integrPoints[k] + beta[0] * integrPoints[l] + beta[4] * integrPoints[k] * integrPoints[l],
+//			//				xy[KE[ielem].uzel[0]].y + beta[3] * integrPoints[k] + beta[2] * integrPoints[l] + beta[5] * integrPoints[k] * integrPoints[l])) *
+//			//			tauKoefs[k] * tauKoefs[l] * J;
+//			//	}
+//			//}
+//			//localB[i] += resultRightPart / 4. * signAlfa0;
+//		}
+//	}
+//}
+
+//void Mka2D_cylindrical::CreateLocalMatrixs(int ielem) {
+//	double hr = rz[KE[ielem].uzel[1]].r - rz[KE[ielem].uzel[0]].r;
+//	double hz = rz[KE[ielem].uzel[2]].z - rz[KE[ielem].uzel[0]].z;
+//	double r = rz[KE[ielem].uzel[0]].r;
+//
+//	double r11 = hr * (hr + 4 * r) / 12;
+//	double r12 = hr * (hr + 2 * r) / 12;
+//	double r22 = hr * (3 * hr + 4 * r) / 12;
+//
+//	double z11 = hz / 3;
+//	double z12 = hz / 6;
+//	double rhr = r + hr / 2;
+//
+//	localMatrix[0][0] = rhr*z11 / hr + r11 / hz;
+//	localMatrix[0][1] = -rhr*z11 / hr + r12 / hz;
+//	localMatrix[0][2] = rhr*z12 / hr - r11 / hz;
+//	localMatrix[0][3] = -rhr*z12 / hr - r12 / hz;
+//
+//	localMatrix[1][1] = rhr * z11 / hr + r22 / hz;
+//	localMatrix[1][2] = localMatrix[0][3];
+//	localMatrix[1][3] = rhr * z12 / hr - r22 / hz;
+//
+//	localMatrix[2][2] = localMatrix[0][0];
+//	localMatrix[2][3] = localMatrix[0][1];
+//	localMatrix[3][3] = localMatrix[1][1];
+//
+//	for (int i = 0; i < 4; ++i) {
+//		localB[i] = 0;
+//		for (int j = i + 1; j < 4; ++j)
+//			localMatrix[j][i] = localMatrix[i][j];
+//	}
+//}
+
+void Mka2D_cylindrical::CreateLocalMatrixs(int ielem) {
+		double hx = rz[KE[ielem].uzel[1]].r - rz[KE[ielem].uzel[0]].r;
+		double hy = rz[KE[ielem].uzel[2]].z - rz[KE[ielem].uzel[0]].z;
+		double x1 = rz[KE[ielem].uzel[0]].r;
+
+		localMatrix[0][0] = hy / 6 + hx*hx / (12 * hy) + hx*x1 / (3 * hy) + hy*x1 / (3 * hx);
+		localMatrix[1][0] = -hy / 6 + hx*hx / (12 * hy) + hx*x1 / (6 * hy) - hy*x1 / (3 * hx);
+		localMatrix[2][0] = hy / 12 - hx*hx / (12 * hy) - hx*x1 / (3 * hy) + hy*x1 / (6 * hx);
+		localMatrix[3][0] = -hy / 12 - hx*hx / (12 * hy) - hx*x1 / (6 * hy) - hy*x1 / (6 * hx);
+
+		localMatrix[1][1] = hy / 6 + hx*hx / (4 * hy) + hx*x1 / (3 * hy) + hy*x1 / (3 * hx);
+		localMatrix[2][1] = -hy / 12 - hx*hx / (12 * hy) - hx*x1 / (6 * hy) - hy*x1 / (6 * hx);
+		localMatrix[3][1] = hy / 12 - hx*hx / (4 * hy) - hx*x1 / (3 * hy) + hy*x1 / (6 * hx);
+
+		localMatrix[2][2] = hy / 6 + hx*hx / (12 * hy) + hx*x1 / (3 * hy) + hy*x1 / (3 * hx);
+		localMatrix[3][2] = -hy / 6 + hx*hx / (12 * hy) + hx*x1 / (6 * hy) - hy*x1 / (3 * hx);
+
+		localMatrix[3][3] = hy / 6 + hx*hx / (4 * hy) + hx*x1 / (3 * hy) + hy*x1 / (3 * hx);
+
+		for (int i = 0; i < 4; i++)
 		{
-			localMatrix[i][j] = sreda[KE[ielem].numberField].sigma * (helpG1[i][j] * hZlocal * (1.0 + 2.0 * rz[KE[ielem].uzel[0]].r / hRlocal) +
-				helpGOseSim[i][j] * hRlocal * hRlocal / hZlocal +
-				helpG2[i][j] * 2.0 * rz[KE[ielem].uzel[0]].r * hRlocal / hZlocal) / 12.0;
+			localB[i] = 0;
+			localMatrix[i][i] *= sreda[KE[ielem].numberField].sigma;
+			for (int j = 0; j < i; j++)
+			{
+				localMatrix[i][j] *= sreda[KE[ielem].numberField].sigma;
+				localMatrix[j][i] = localMatrix[i][j];
+			}
+		}
+}
 
-			//double g = 0, m = 0;
-			//for (size_t k = 0; k < 3; k++)
-			//{
-			//	for (size_t l = 0; l < 3; l++)
-			//	{
-			//		double d_ksi_i_dr = difBasicFunc1d(i % 2, integrPoints[k])*BasicFunc1d(i / 2, integrPoints[l]);
-			//		double d_ksi_i_dz = BasicFunc1d(i % 2, integrPoints[k])*difBasicFunc1d(i / 2, integrPoints[l]);
-			//		double d_ksi_j_dr = difBasicFunc1d(j % 2, integrPoints[k])*BasicFunc1d(j / 2, integrPoints[l]);
-			//		double d_ksi_j_dz = BasicFunc1d(j % 2, integrPoints[k])*difBasicFunc1d(j / 2, integrPoints[l]);
+//void Mka2D_cylindrical::Addition(int ielem)
+//{
+//	int ibeg, iend, ind;
+//	for (int i = 0; i < 4; i++)
+//	{
+//		di[KE[ielem].uzel[i]] += localMatrix[i][i];
+//		b[KE[ielem].uzel[i]] += localB[i];
+//		for (int j = 0; j < i; j++)
+//		{
+//			for (int k = ig[KE[ielem].uzel[i]]; k < ig[KE[ielem].uzel[i] + 1]; k++)
+//			{
+//				if (jg[k] == KE[ielem].uzel[j])
+//				{
+//					ggl[k] += localMatrix[i][j];
+//					break;
+//				}
+//			}
+//		}
+//	}
+//}
 
-			//		g += sreda[KE[ielem].numberField].sigma * tauKoefs[k] * tauKoefs[l] * (rz[KE[ielem].uzel[0]].r + integrPoints[k] * hRlocal)*
-			//			(d_ksi_i_dr*d_ksi_j_dr + d_ksi_i_dz*d_ksi_j_dz);
-
-			//		//m+=
-			//	}
-			//}
-			//double oldValue = sreda[KE[ielem].numberField].sigma * (helpG1[i][j] * hZlocal * (1.0 + 2.0 * rz[KE[ielem].uzel[0]].r / hRlocal) +
-			//	helpGOseSim[i][j] * hRlocal * hRlocal / hZlocal +
-			//	helpG2[i][j] * 2.0 * rz[KE[ielem].uzel[0]].r * hRlocal / hZlocal) / 12.0;
-			//g *= hRlocal*hZlocal / 4.;
-			//localMatrix[i][j] = g;
-
-			//right part
-			//double resultRightPart = 0;
-			//for (size_t k = 0; k < 3; k++)
-			//{
-			//	for (size_t l = 0; l < 3; l++)
-			//	{
-			//		resultRightPart += BasicFunc1d(i % 3, integrPoints[k]) * BasicFunc1d(i / 3, integrPoints[l]) *
-			//			Func(Point(
-			//				xy[KE[ielem].uzel[0]].x + beta[1] * integrPoints[k] + beta[0] * integrPoints[l] + beta[4] * integrPoints[k] * integrPoints[l],
-			//				xy[KE[ielem].uzel[0]].y + beta[3] * integrPoints[k] + beta[2] * integrPoints[l] + beta[5] * integrPoints[k] * integrPoints[l])) *
-			//			tauKoefs[k] * tauKoefs[l] * J;
-			//	}
-			//}
-			//localB[i] += resultRightPart / 4. * signAlfa0;
+void Mka2D_cylindrical::AddToMatrix(int posI, int posJ, double el)
+{
+	int tmp;
+	if (posI == posJ)
+	{
+		di[posI] += el;
+		return;
+	}
+	else
+	{
+		if (posI < posJ)
+		{
+			return;
+		}
+		for (tmp = ig[posI]; tmp < ig[posI + 1]; tmp++)
+		{
+			if (jg[tmp] == posJ)
+			{
+				ggl[tmp] += el;
+				return;
+			}
 		}
 	}
 }
 
 void Mka2D_cylindrical::Addition(int ielem)
 {
-	int ibeg, iend, ind;
-	for (int i = 0; i < 4; i++)
+	int i, j;
+	for (i = 0; i < 4; i++)
 	{
-		di[KE[ielem].uzel[i]] += localMatrix[i][i];
 		b[KE[ielem].uzel[i]] += localB[i];
-		for (int j = 0; j < i; j++)
+		//todo j<=i
+		for (j = 0; j < 4; j++)
 		{
-			for (int k = ig[KE[ielem].uzel[i]]; k < ig[KE[ielem].uzel[i] + 1]; k++)
-			{
-				if (jg[k] == KE[ielem].uzel[j])
-				{
-					ggl[k] += localMatrix[i][j];
-					break;
-				}
-			}
+			AddToMatrix(KE[ielem].uzel[i], KE[ielem].uzel[j], localMatrix[i][j]);
 		}
 	}
 }
@@ -580,38 +710,45 @@ void Mka2D_cylindrical::Edge2()
 	ofstream ku2(filePrefix + "ku2.txt");
 	double h = 0.001;
 	double tetta[2];
+	double local_M_1d[2][2];
 	double dh;
-	for (int iy = 0; iy < Z.size() - 1; iy++)
-	{
-		int koef = -1;
-		int intIndexThis = indexRZ(R[0], Z[iy]);
-		int intIndexNext = indexRZ(R[0], Z[iy + 1]);
-		dh = fabs(rz[intIndexNext].z - rz[intIndexThis].z);
-		tetta[0] = koef * (analiticSolution(Point_cylindrical(rz[intIndexThis].r + h, rz[intIndexThis].z)) -
-			analiticSolution(Point_cylindrical(rz[intIndexThis].r - h, rz[intIndexThis].z))) / (2 * h);
-		tetta[1] = koef * (analiticSolution(Point_cylindrical(rz[intIndexNext].r + h, rz[intIndexNext].z)) -
-			analiticSolution(Point_cylindrical(rz[intIndexNext].r - h, rz[intIndexNext].z))) / (2 * h);
+	//for (int iy = 0; iy < Z.size() - 1; iy++)
+	//{
+	//	int koef = -1;
+	//	int intIndexThis = indexRZ(R[0], Z[iy]);
+	//	int intIndexNext = indexRZ(R[0], Z[iy + 1]);
+	//	dh = fabs(rz[intIndexNext].z - rz[intIndexThis].z);
+	//	tetta[0] = koef * (analiticSolution(Point_cylindrical(rz[intIndexThis].r + h, rz[intIndexThis].z)) -
+	//		analiticSolution(Point_cylindrical(rz[intIndexThis].r - h, rz[intIndexThis].z))) / (2 * h);
+	//	tetta[1] = koef * (analiticSolution(Point_cylindrical(rz[intIndexNext].r + h, rz[intIndexNext].z)) -
+	//		analiticSolution(Point_cylindrical(rz[intIndexNext].r - h, rz[intIndexNext].z))) / (2 * h);
 
-		//НУЛЕВЫЕ
-		tetta[0] = tetta[1] = 0;
-		b[intIndexThis] += (2 * tetta[0] + tetta[1]) * dh / 6.0;
-		b[intIndexNext] += (tetta[0] + 2 * tetta[1]) * dh / 6.0;
-	}
+	//	//НУЛЕВЫЕ
+	//	tetta[0] = tetta[1] = 0;
+	//	b[intIndexThis] += (2 * tetta[0] + tetta[1]) * dh / 6.0;
+	//	b[intIndexNext] += (tetta[0] + 2 * tetta[1]) * dh / 6.0;
+	//}
 	for (int ix = 0; ix < R.size() - 1; ix++)
 	{
 		int koef = 1;
 		int intIndexThis = indexRZ(R[ix], Z[Z.size() - 1]);
 		int intIndexNext = indexRZ(R[ix + 1], Z[Z.size() - 1]);
 		dh = fabs(rz[intIndexNext].r - rz[intIndexThis].r);
-		tetta[0] = koef * (analiticSolution(Point_cylindrical(rz[intIndexThis].r, rz[intIndexThis].z + h)) -
-			analiticSolution(Point_cylindrical(rz[intIndexThis].r, rz[intIndexThis].z - h))) / (2 * h);
-		tetta[1] = koef * (analiticSolution(Point_cylindrical(rz[intIndexNext].r, rz[intIndexNext].z + h)) -
-			analiticSolution(Point_cylindrical(rz[intIndexNext].r, rz[intIndexNext].z - h))) / (2 * h);
+		//tetta[0] = koef * (analiticSolution(Point_cylindrical(rz[intIndexThis].r, rz[intIndexThis].z + h)) -
+		//	analiticSolution(Point_cylindrical(rz[intIndexThis].r, rz[intIndexThis].z - h))) / (2 * h);
+		//tetta[1] = koef * (analiticSolution(Point_cylindrical(rz[intIndexNext].r, rz[intIndexNext].z + h)) -
+		//	analiticSolution(Point_cylindrical(rz[intIndexNext].r, rz[intIndexNext].z - h))) / (2 * h);
 
 		//НУЛЕВЫЕ
-		tetta[0] = tetta[1] = 0;
-		b[intIndexThis] += (2 * tetta[0] + tetta[1]) * dh / 6.0;
-		b[intIndexNext] += (tetta[0] + 2 * tetta[1]) * dh / 6.0;
+		local_M_1d[0][0] = dh*(dh + 4 * rz[intIndexThis].r) / 12;
+		local_M_1d[0][1] = local_M_1d[1][0] = dh*(dh + 2 * rz[intIndexThis].r) / 12;
+		local_M_1d[1][1] = dh*(3 * dh + 4 * rz[intIndexThis].r) / 12;
+		tetta[0] = tetta[1] = power;
+		double val1 = (local_M_1d[0][0] * tetta[0] + local_M_1d[0][1] * tetta[1]);
+		double val2 = (local_M_1d[0][1] * tetta[0] + local_M_1d[1][1] * tetta[1]);
+		b[intIndexThis] += val1;
+		b[intIndexNext] += val2;
+		ku2 << intIndexThis << " " << val1 << " " << intIndexNext << " " << val2 << endl;
 	}
 }
 
@@ -623,15 +760,25 @@ void Mka2D_cylindrical::GenerateMatrix()
 		CreateLocalMatrixs(ielem);
 		Addition(ielem);
 	}
-	//		PrintPlotMatrix(true);
+	//PrintPlotMatrix(true);
 	//Edge2();
-	int sourceIndex = indexRZ(koordSourceR, koordSourceZ);
-	b[sourceIndex] = power;
+	if (sourceType == 1) {
+		int sourceIndex = indexRZ(koordSourceR, koordSourceZ);
+		if (sourceIndex >= 0) {
+			testFile << "SourceType=1, point(" << rz[sourceIndex] << ",i=" << sourceIndex << ", power=" << power << endl;
+			b[sourceIndex] += power;
+		}
+	}
+	if (sourceType == 2) {
+		testFile << "SourceType=" << sourceType << ", power=" << power << endl;
+		Edge2();
+	}
 	for (size_t i = 0; i < ig[nPoints]; i++)
 	{
 		ggu[i] = ggl[i];
 	}
 	Edge1_sim();
+	//Edge1_sim_old();
 }
 
 void Mka2D_cylindrical::genNet1d(double startValue, double endValue, double startH, double koefRazriadki, vector<double>& vect)
@@ -714,6 +861,7 @@ void Mka2D_cylindrical::MultMatrixOnVector(double* in, double* out, double* diMa
 	double* out1;
 	//int countRegularNodes = xyz_points.size();
 	out1 = new double[nPoints];
+	memset(out1, 0, sizeof(double)*nPoints);
 	for (i = 0; i < nPoints; i++)
 	{
 		out1[i] = diMas[i] * in[i];
@@ -789,6 +937,90 @@ void Mka2D_cylindrical::runLOS(double* ggl, double* ggu, double* diag, int N, in
 		checkE = sqrt(ScalarMult(r, r) / ScalarMult(b, b));
 	}
 
+	//double sumPogr = 0;
+	//double sumU = 0;
+	//double correctSolution;
+	//testFile << setw(10) << "r" << setw(10) << "z" << setw(18) << "correctSolution" << setw(18) << "q" << setw(18) << "diff" << endl;
+	//for (size_t i = 0; i < nPoints; i++)
+	//{
+	//	correctSolution = analiticSolution(rz[i]);
+	//	testFile << setw(10) << rz[i].r << setw(10) << rz[i].z << setw(18) << correctSolution << setw(18) << q[i] << setw(18) << q[i] - correctSolution << endl;
+	//	//		testFile << setw(16) <<  setw(20) << q[i] << setw(20) << correctSolution << setw(20) << q[i] - correctSolution << setw(5) << i << endl;
+	//	sumPogr += (q[i] - correctSolution) * (q[i] - correctSolution);
+	//	sumU += correctSolution * correctSolution;
+	//}
+	//correctSolution = sqrt(sumPogr / sumU);
+	//testFile << setw(16) << "Отн. погрешность: " << correctSolution << endl;
+}
+
+//void Mka2D_cylindrical::LOS()
+//{
+//	int maxiter = 10000, i;
+//	double alfa, alfachisl, alfaznam, beta, betachisl, betaznam, checkE, epsMSG = 1e-16, startNeviazka;
+//	double* r = new double[nPoints];
+//	double* s = new double[nPoints];
+//	double* z = new double[nPoints];
+//	double* p = new double[nPoints];
+//	q = new double[nPoints];
+//	double* rout = new double[nPoints];
+//	for (i = 0; i < nPoints; i++)
+//	{
+//		s[i] = rout[i] = r[i] = q[i] = z[i] = p[i] = 0;
+//	}
+//	MultMatrixOnVector(q, r);
+//	for (i = 0; i < nPoints; i++)
+//	{
+//		r[i] = b[i] - r[i];
+//		z[i] = r[i];
+//	}
+//	MultMatrixOnVector(z, p);
+//	checkE = sqrt(ScalarMult(r, r) / ScalarMult(b, b));
+//	//startNeviazka = checkE = ScalarMult(r, r);
+//	for (int iter = 0; iter < maxiter && checkE >= epsMSG; iter++)
+//	{
+//		alfachisl = ScalarMult(p, r);
+//		alfaznam = ScalarMult(p, p);
+//		alfa = alfachisl / alfaznam;
+//		for (i = 0; i < nPoints; i++)
+//		{
+//			q[i] = q[i] + alfa * z[i];
+//			r[i] = r[i] - alfa * p[i];
+//		}
+//		MultMatrixOnVector(r, rout);
+//		betachisl = ScalarMult(p, rout);
+//		betaznam = ScalarMult(p, p);
+//		beta = -betachisl / betaznam;
+//		for (i = 0; i < nPoints; i++)
+//		{
+//			z[i] = r[i] + beta * z[i];
+//			p[i] = rout[i] + beta * p[i];
+//		}
+//		checkE = sqrt(ScalarMult(r, r) / ScalarMult(b, b));
+//	}
+//		//double sumPogr = 0;
+//		//double sumU = 0;
+//		//double correctSolution;
+//		//testFile << setw(10) << "r" << setw(10) << "z" << setw(18) << "correctSolution" << setw(18) << "q" << setw(18) << "diff" << endl;
+//		//for (size_t i = 0; i < nPoints; i++)
+//		//{
+//		//	correctSolution = analiticSolution(rz[i]);
+//		//	testFile << setw(10) << rz[i].r << setw(10) << rz[i].z << setw(18) << correctSolution << setw(18) << q[i] << setw(18) << q[i] - correctSolution << endl;
+//		//	//		testFile << setw(16) <<  setw(20) << q[i] << setw(20) << correctSolution << setw(20) << q[i] - correctSolution << setw(5) << i << endl;
+//		//	sumPogr += (q[i] - correctSolution) * (q[i] - correctSolution);
+//		//	sumU += correctSolution * correctSolution;
+//		//}
+//		//correctSolution = sqrt(sumPogr / sumU);
+//		//testFile << setw(16) <<  "Отн. погрешность: " << correctSolution << endl;
+//}
+
+void Mka2D_cylindrical::directSolveStraightTask()
+{
+	GeneratePortrait();
+	GenerateMatrix();
+	//runLOS(ggl, ggu, di, nPoints, ig, jg, b, q);
+	LosLU(ggl, ggu, di, nPoints, ig, jg, b, q);
+	//LOS(nPoints, ig, jg, ggl, ggu, di, b, q, 1e-16, 10000);
+
 	double sumPogr = 0;
 	double sumU = 0;
 	double correctSolution;
@@ -803,73 +1035,6 @@ void Mka2D_cylindrical::runLOS(double* ggl, double* ggu, double* diag, int N, in
 	}
 	correctSolution = sqrt(sumPogr / sumU);
 	testFile << setw(16) << "Отн. погрешность: " << correctSolution << endl;
-}
-
-void Mka2D_cylindrical::LOS()
-{
-	int maxiter = 10000, i;
-	double alfa, alfachisl, alfaznam, beta, betachisl, betaznam, checkE, epsMSG = 1e-16, startNeviazka;
-	double* r = new double[nPoints];
-	double* s = new double[nPoints];
-	double* z = new double[nPoints];
-	double* p = new double[nPoints];
-	q = new double[nPoints];
-	double* rout = new double[nPoints];
-	for (i = 0; i < nPoints; i++)
-	{
-		s[i] = rout[i] = r[i] = q[i] = z[i] = p[i] = 0;
-	}
-	MultMatrixOnVector(q, r);
-	for (i = 0; i < nPoints; i++)
-	{
-		r[i] = b[i] - r[i];
-		z[i] = r[i];
-	}
-	MultMatrixOnVector(z, p);
-	checkE = sqrt(ScalarMult(r, r) / ScalarMult(b, b));
-	//startNeviazka = checkE = ScalarMult(r, r);
-	for (int iter = 0; iter < maxiter && checkE >= epsMSG; iter++)
-	{
-		alfachisl = ScalarMult(p, r);
-		alfaznam = ScalarMult(p, p);
-		alfa = alfachisl / alfaznam;
-		for (i = 0; i < nPoints; i++)
-		{
-			q[i] = q[i] + alfa * z[i];
-			r[i] = r[i] - alfa * p[i];
-		}
-		MultMatrixOnVector(r, rout);
-		betachisl = ScalarMult(p, rout);
-		betaznam = ScalarMult(p, p);
-		beta = -betachisl / betaznam;
-		for (i = 0; i < nPoints; i++)
-		{
-			z[i] = r[i] + beta * z[i];
-			p[i] = rout[i] + beta * p[i];
-		}
-		checkE = sqrt(ScalarMult(r, r) / ScalarMult(b, b));
-	}
-		double sumPogr = 0;
-		double sumU = 0;
-		double correctSolution;
-		testFile << setw(10) << "r" << setw(10) << "z" << setw(18) << "correctSolution" << setw(18) << "q" << setw(18) << "diff" << endl;
-		for (size_t i = 0; i < nPoints; i++)
-		{
-			correctSolution = analiticSolution(rz[i]);
-			testFile << setw(10) << rz[i].r << setw(10) << rz[i].z << setw(18) << correctSolution << setw(18) << q[i] << setw(18) << q[i] - correctSolution << endl;
-			//		testFile << setw(16) <<  setw(20) << q[i] << setw(20) << correctSolution << setw(20) << q[i] - correctSolution << setw(5) << i << endl;
-			sumPogr += (q[i] - correctSolution) * (q[i] - correctSolution);
-			sumU += correctSolution * correctSolution;
-		}
-		correctSolution = sqrt(sumPogr / sumU);
-		testFile << setw(16) <<  "Отн. погрешность: " << correctSolution << endl;
-}
-
-void Mka2D_cylindrical::directSolveStraightTask()
-{
-	GeneratePortrait();
-	GenerateMatrix();
-	runLOS(ggl, ggu, di, nPoints, ig, jg, b, q);
 }
 
 int Mka2D_cylindrical::findKE(Point_cylindrical point)

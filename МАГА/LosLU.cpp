@@ -1,5 +1,8 @@
+#pragma once
 #include <math.h>
-#include <iostream>
+#include "MkaUtils.h"
+
+using namespace std;
 
 void LUsq(double* ggl, double* ggu, double* diag, int N, int* ig, int* jg, double* D, double* L, double* U)
 {
@@ -94,6 +97,192 @@ void multU(double* a1, int N, int* ig, int* jg, double* U, double* D)
 			a1[jg[j]] -= U[j] * a1[i];
 		}
 	}
+}
+
+int LOS(int n, int *ig, int *jg,
+	double *ggl, double *ggu, double *di, double *f,
+	double *x, double eps, int maxiter)
+{
+	int iter = 0;
+	int i;
+	double g, g1, mu, alpha, betta;
+	double nu;
+	double *r = NULL, *p = NULL, *h = NULL, *s = NULL, *z = NULL, *tmp = NULL, *w = NULL;
+	double r_old, p_scal;
+
+	__time64_t time_total, time_beg, time_end; // для засечки времени
+	__time64_t timestruct;
+
+	_time64(&timestruct);
+	time_beg = timestruct;
+
+	ofstream logfile("solver.txt");
+	logfile.open("log.txt");
+	logfile << "LOS..." << endl;
+
+	//// факторизованнные диагональные блоки
+	//double *df = NULL;     // диагональ факторизованных диагональных блоков 
+	//double *ggl_f = NULL;  // внедиагональные эл-ты факторизованных диагональных блоков (нижний треугольник)
+	//double *ggu_f = NULL;  // внедиагональные эл-ты факторизованных диагональных блоков (верхний треугольник)
+
+	r = new double[n];
+	p = new double[n];
+	s = new double[n];
+	z = new double[n];
+	tmp = new double[n];
+	w = new double[n];
+	h = new double[n];
+
+	//double *s_smooth = new double[n];
+	//double *y = new double[n];
+
+	//df = new double[n];
+	//ggl_f = new double[n];
+	//ggu_f = new double[n];
+
+	//// выполняем факторизацию диагональных блоков
+	//Build_block_diag_preconditioner(nb, idi, di_block, df, ggl_f, ggu_f);
+
+	// начальное приближение
+	for (i = 0; i < n; i++)
+	{
+		r[i] = h[i] = s[i] = z[i] = x[i] = p[i] = 0.0;
+	}
+
+	//	вычисление начальной невязки
+	mult(r, x, ggl, ggu, di, n, ig, jg);
+
+	for (i = 0; i < n; i++)
+	{
+		r[i] = f[i] - r[i];
+		p[i] = r[i];
+	}
+	mult(p, z, ggl, ggu, di, n, ig, jg);
+
+	betta = 0;
+
+	r_old = scalarOfVectors(r, r, n);
+
+	//for (size_t i = 0; i < n; i++)
+	//{
+	//	s_smooth[i] = r[i];
+	//	y[i] = x[i];
+	//	p[i] = s[i];
+	//}
+	//s_old = scalarOfVectors(s_smooth, s_smooth, n);
+
+	if (r_old < 1e-30)
+	{
+		logfile << "x0 is solution" << endl;
+		//cout << "x0 is solution" << endl;
+		goto COCG_EXIT;
+	}
+
+	// главный цикл
+	for (iter = 1; iter <= maxiter; iter++)
+	{
+		g = scalarOfVectors(p, r, n);
+		p_scal = scalarOfVectors(p, p, n);
+		alpha = g / p_scal;
+
+		// x = x + alpha*p
+		for (i = 0; i < n; i++)
+			x[i] += alpha*z[i];
+
+		// r = r - alpha*u
+		for (i = 0; i < n; i++)
+			r[i] -= alpha*p[i];
+
+		mult(tmp, r, ggl, ggu, di, n, ig, jg);
+
+		g1 = scalarOfVectors(p, tmp, n);
+		betta = -g1 / p_scal;
+
+		// p = s + betta*p
+		for (i = 0; i < n; i++)
+			z[i] = r[i] + betta*z[i];
+
+		// z = tmp + betta*z
+		for (i = 0; i < n; i++)
+			p[i] = tmp[i] + betta*p[i];
+
+		if (fabs(p_scal) < 1e-30 && fabs(p_scal) < 1e-30)
+		{
+			//cout << "mu=0, LOS failed" << endl;
+			logfile << "mu=0, LOS failed" << endl;
+			goto COCG_EXIT;
+		}
+
+
+		//// nu
+
+		//double *rs = new double[n];
+		//for (size_t i = 0; i < n; i++)
+		//{
+		//	rs[i] = r[i] - s_smooth[i];
+		//}
+
+		//nu = Scal(s_smooth, rs, n) / Scal(rs, rs, n) * (-1.0);
+		//if (nu < 0.0)
+		//	nu = 0.0;
+		//if (nu > 1.0)
+		//	nu = 1.0;
+
+		//for (i = 0; i < n; i++)
+		//{
+		//	y[i] = (1.0 - nu) * y[i] + nu * x[i];
+		//	s_smooth[i] = (1.0 - nu) * s_smooth[i] + nu * r[i];
+		//}
+
+
+		// вычисляем норму невязки
+		//r = Norm_Euclid(r, n);
+		double s_norm = scalarOfVectors(r, r, n);
+
+		//cout << iter << "\t" << scientific << r / p_old << endl;
+		logfile << iter << "\t" << scientific << s_norm / r_old << endl;
+		//logfile << iter << "\t" << scientific << r / p_old << endl;
+
+
+		// выход по достижении малости невязки
+		//if (r / p_old < eps)
+		//	goto COCG_EXIT;
+		if (s_norm / r_old < eps)
+			goto COCG_EXIT;
+		//p_old = r;
+
+
+		if (fabs(g1) < 1e-30 && fabs(g1) < 1e-30)
+		{
+			//cout << "g=0, LOS failed" << endl;
+			logfile << "g=0, LOS failed" << endl;
+			goto COCG_EXIT;
+		}
+		//if (rs) { delete[] rs; rs = NULL; }
+	}
+
+COCG_EXIT:
+
+	cout << "iter: " << iter << endl;
+	if (r) { delete[] r; r = NULL; }
+	if (p) { delete[] p; p = NULL; }
+	//if (s_smooth) { delete[] s_smooth; s_smooth = NULL; }
+	if (h) { delete[] h; h = NULL; }
+	if (s) { delete[] s; s = NULL; }
+	//if (y) { delete[] y; y = NULL; }
+
+	//if (df) { delete[] df; df = NULL; }
+	//if (ggl_f) { delete[] ggl_f; ggl_f = NULL; }
+	//if (ggu_f) { delete[] ggu_f; ggu_f = NULL; }
+
+	_time64(&timestruct);
+	time_end = timestruct;
+	time_total = time_end - time_beg;
+	logfile << "Time: " << time_total << endl;
+	//	Write_kit("kit", r / p_old, eps, iter, time_total);
+	logfile.close();
+
+	return iter;
 }
 
 int LosLU(double* ggl, double* ggu, double* diag, int N, int* ig, int* jg, double* f, double* q)

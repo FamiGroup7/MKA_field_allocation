@@ -1,8 +1,14 @@
-Construct xyz                           00:00M858
-Construct nvtr                          00:01M790
-Generate T matrix                       00:00M004
-Generate portrait                       00:05M585
-Generate global matrix                  00:01M222
+Construct xyz                           00:00M993
+Construct nvtr                          00:02M360
+Generate T matrix                       00:00M002
+Generate portrait                       00:05M329
+Generate global matrix                  00:01M519
 Apply boundaries 2                      00:00M000
 Apply boundaries 3                      00:00M000
-Apply boundaries 1                      00:01M612
+Apply boundaries 1                      00:02M189
+Total program duration                  00:15M727
+
+KE number = 15548
+dim(A) = 17496
+Nodes = 17496
+Terminal nodes = 0
