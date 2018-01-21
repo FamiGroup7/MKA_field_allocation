@@ -16,8 +16,7 @@
 #include <string>  // string
 
 const double EPS = 1e-15;
-
-#define _USE_MATH_DEFINES
+#define PI 3.14159265358979323846
 
 class MkaUtils
 {

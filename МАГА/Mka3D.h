@@ -3,15 +3,12 @@
 #include "Point.h"
 #include "Edge.h"
 #include "Qube.h"
-//#include "LosLU.cpp"
-#define HELP_STRUCT_KE_MAX_SIZE 50
+#include "ke_tree.h"
 
 using namespace std;
 
 class Mka3D {
 public:
-	Mka3D(bool netOptimization, bool debugMod, bool optOnlyOnOneDirection, bool maxOptimization,
-		bool optX, bool optY, bool optZ);
 	Mka3D(string filePrefix, bool netOptimization, bool debugMod, bool optOnlyOnOneDirection, bool maxOptimization,
 		bool optX, bool optY, bool optZ);
 	~Mka3D();
@@ -37,7 +34,6 @@ public:
 	void PrintPlotMatrix(bool flag_simmeric);
 	void runLOS(double* ggl, double* ggu, double* diag, int N, int* ig, int* jg, double* f, double* q);
 
-
 	double *di, *b, *q, *ggl, *ggu;
 	int *ig, *jg;
 	vector<Point> xyz_points;
@@ -46,226 +42,13 @@ public:
 	int upKU, downKU, leftKU, rightKU, foreKU, behindKU;
 	int sourceType;
 	double power = 0;
-
-	struct nvtr
-	{
-		int uzel[8], numberField;
-
-		nvtr(int number_field, int newNodes[8])
-			: numberField(number_field)
-		{
-			memcpy(uzel, newNodes, 8);
-		}
-
-		nvtr()
-		{
-		}
-	};
-
-	struct field
-	{
-		double x1, x2, y1, y2, z1, z2, lambda, gamma;
-
-		field(double x1, double x2, double y1, double y2, double z1, double z2, double lambda, double gamma)
-			: x1(x1),
-			x2(x2),
-			y1(y1),
-			y2(y2),
-			z1(z1),
-			z2(z2),
-			lambda(lambda),
-			gamma(gamma)
-		{
-		}
-
-		field()
-		{
-		}
-	};
+	vector<int> edge1Nodes;
 
 	vector<nvtr> KE;
 	vector<field> sreda;
 	vector<field> notOptimizedFields;
 
-	struct helpSearchKE {
-		int delim;
-		double leftOuter, rightOuter, upOuter, downOuter, foreOuter, backOuter;
-		vector<int> elements;
-		helpSearchKE*child1 = NULL, *child2 = NULL;
-		field info;
-		vector<Point>* points;
-		vector<nvtr>* kes;
-
-		helpSearchKE() {}
-
-		void init(double x1, double x2, double y1, double y2, double z1, double z2, vector<Point>*points, vector<nvtr>* kes) {
-			this->delim = 0;
-			this->points = points;
-			this->kes = kes;
-			this->info = field(x1, x2, y1, y2, z1, z2, -1, -1);
-			leftOuter = x1; rightOuter = x2;
-			foreOuter = y1; backOuter = y2;
-			downOuter = z1; upOuter = z2;
-		}
-
-		void init(int parentDelim, helpSearchKE &parent, bool first) {
-			this->info.x1 = parent.info.x1;
-			this->info.x2 = parent.info.x2;
-			this->info.y1 = parent.info.y1;
-			this->info.y2 = parent.info.y2;
-			this->info.z1 = parent.info.z1;
-			this->info.z2 = parent.info.z2;
-			this->points = parent.points;
-			this->kes = parent.kes;
-			switch (parentDelim)
-			{
-			case 0: delim = 1;
-				first ? this->info.x2 = (parent.info.x1 + parent.info.x2) / 2.0 :
-					this->info.x1 = (parent.info.x1 + parent.info.x2) / 2.0;
-				break;
-			case 1: delim = 2;
-				first ? this->info.y2 = (parent.info.y1 + parent.info.y2) / 2.0 :
-					this->info.y1 = (parent.info.y1 + parent.info.y2) / 2.0;
-				break;;
-			case 2: delim = 0;
-				first ? this->info.z2 = (parent.info.z1 + parent.info.z2) / 2.0 :
-					this->info.z1 = (parent.info.z1 + parent.info.z2) / 2.0;
-				break;;
-			default:
-				throw new exception("error construct help struct for ke");
-			}
-			leftOuter = info.x1; rightOuter = info.x2;
-			foreOuter = info.y1; backOuter = info.y2;
-			downOuter = info.z1; upOuter = info.z2;
-		}
-
-		Point center(int iKe) {
-			double xCenter, yCenter, zCenter;
-			xCenter = points->at(kes->at(iKe).uzel[0]).x + points->at(kes->at(iKe).uzel[1]).x;
-			yCenter = points->at(kes->at(iKe).uzel[0]).y + points->at(kes->at(iKe).uzel[2]).y;
-			zCenter = points->at(kes->at(iKe).uzel[0]).z + points->at(kes->at(iKe).uzel[4]).z;
-			return Point(xCenter / 2, yCenter / 2, zCenter / 2);
-		}
-
-		bool contains(Point point) {
-			return
-				/*MkaUtils::compare(point.x, points->at(kes->at(var).uzel[0]).x) <= 0 && MkaUtils::compare(point.x, points->at(kes->at(var).uzel[7]).x) >= 0 &&
-				MkaUtils::compare(point.y, points->at(kes->at(var).uzel[0]).y) <= 0 && MkaUtils::compare(point.y, points->at(kes->at(var).uzel[7]).y) >= 0 &&
-				MkaUtils::compare(point.z, points->at(kes->at(var).uzel[0]).z) <= 0 && MkaUtils::compare(point.z, points->at(kes->at(var).uzel[7]).z) >= 0*/
-				point.x >= info.x1 && point.x <= info.x2 &&
-				point.y >= info.y1 && point.y <= info.y2 &&
-				point.z >= info.z1 && point.z <= info.z2;
-		}
-
-		bool containsInOuter(Point point) {
-			return
-				/*MkaUtils::compare(point.x, points->at(kes->at(var).uzel[0]).x) <= 0 && MkaUtils::compare(point.x, points->at(kes->at(var).uzel[7]).x) >= 0 &&
-				MkaUtils::compare(point.y, points->at(kes->at(var).uzel[0]).y) <= 0 && MkaUtils::compare(point.y, points->at(kes->at(var).uzel[7]).y) >= 0 &&
-				MkaUtils::compare(point.z, points->at(kes->at(var).uzel[0]).z) <= 0 && MkaUtils::compare(point.z, points->at(kes->at(var).uzel[7]).z) >= 0*/
-				point.x >= leftOuter && point.x <= rightOuter &&
-				point.y >= foreOuter && point.y <= backOuter &&
-				point.z >= downOuter && point.z <= upOuter;
-		}
-
-		void addKe(int iKe) {
-			addKe(iKe, center(iKe));
-		}
-
-		void expandOuter(double probablyNewOuter, double&outer, int comparison) {
-			if (probablyNewOuter*comparison < outer*comparison) {
-				outer = probablyNewOuter;
-			}
-		}
-
-		void addKe(int iKe, Point point) {
-			if (child1 == NULL && child2 == NULL) {
-				if (!contains(point)) {
-					throw new exception("dsadf");
-				}
-				elements.push_back(iKe);
-				expandOuter(points->at(kes->at(iKe).uzel[0]).x, leftOuter, 1);
-				expandOuter(points->at(kes->at(iKe).uzel[0]).y, foreOuter, 1);
-				expandOuter(points->at(kes->at(iKe).uzel[0]).z, downOuter, 1);
-				expandOuter(points->at(kes->at(iKe).uzel[7]).x, rightOuter, -1);
-				expandOuter(points->at(kes->at(iKe).uzel[7]).y, backOuter, -1);
-				expandOuter(points->at(kes->at(iKe).uzel[7]).z, upOuter, -1);
-				if (elements.size() >= HELP_STRUCT_KE_MAX_SIZE) {
-					child1 = new helpSearchKE();
-					child2 = new helpSearchKE();
-					child1->init(delim, *this, true);
-					child2->init(delim, *this, false);
-					for each (int var in elements)
-					{
-						addKe(var);
-					}
-					elements.clear();
-				}
-			}
-			else {
-				if (child1->contains(point)) {
-					child1->addKe(iKe, point);
-				}
-				else if (child2->contains(point)) {
-					child2->addKe(iKe, point);
-				}
-				else throw new exception("cannot add iKe");
-			}
-		}
-
-		int getKe(Point point) {
-			if (containsInOuter(point)) {
-				if (child1 == NULL && child2 == NULL) {
-					for each (int var in elements)
-					{
-						Point leftDown = points->at(kes->at(var).uzel[0]);
-						Point rightUp = points->at(kes->at(var).uzel[7]);
-						if (
-							point.x >= leftDown.x  && point.x <= rightUp.x &&
-							point.y >= leftDown.y && point.y <= rightUp.y &&
-							point.z >= leftDown.z && point.z <= rightUp.z) {
-							return var;
-						}
-					}
-					return -1;
-				}
-				int result = -1;
-				if (child1->containsInOuter(point)) {
-					result = child1->getKe(point);
-					if (result == -1) {
-						result = child2->getKe(point);
-					}
-					return result;
-				}
-				else if (child2->containsInOuter(point)) {
-					result = child2->getKe(point);
-					if (result == -1) {
-						result = child1->getKe(point);
-					}
-					return result;
-				}
-				//else
-				//	throw new exception("IT IS IMPOSIBLE!");
-				return result;
-			}
-			return -1;
-		}
-	}*keBiTree;
-
-	struct locateOfPoint
-	{
-		int i, j, k;
-
-		locateOfPoint(int i, int j, int k)
-			: i(i),
-			j(j),
-			k(k)
-		{
-		}
-
-		locateOfPoint() : i(0), j(0), k(0)
-		{
-		}
-	};
+	ke_tree*keBiTree;
 
 	struct neighbor {
 		int index;
@@ -298,6 +81,7 @@ public:
 		int nodes[4];
 		int iKe;
 	};
+	double koordSourceX, koordSourceY, koordSourceZ;
 private:
 	string filePrefix;
 
@@ -336,7 +120,6 @@ private:
 	double* ggT;
 	multimap<Point, byte> termNodeOnEdge;
 	double leftX, rightX, leftY, rightY, leftZ, rightZ;
-	double koordSourceX, koordSourceY, koordSourceZ;
 	double *xNet, *yNet, *zNet;
 	int nX, nY, nZ;
 	char*** matrixNode;

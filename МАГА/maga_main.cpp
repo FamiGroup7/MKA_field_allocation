@@ -1,5 +1,6 @@
 #include "Mka3D.h"
 #include "Mka2D_cylindrical.h"
+#include "FieldAllocation.h"
 
 ofstream logger("resources_field_allocation/log.txt");
 
@@ -106,9 +107,10 @@ void output_slice(const string & tecplot_filename, Mka3D &taskCheck, double*q0, 
 		}
 	}
 
-	tecplot_file << "v1;v2;u0;u_plus;u_correct" << endl;
+	tecplot_file << "v1;v2;u0;u_plus;u_correct;u_correct-(u0+u_plus)" << endl;
 	for (size_t i = 0; i < data.size(); i++)
-		tecplot_file << data[i].v1 << ';' << data[i].v2 << ';' << data[i].u0 << ';' << data[i].u_plus << ';' << data[i].u_correct << endl;;
+		tecplot_file << data[i].v1 << ';' << data[i].v2 << ';' << data[i].u0 << ';' << data[i].u_plus 
+		<< ';' << data[i].u_correct << ';' << data[i].u_correct - (data[i].u0 + data[i].u_plus) << endl;
 
 	tecplot_file << "\n";
 	tecplot_file.flush();
@@ -343,53 +345,90 @@ void fieldAllocation(double lambda0, double*q0, Mka3D&simple) {
 	LosLU(simple.ggl, simple.ggu, simple.di, simple.countRegularNodes, simple.ig, simple.jg, b_plus, simple.q);
 }
 
-////without 2d
+double*analitic_u0(double power, Point source, double lambda, Mka3D&net) {
+	double koef = power / (2 * PI/**lambda*/);
+	double *q0 = new double[net.countRegularNodes];
+	for (size_t i = 0; i < net.countRegularNodes; i++)
+	{
+		q0[i] = koef / (sqrt(
+			(source.x - net.xyz_points[i].x)*(source.x - net.xyz_points[i].x) +
+			(source.y - net.xyz_points[i].y)*(source.y - net.xyz_points[i].y) +
+			(source.z - net.xyz_points[i].z)*(source.z - net.xyz_points[i].z)
+		));
+	}
+	return q0;
+}
+
+////Проверка решения 2д и однородной 3д
+
 //int main(int argc, char* argv[])
 //{
 //	auto start = std::chrono::system_clock::now();
 //	setlocale(LC_ALL, "rus");
 //
 //	////ahTUNG!
-//	double lambda0 = 1;
+//	double lambda0 = 0.1;
+//	double power = 0.1;
+//	Mka2D_cylindrical task2D("resources_field_allocation/2D/", false, true, false, true);
+//	task2D.startFull2dProcess();
+//
+//	Mka3D task_instead2D("resources_field_allocation/3D/", false, false, true, false,
+//		true, true, true);
+//	task_instead2D.buildNet("sreda.txt", "sourceLocate.txt");
+//	task_instead2D.build_xyz_nvtr_portratin_Abqx();
+//	task_instead2D.generateGlobalMatrix(lambda0);
+//	LosLU(task_instead2D.ggl, task_instead2D.ggu, task_instead2D.di, task_instead2D.countRegularNodes,
+//		task_instead2D.ig, task_instead2D.jg, task_instead2D.b, task_instead2D.q);
+//
+//	double *q0_2D = map2dSolutionToNet(task2D, task_instead2D);
+//	double *q0 = analitic_u0(power, Point(0, 0, 0), lambda0, task_instead2D);
+//	logger << "q0_2D[i]" << "\t\t\t" << "q0" << endl;
+//	for (int i = 0; i < task_instead2D.countRegularNodes; i++)
+//	{
+//		logger << q0_2D[i] << "\t\t\t" << q0[i] << endl;
+//	}
+//
+//	output_slice("output/sliceZ-450_Y0.csv", task_instead2D, q0_2D, 'Z', -45, 'X', 0, 60.0, 150, 'Y', 0.0, 0.0, 1);
+//	output_slice("output/sliceZ-450_Y450.csv", task_instead2D, q0_2D, 'Z', -45, 'X', 0, 60.0, 150, 'Y', 45.0, 45.0, 1);
+//}
+
+////without 2d
+
+//int main(int argc, char* argv[])
+//{
+//	auto start = std::chrono::system_clock::now();
+//	setlocale(LC_ALL, "rus");
+//
+//	////ahTUNG!
+//	double lambda0 = 0.1;
 //	Mka3D task_instead2D("resources_field_allocation/3D/", false, true, true, false,
 //		true, true, true);
 //	task_instead2D.buildNet("sreda.txt", "sourceLocate.txt");
 //	task_instead2D.build_xyz_nvtr_portratin_Abqx();
 //	task_instead2D.generateGlobalMatrix(lambda0);
-//	LosLU(task_instead2D.ggl, task_instead2D.ggu, task_instead2D.di, task_instead2D.countRegularNodes, 
+//	LosLU(task_instead2D.ggl, task_instead2D.ggu, task_instead2D.di, task_instead2D.countRegularNodes,
 //		task_instead2D.ig, task_instead2D.jg, task_instead2D.b, task_instead2D.q);
-//	Mka3D task("resources_field_allocation/3D/", false, false, true, false,
-//		true, true, true);
-//	Mka3D taskCheck("resources_field_allocation/3D_check/", false, false, true, false,
-//		true, true, true);
 //
-//	task.buildNet("sreda.txt", "sourceLocate.txt");
-//	task.build_xyz_nvtr_portratin_Abqx();
-//
-//	double*q0 = task_instead2D.q;
-//	fieldAllocation(lambda0, q0, task);
+//	double*q0 = new double[task_instead2D.countRegularNodes];
+//	memcpy(q0, task_instead2D.q, sizeof(double)*task_instead2D.countRegularNodes);
+//	fieldAllocation(lambda0, q0, task_instead2D);
 //
 //	////check
+//	Mka3D taskCheck("resources_field_allocation/3D_check/", false, false, true, false,
+//		true, true, true);
 //	taskCheck.startFullProcess();
-//	double * q_check = new double[task.countRegularNodes];
-//	for (int i = 0; i < task.countRegularNodes; i++)
+//	double * q_check = new double[task_instead2D.countRegularNodes];
+//	for (int i = 0; i < task_instead2D.countRegularNodes; i++)
 //	{
-//		Point target = task.xyz_points[i];
+//		Point target = task_instead2D.xyz_points[i];
 //		int iKe_checkNet = taskCheck.findKE(target);
 //		double solution = 0;
 //		if (iKe_checkNet >= 0) {
 //			solution = taskCheck.solutionInPoint(iKe_checkNet, target);
 //		}
 //		else {
+//			iKe_checkNet = taskCheck.findKE(target);
 //			i = i;
-//			int iKe = task.findKE(target);
-//			if (iKe < 0) {
-//				i = i;
-//			}
-//			else {
-//				double val = task.solutionInPoint(iKe, target);
-//				i = i;
-//			}
 //		}
 //
 //		q_check[i] = solution;
@@ -402,14 +441,14 @@ void fieldAllocation(double lambda0, double*q0, Mka3D&simple) {
 //	outSolutionOnUpFace << "x" << ';' << "q0" << ';' << "task.q+" << ';' << "q_sum" << ';' << "q3D" << endl;
 //	double diff = 0, accurate = 0;
 //	char buff[100];
-//	for (int i = 0; i < task.countRegularNodes; i++) {
+//	for (int i = 0; i < task_instead2D.countRegularNodes; i++) {
 //		accurate += q_check[i] * q_check[i];
-//		double sum = q0[i] + task.q[i];
-//		logger << setw(20) << q0[i] << setw(20) << task.q[i] << setw(20) << sum << setw(20) << q_check[i] << setw(20) << q_check[i] - sum << setw(20) << task.xyz_points[i].x << setw(20) << task.xyz_points[i].y << setw(20) << task.xyz_points[i].z << endl;
-//		outFIleCsv << q0[i] << ';' << task.q[i] << ';' << sum << ';' << q_check[i] << ';' << q_check[i] - sum << endl;
+//		double sum = q0[i] + task_instead2D.q[i];
+//		logger << setw(20) << q0[i] << setw(20) << task_instead2D.q[i] << setw(20) << sum << setw(20) << q_check[i] << setw(20) << q_check[i] - sum << setw(20) << task_instead2D.xyz_points[i].x << setw(20) << task_instead2D.xyz_points[i].y << setw(20) << task_instead2D.xyz_points[i].z << endl;
+//		outFIleCsv << q0[i] << ';' << task_instead2D.q[i] << ';' << sum << ';' << q_check[i] << ';' << q_check[i] - sum << endl;
 //		diff += (sum - q_check[i])*(sum - q_check[i]);
-//		if (MkaUtils::equals(task.xyz_points[i].y, 0) && MkaUtils::equals(task.xyz_points[i].z, 0)) {
-//			snprintf(buff, sizeof(buff), "%e;%e;%e;%e;%e", task.xyz_points[i].x, q0[i], task.q[i], sum, q_check[i]);
+//		if (MkaUtils::equals(task_instead2D.xyz_points[i].y, 0) && MkaUtils::equals(task_instead2D.xyz_points[i].z, 0)) {
+//			snprintf(buff, sizeof(buff), "%e;%e;%e;%e;%e", task_instead2D.xyz_points[i].x, q0[i], task_instead2D.q[i], sum, q_check[i]);
 //			outSolutionOnUpFace << buff << endl;
 //		}
 //	}
@@ -418,56 +457,11 @@ void fieldAllocation(double lambda0, double*q0, Mka3D&simple) {
 //	logger << setw(40) << std::left << "execution time" <<
 //		MkaUtils::formattingTime(std::chrono::system_clock::time_point(std::chrono::system_clock::now() - start)) << endl;
 //
-//	output_slice("output/sliceZ-450_Y0.csv", taskCheck, q0, task, 'Z', -450, 'X', 0, 600.0, 150, 'Y', 0.0, 0.0, 1);
-//	output_slice("output/sliceZ-450_Y450.csv", taskCheck, q0, task, 'Z', -450, 'X', 0, 600.0, 150, 'Y', 450.0, 450.0, 1);
+//	output_slice("output/sliceZ-450_Y0.csv", taskCheck, q0, task_instead2D, 'Z', -45, 'X', 0, 60.0, 150, 'Y', 0.0, 0.0, 1);
+//	output_slice("output/sliceZ-450_Y450.csv", taskCheck, q0, task_instead2D, 'Z', -45, 'X', 0, 60.0, 150, 'Y', 45.0, 45.0, 1);
 //}
 
 //check themselfs
-int main(int argc, char* argv[])
-{
-	auto start = std::chrono::system_clock::now();
-	setlocale(LC_ALL, "rus");
-
-	//ahTUNG!
-	double lambda0 = 1;
-	Mka3D task("resources_field_allocation/3D/", false, false, true, false,
-		true, true, true);
-	Mka3D taskCheck("resources_field_allocation/3D/", false, false, true, false,
-		true, true, true);
-
-	task.startFullProcess();
-	taskCheck.startFullProcess();
-
-	double * q_check = new double[task.countRegularNodes];
-	for (int i = 0; i < task.countRegularNodes; i++)
-	{
-		Point target = task.xyz_points[i];
-		int iKe_checkNet = taskCheck.findKE(target);
-		double solution = 0;
-		if (iKe_checkNet >= 0) {
-			solution = taskCheck.solutionInPoint(iKe_checkNet, target);
-		}
-		else {
-			i = i;
-			int iKe = task.findKE(target);
-			if (iKe < 0) {
-				i = i;
-			}
-			else {
-				double val = task.solutionInPoint(iKe, target);
-				i = i;
-			}
-		}
-
-		q_check[i] = solution;
-	}
-
-	logger << setw(40) << std::left << "execution time" <<
-		MkaUtils::formattingTime(std::chrono::system_clock::time_point(std::chrono::system_clock::now() - start)) << endl;
-
-	output_slice("output/sliceZ-450_Y0.csv", taskCheck, task.q, 'Z', -450, 'X', 0, 600.0, 150, 'Y', 0.0, 0.0, 1);
-	output_slice("output/sliceZ-450_Y450.csv", taskCheck, task.q, 'Z', -450, 'X', 0, 600.0, 150, 'Y', 450.0, 450.0, 1);
-}
 
 //int main(int argc, char* argv[])
 //{
@@ -476,6 +470,49 @@ int main(int argc, char* argv[])
 //
 //	//ahTUNG!
 //	double lambda0 = 1;
+//	Mka3D task("resources_field_allocation/3D/", false, false, true, false,
+//		true, true, true);
+//	Mka3D taskCheck("resources_field_allocation/3D_check/", false, false, true, false,
+//		true, true, true);
+//
+//	task.startFullProcess();
+//	taskCheck.startFullProcess();
+//
+//	double * q_check = new double[task.countRegularNodes];
+//	for (int i = 0; i < task.countRegularNodes; i++)
+//	{
+//		Point target = task.xyz_points[i];
+//		double q_task_target = task.q[i];
+//
+//		int iKe_checkNet = taskCheck.findKE(target);
+//		double solution = 0;
+//		if (iKe_checkNet >= 0) {
+//			solution = taskCheck.solutionInPoint(iKe_checkNet, target);
+//		}
+//		else {
+//			iKe_checkNet = taskCheck.findKE(target);
+//			i = i;
+//		}
+//
+//		q_check[i] = solution;
+//	}
+//
+//	logger << setw(40) << std::left << "execution time" <<
+//		MkaUtils::formattingTime(std::chrono::system_clock::time_point(std::chrono::system_clock::now() - start)) << endl;
+//
+//	output_slice("output/sliceZ-450_Y0.csv", taskCheck, task.q, 'Z', -45, 'X', 0, 60.0, 150, 'Y', 0.0, 0.0, 1);
+//	output_slice("output/sliceZ-450_Y450.csv", taskCheck, task.q, 'Z', -45, 'X', 0, 60.0, 150, 'Y', 45.0, 45.0, 1);
+//}
+
+//with 2d-> on 3d net
+
+//int main(int argc, char* argv[])
+//{
+//	auto start = std::chrono::system_clock::now();
+//	setlocale(LC_ALL, "rus");
+//
+//	//ahTUNG!
+//	double lambda0 = 0.1;
 //	Mka2D_cylindrical task2D("resources_field_allocation/2D/", false, true, false, true);
 //	Mka3D task("resources_field_allocation/3D/", false, false, true, false,
 //		true, true, true);
@@ -530,6 +567,16 @@ int main(int argc, char* argv[])
 //	logger << setw(40) << std::left << "execution time" <<
 //		MkaUtils::formattingTime(std::chrono::system_clock::time_point(std::chrono::system_clock::now() - start)) << endl;
 //	
-//	output_slice("output/sliceZ-450_Y0.csv", taskCheck, q0, task, 'Z', -450, 'X', 0, 600.0, 150, 'Y', 0.0, 0.0, 1);
-//	output_slice("output/sliceZ-450_Y450.csv", taskCheck, q0, task, 'Z', -450, 'X', 0, 600.0, 150, 'Y', 450.0, 450.0, 1);
+//	output_slice("output/sliceZ-450_Y0.csv", taskCheck, q0, task, 'Z', -45, 'X', 0, 60.0, 50, 'Y', 0.0, 0.0, 1);
+//	output_slice("output/sliceZ-450_Y450.csv", taskCheck, q0, task, 'Z', -45, 'X', 0, 60.0, 50, 'Y', 45.0, 45.0, 1);
 //}
+
+void main() {
+	setlocale(LC_ALL, "rus");
+	FIeldAllocation task(0.1, 1, true);
+	task.start();
+
+	task.output_slice("output/sliceZ-450_Y0.csv", 'Z', -45, 'X', 0, 60.0, 50, 'Y', 0.0, 0.0, 1);
+	task.output_slice("output/sliceZ-450_Y450.csv", 'Z', -45, 'X', 0, 60.0, 50, 'Y', 45.0, 45.0, 1);
+	//Mka3D 
+}

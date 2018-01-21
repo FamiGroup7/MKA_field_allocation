@@ -1,16 +1,8 @@
-Net optimization                        00:00:00M626
-Construct xyz                           00:00:00M114
-Construct nvtr                          00:00:00M110
-Generate T matrix                       00:00:00M690
-Generate portrait                       00:00:00M483
-Generate global matrix                  00:00:00M160
-Apply boundaries 2                      00:00:00M000
-Apply boundaries 3                      00:00:00M000
-Apply boundaries 1                      00:00:00M097
-Solve slau                              00:00:00M006
-Total program duration                  00:02:00M460
-
-KE number = 840
-dim(A) = 929
-Nodes = 1529
-Terminal nodes = 600
+Net optimization                        00:00M000
+Construct xyz                           00:00M092
+Construct nvtr                          00:00M173
+Generate T matrix                       00:00M002
+Generate portrait                       00:00M481
+Apply boundaries 2                      00:00M000
+Apply boundaries 3                      00:00M000
+Apply boundaries 1                      00:00M102

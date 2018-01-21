@@ -50,6 +50,7 @@ public:
 
 	int sourceType;
 	double power = 0;
+	string sredaFile = "sreda2D.txt";
 
 	double solutionInPoint(int iKe, Point_cylindrical target);
 
@@ -96,6 +97,7 @@ public:
 	vector<field> sreda;
 	vector<Point_cylindrical> rz;
 	vector<nvtr> KE;
+	double koordSourceR, koordSourceZ;
 private:
 	string filePrefix;
 	ofstream testFile;
@@ -116,6 +118,5 @@ private:
 
 	double r0, r1, z0, z1; 
 	bool ku1_left, ku1_right, ku1_up, ku1_down;
-	double koordSourceR, koordSourceZ;
 };
 

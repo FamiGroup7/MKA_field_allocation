@@ -109,7 +109,7 @@ void Mka2D_cylindrical::GenerateNet()
 	field tempField;
 	set<double> xTemp, zTemp;
 	set<double>::const_iterator it;
-	ifstream inpSreda(filePrefix + "sreda2D.txt");
+	ifstream inpSreda(filePrefix + sredaFile);
 	inpSreda >> numberFields;
 	double areaOfSreda = 0;
 	for (i = 0; i < numberFields; i++)
@@ -766,7 +766,9 @@ void Mka2D_cylindrical::GenerateMatrix()
 		int sourceIndex = indexRZ(koordSourceR, koordSourceZ);
 		if (sourceIndex >= 0) {
 			testFile << "SourceType=1, point(" << rz[sourceIndex] << ",i=" << sourceIndex << ", power=" << power << endl;
-			b[sourceIndex] += power;
+			double add = power / (2 * PI/* * sreda[0].sigma*/);
+			testFile << "Added power " << add << endl;
+			b[sourceIndex] += add;
 		}
 	}
 	if (sourceType == 2) {
